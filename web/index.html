@@ -1,1 +1,590 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>VELTRIX — VLX Miner</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:radial-gradient(circle at 50% 15%,#173c4a,#07141a 48%,#03080b);
+color:#fff;
+font-family:Arial,sans-serif;
+min-height:100vh
+}
+
+.app{
+max-width:520px;
+margin:auto;
+padding-bottom:90px
+}
+
+.head{
+text-align:center;
+padding:19px
+}
+
+.logo{
+font-size:20px;
+font-weight:900;
+letter-spacing:2px
+}
+
+.sub{
+font-size:11px;
+color:#91a4ad;
+margin-top:4px
+}
+
+.balance{
+margin:17px auto 0;
+width:max-content;
+min-width:200px;
+padding:11px 20px;
+border:1px solid #315361;
+border-radius:30px;
+background:#102b35;
+font-weight:800
+}
+
+.balance b{
+font-size:21px
+}
+
+.tag{
+display:inline-block;
+background:#22d76c;
+color:#06220f;
+padding:5px 14px;
+border-radius:0 0 10px 10px;
+font-size:10px
+}
+
+.page{
+display:none;
+padding:0 18px
+}
+
+.page.active{
+display:block
+}
+
+.coin{
+width:228px;
+height:228px;
+margin:40px auto 27px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle at 35% 25%,#fff2a9,#e7ae3b 38%,#a66a17 70%,#452705);
+border:8px solid #d5972d;
+box-shadow:0 0 45px #d99b3344,inset 0 0 25px #fff6
+}
+
+.coin span{
+font-size:46px;
+font-weight:1000;
+color:#624006
+}
+
+.rate{
+text-align:center;
+font-size:42px;
+font-weight:1000
+}
+
+.rate small{
+font-size:14px;
+color:#a6b6bc
+}
+
+.btn{
+display:block;
+width:94%;
+margin:11px auto;
+padding:17px;
+border:0;
+border-radius:19px;
+background:#1597ee;
+color:#fff;
+font-size:19px;
+font-weight:900
+}
+
+.boost{
+background:linear-gradient(90deg,#eeb319,#ffd343);
+color:#201700
+}
+
+.card{
+background:#0d222b;
+border:1px solid #20414c;
+border-radius:18px;
+padding:18px;
+margin:13px 0
+}
+
+.muted{
+color:#91a4ad;
+font-size:13px;
+line-height:1.55
+}
+
+.input{
+width:100%;
+padding:14px;
+background:#06141a;
+border:1px solid #35515b;
+border-radius:12px;
+color:#fff;
+margin:7px 0
+}
+
+.status{
+background:#122d36;
+border-radius:12px;
+padding:12px;
+font-size:13px;
+color:#acd3dc;
+word-break:break-all
+}
+
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:#050b10;
+border-top:1px solid #19303a;
+display:flex;
+justify-content:center;
+padding:8px 4px 11px;
+z-index:4
+}
+
+.nav button{
+width:25%;
+border:0;
+background:transparent;
+color:#7f9199;
+font-size:11px
+}
+
+.nav button.on{
+color:#fff
+}
+
+.nav b{
+display:block;
+font-size:21px;
+margin-bottom:3px
+}
+
+.toast{
+position:fixed;
+top:18px;
+left:50%;
+transform:translateX(-50%);
+display:none;
+background:#16343d;
+border:1px solid #35616c;
+padding:12px 16px;
+border-radius:13px;
+z-index:8;
+font-size:13px
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="head">
+
+<div class="logo">⚡ VELTRIX</div>
+
+<div class="sub">
+VLX • COMMUNITY MINING
+</div>
+
+<div class="balance">
+💰 <b id="bal">0.00</b> VLX
+<br>
+<span class="tag">VLX POINTS</span>
+</div>
+
+</header>
+
+<section id="home" class="page active">
+
+<div class="coin">
+<span>VLX</span>
+</div>
+
+<div class="rate">
++<span id="rate">4.57</span>
+<small> VLX / HOUR</small>
+</div>
+
+<button class="btn" onclick="claim()">
+⛏️ CLAIM MINING
+</button>
+
+<button class="btn boost" onclick="boost()">
+🚀 BOOST +0.5 VLX/H
+</button>
+
+<div class="card">
+
+<b>📌 About VLX Points</b>
+
+<p class="muted">
+Mining rewards are currently off-chain VLX Points.
+Future conversion, token distribution, price and exchange listing
+will be announced by the project.
+</p>
+
+</div>
+
+</section>
+
+
+<section id="friends" class="page">
+
+<div class="card">
+
+<h2>👥 Invite Friends</h2>
+
+<p class="muted">
+Invite friends to earn referral VLX Points.
+</p>
+
+<div class="status" id="ref">
+Loading...
+</div>
+
+<button class="btn" onclick="copyRef()">
+COPY LINK
+</button>
+
+</div>
+
+</section>
+
+
+<section id="wallet" class="page">
+
+<div class="card">
+
+<h2>💳 Wallet</h2>
+
+<p class="muted">
+Save the wallet that may be used for future VLX distribution.
+</p>
+
+<input
+id="walletInput"
+class="input"
+placeholder="Wallet address"
+>
+
+<button class="btn" onclick="saveWallet()">
+SAVE WALLET
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h2>💸 Withdraw</h2>
+
+<p class="muted">
+Requests remain PENDING until the real token distribution system is activated.
+</p>
+
+<input
+id="amount"
+class="input"
+type="number"
+placeholder="VLX Points"
+>
+
+<button class="btn" onclick="withdraw()">
+SUBMIT PENDING
+</button>
+
+</div>
+
+</section>
+
+
+<nav class="nav">
+
+<button class="on" onclick="page('home',this)">
+<b>⌂</b>
+Mine
+</button>
+
+<button onclick="page('friends',this)">
+<b>👥</b>
+Friends
+</button>
+
+<button onclick="page('wallet',this)">
+<b>💳</b>
+Wallet
+</button>
+
+</nav>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.expand();
+
+const initData = tg.initData;
+
+let uid;
+
+
+function toast(s){
+
+let x = document.getElementById('toast');
+
+x.textContent = s;
+
+x.style.display = 'block';
+
+setTimeout(()=>{
+x.style.display = 'none';
+},2200);
+
+}
+
+
+async function req(url,body={}){
+
+let r = await fetch(url,{
+
+method:'POST',
+
+headers:{
+'Content-Type':'application/json'
+},
+
+body:JSON.stringify({
+initData,
+...body
+})
+
+});
+
+return r.json();
+
+}
+
+
+function render(u){
+
+uid = u.id;
+
+document.getElementById('bal').textContent =
+Number(u.balance).toFixed(2);
+
+document.getElementById('rate').textContent =
+Number(u.rate).toFixed(2);
+
+if(u.wallet)
+document.getElementById('walletInput').value = u.wallet;
+
+document.getElementById('ref').textContent =
+'https://t.me/VeltrixMinerBot?start=' + u.id;
+
+}
+
+
+async function init(){
+
+if(!initData){
+
+toast('Open this app inside Telegram');
+
+return;
+
+}
+
+let d = await req('/api/user',{
+
+startParam:
+tg.initDataUnsafe.start_param ||
+new URLSearchParams(location.search).get('ref') ||
+''
+
+});
+
+if(d.error){
+
+toast(d.error);
+
+}else{
+
+render(d);
+
+}
+
+}
+
+
+async function claim(){
+
+let d = await req('/api/claim');
+
+if(d.error){
+
+toast(d.error);
+
+}else{
+
+render(d.user);
+
+toast('⛏️ Balance updated');
+
+}
+
+}
+
+
+async function boost(){
+
+let d = await req('/api/boost');
+
+if(d.error){
+
+toast(d.error);
+
+}else{
+
+render(d.user);
+
+toast('🚀 Boost activated');
+
+}
+
+}
+
+
+async function saveWallet(){
+
+let d = await req('/api/wallet',{
+
+wallet:
+document.getElementById('walletInput').value
+
+});
+
+if(d.error){
+
+toast(d.error);
+
+}else{
+
+render(d.user);
+
+toast('✅ Wallet saved');
+
+}
+
+}
+
+
+async function withdraw(){
+
+let d = await req('/api/withdraw',{
+
+amount:
+Number(document.getElementById('amount').value)
+
+});
+
+if(d.error){
+
+toast(d.error);
+
+}else{
+
+render(d.user);
+
+document.getElementById('amount').value='';
+
+toast('🟡 PENDING submitted');
+
+}
+
+}
+
+
+function page(id,b){
+
+document
+.querySelectorAll('.page')
+.forEach(x=>x.classList.remove('active'));
+
+document
+.getElementById(id)
+.classList.add('active');
+
+document
+.querySelectorAll('.nav button')
+.forEach(x=>x.classList.remove('on'));
+
+b.classList.add('on');
+
+}
+
+
+function copyRef(){
+
+navigator.clipboard?.writeText(
+document.getElementById('ref').textContent
+);
+
+toast('Referral copied');
+
+}
+
+
+setInterval(async()=>{
+
+if(initData){
+
+let d = await req('/api/claim');
+
+if(d.user)
+render(d.user);
+
+}
+
+},15000);
+
+
+init();
+
+</script>
+
+</body>
+</html>
