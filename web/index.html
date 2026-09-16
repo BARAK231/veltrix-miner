@@ -1,355 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
-<title>VELTRIX — VLX Miner</title>
+  <title>VELTRIX — VLX Miner</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  background: #07111f;
-  color: #fff;
-  font-family: Arial, sans-serif;
-}
+    body {
+      margin: 0;
+      background: #0b0f14;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
 
-button,
-input {
-  font: inherit;
-}
+    button,
+    input {
+      font: inherit;
+    }
 
-.container {
-  max-width: 520px;
-  margin: auto;
-  padding: 18px 14px 100px;
-}
+    .app {
+      max-width: 520px;
+      margin: auto;
+      min-height: 100vh;
+      padding-bottom: 85px;
+    }
 
-.header {
-  text-align: center;
-  margin-bottom: 18px;
-}
+    header {
+      padding: 20px 18px 10px;
+      text-align: center;
+    }
 
-.logo {
-  font-size: 48px;
-  margin-bottom: 5px;
-}
+    .logo {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
 
-.title {
-  font-size: 25px;
-  font-weight: 800;
-}
+    .sub {
+      color: #8d98a5;
+      margin-top: 5px;
+      font-size: 13px;
+    }
 
-.subtitle {
-  color: #9fb0c4;
-  margin-top: 5px;
-}
+    .card {
+      background: #121820;
+      border: 1px solid #202b36;
+      border-radius: 18px;
+      margin: 12px 14px;
+      padding: 18px;
+    }
 
-.card {
-  background: #0d1b2d;
-  border: 1px solid #1b3048;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 14px;
-}
+    .balance {
+      text-align: center;
+    }
 
-.balance-label {
-  color: #9fb0c4;
-  font-size: 14px;
-}
+    .balance-title {
+      color: #8d98a5;
+      font-size: 13px;
+    }
 
-.balance {
-  font-size: 36px;
-  font-weight: 800;
-  margin-top: 6px;
-}
+    .balance-number {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 8px 0;
+    }
 
-.symbol {
-  font-size: 17px;
-  color: #55d6ff;
-}
+    .vlx {
+      color: #8d98a5;
+    }
 
-.rate {
-  text-align: center;
-  font-size: 18px;
-  margin: 14px 0;
-}
+    .mining-box {
+      text-align: center;
+    }
 
-.timer {
-  text-align: center;
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin: 15px 0;
-}
+    .mining-status {
+      font-size: 14px;
+      color: #8d98a5;
+      margin-bottom: 8px;
+    }
 
-.progress {
-  width: 100%;
-  height: 9px;
-  background: #182a40;
-  border-radius: 20px;
-  overflow: hidden;
-}
+    .mining-number {
+      font-size: 32px;
+      font-weight: 800;
+    }
 
-.progress-bar {
-  height: 100%;
-  width: 0%;
-  background: #22c55e;
-}
+    .rate {
+      margin-top: 8px;
+      color: #8d98a5;
+      font-size: 13px;
+    }
 
-.primary {
-  width: 100%;
-  border: 0;
-  border-radius: 13px;
-  padding: 14px;
-  margin-top: 15px;
-  background: #19c37d;
-  color: #06130d;
-  font-weight: 800;
-  cursor: pointer;
-}
+    .timer {
+      margin: 15px 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
 
-.primary:disabled {
-  opacity: .45;
-}
+    button {
+      border: 0;
+      border-radius: 13px;
+      padding: 13px 18px;
+      width: 100%;
+      font-weight: 700;
+      cursor: pointer;
+      background: #fff;
+      color: #000;
+    }
 
-.nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #091625;
-  border-top: 1px solid #1b3048;
-  display: flex;
-  justify-content: space-around;
-  padding: 9px 3px;
-  z-index: 100;
-}
+    button:disabled {
+      opacity: 0.45;
+    }
 
-.nav button {
-  background: none;
-  border: 0;
-  color: #8194aa;
-  font-size: 11px;
-  padding: 5px;
-}
+    .section {
+      display: none;
+    }
 
-.nav button.active {
-  color: #42d9ff;
-}
+    .section.active {
+      display: block;
+    }
 
-.section {
-  display: none;
-}
+    .task {
+      background: #171f28;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
 
-.section.active {
-  display: block;
-}
+    .task-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
 
-.section-title {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 14px;
-}
+    .task-reward {
+      color: #8d98a5;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
 
-.task {
-  background: #102137;
-  border: 1px solid #203752;
-  border-radius: 15px;
-  padding: 15px;
-  margin-bottom: 12px;
-}
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
 
-.task-title {
-  font-weight: 800;
-  font-size: 16px;
-}
+    .task-actions button {
+      width: 50%;
+      padding: 10px;
+    }
 
-.task-reward {
-  color: #22c55e;
-  margin: 8px 0;
-  font-weight: 700;
-}
+    .secondary {
+      background: #27313d;
+      color: #fff;
+    }
 
-.task-buttons {
-  display: flex;
-  gap: 8px;
-}
+    .friend-link {
+      background: #0d131a;
+      border: 1px solid #27313d;
+      border-radius: 10px;
+      padding: 12px;
+      word-break: break-all;
+      font-size: 12px;
+      margin: 12px 0;
+    }
 
-.task-buttons a,
-.task-buttons button {
-  flex: 1;
-  text-align: center;
-  text-decoration: none;
-  border: 0;
-  border-radius: 10px;
-  padding: 11px 5px;
-  font-weight: 700;
-}
+    input {
+      width: 100%;
+      background: #0d131a;
+      color: #fff;
+      border: 1px solid #27313d;
+      border-radius: 12px;
+      padding: 13px;
+      outline: none;
+      margin-bottom: 10px;
+    }
 
-.join {
-  background: #1684ff;
-  color: white;
-}
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
 
-.verify {
-  background: #19c37d;
-  color: #06130d;
-}
+    .row > div {
+      flex: 1;
+      background: #171f28;
+      border-radius: 12px;
+      padding: 13px;
+      text-align: center;
+    }
 
-.verify:disabled {
-  opacity: .4;
-}
+    .small {
+      color: #8d98a5;
+      font-size: 12px;
+    }
 
-.ref-link {
-  background: #07111f;
-  border: 1px solid #243c58;
-  border-radius: 11px;
-  padding: 12px;
-  word-break: break-all;
-  color: #9edfff;
-  margin: 12px 0;
-}
+    .error {
+      display: none;
+      background: #4a1616;
+      color: #ffb5b5;
+      border: 1px solid #8e2b2b;
+      border-radius: 12px;
+      margin: 10px 14px;
+      padding: 12px;
+      font-size: 13px;
+      word-break: break-word;
+    }
 
-.copy {
-  width: 100%;
-  border: 0;
-  border-radius: 11px;
-  padding: 12px;
-  background: #1684ff;
-  color: white;
-  font-weight: 700;
-}
+    .success {
+      color: #b8ffca;
+      font-size: 13px;
+      margin-top: 10px;
+    }
 
-.input {
-  width: 100%;
-  background: #07111f;
-  border: 1px solid #29425d;
-  color: white;
-  border-radius: 11px;
-  padding: 13px;
-  outline: none;
-  margin-top: 8px;
-}
+    nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: 520px;
+      margin: auto;
+      background: #111820;
+      border-top: 1px solid #202b36;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 8px 5px;
+      z-index: 100;
+    }
 
-.small {
-  color: #8194aa;
-  font-size: 13px;
-  line-height: 1.5;
-}
+    nav button {
+      background: transparent;
+      color: #8d98a5;
+      padding: 8px 2px;
+      font-size: 11px;
+    }
 
-.rank-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #102137;
-  border-radius: 12px;
-  padding: 13px;
-  margin-bottom: 8px;
-}
+    nav button.active {
+      color: #fff;
+    }
 
-.rank-number {
-  width: 35px;
-  font-weight: 800;
-}
-
-.rank-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rank-balance {
-  color: #55d6ff;
-  font-weight: 700;
-}
-
-.message {
-  text-align: center;
-  color: #9fb0c4;
-  padding: 20px 5px;
-}
-
-.success {
-  color: #22c55e;
-}
-
-.error {
-  color: #ff7070;
-}
-
-.wallet-box {
-  margin-bottom: 15px;
-}
-
-.status {
-  margin-top: 10px;
-  font-size: 13px;
-}
-</style>
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #202b36;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
+
+  <header>
+    <div class="logo">VELTRIX</div>
+    <div class="sub">VLX MINER</div>
+  </header>
+
+  <div id="errorBox" class="error"></div>
 
   <!-- MINE -->
   <section id="mine" class="section active">
 
-    <div class="header">
-      <div class="logo">⚡</div>
-      <div class="title">VELTRIX</div>
-      <div class="subtitle">VLX Mining</div>
+    <div class="card balance">
+      <div class="balance-title">CLAIMED BALANCE</div>
+      <div id="balance" class="balance-number">0.0000</div>
+      <div class="vlx">VLX</div>
     </div>
 
-    <div class="card">
-      <div class="balance-label">Your Balance</div>
+    <div class="card mining-box">
+      <div class="mining-status">⛏️ MINING</div>
 
-      <div class="balance">
-        <span id="balance">0.00</span>
-        <span class="symbol">VLX</span>
+      <div id="mining" class="mining-number">
+        0.0000
       </div>
+
+      <div class="vlx">VLX</div>
 
       <div class="rate">
-        ⛏️ <b>4.74 VLX / hour</b>
+        ⚡ 4.74 VLX / hour
       </div>
 
-      <div class="timer" id="timer">
+      <div id="timer" class="timer">
         08:00:00
       </div>
 
-      <div class="progress">
-        <div class="progress-bar" id="progress"></div>
-      </div>
-
-      <button
-        id="claimButton"
-        class="primary"
-        onclick="claimMining()"
-        disabled
-      >
+      <button id="claimBtn" disabled>
         ⏳ MINING...
       </button>
 
-      <div
-        id="mineMessage"
-        class="status"
-      ></div>
+      <div id="claimMessage"></div>
     </div>
 
     <div class="card">
-      <div class="small">
-        Mining runs for 8 hours. When the cycle finishes,
-        claim your VLX and a new cycle starts automatically.
+      <div class="row">
+        <div>
+          <div id="total">0.0000</div>
+          <div class="small">TOTAL</div>
+        </div>
+
+        <div>
+          <div>8h</div>
+          <div class="small">CYCLE</div>
+        </div>
       </div>
     </div>
 
@@ -358,21 +318,9 @@ input {
   <!-- TASKS -->
   <section id="tasks" class="section">
 
-    <div class="section-title">
-      📢 Tasks
-    </div>
-
     <div class="card">
-      <div class="small">
-        Join the channel and then press VERIFY.
-        You can receive each task reward only once.
-      </div>
-    </div>
-
-    <div id="tasksList">
-      <div class="message">
-        Loading tasks...
-      </div>
+      <h3>🎯 Tasks</h3>
+      <div id="taskList">Loading...</div>
     </div>
 
   </section>
@@ -380,43 +328,28 @@ input {
   <!-- FRIENDS -->
   <section id="friends" class="section">
 
-    <div class="section-title">
-      👥 Friends
-    </div>
-
     <div class="card">
+      <h3>👥 Friends</h3>
 
-      <div class="balance-label">
-        Referral Bonus
+      <div class="row">
+        <div>
+          <div id="refCount">0</div>
+          <div class="small">FRIENDS</div>
+        </div>
+
+        <div>
+          <div>300</div>
+          <div class="small">BONUS</div>
+        </div>
       </div>
 
-      <div class="balance">
-        300 <span class="symbol">VLX</span>
-      </div>
-
-      <div class="small">
-        Invite a new user and receive 300 VLX when they join VELTRIX for the first time.
-      </div>
-
-      <div
-        id="refLink"
-        class="ref-link"
-      >
+      <div id="refLink" class="friend-link">
         Loading...
       </div>
 
-      <button
-        class="copy"
-        onclick="copyReferral()"
-      >
-        📋 COPY REFERRAL LINK
+      <button id="copyRef">
+        📋 Copy Referral Link
       </button>
-
-      <div class="status">
-        👥 Referrals:
-        <b id="refCount">0</b>
-      </div>
-
     </div>
 
   </section>
@@ -424,14 +357,9 @@ input {
   <!-- RANK -->
   <section id="rank" class="section">
 
-    <div class="section-title">
-      🏆 Leaderboard
-    </div>
-
-    <div id="leaderboard">
-      <div class="message">
-        Loading...
-      </div>
+    <div class="card">
+      <h3>🏆 Rank</h3>
+      <div id="leaderboard">Loading...</div>
     </div>
 
   </section>
@@ -439,74 +367,46 @@ input {
   <!-- WALLET -->
   <section id="wallet" class="section">
 
-    <div class="section-title">
-      💰 Wallet
-    </div>
-
     <div class="card">
 
-      <div class="wallet-box">
-        <b>Coinbase Wallet / EVM Wallet</b>
+      <h3>💰 Wallet</h3>
 
-        <div class="small">
-          Enter your public EVM wallet address only.
-          Never enter your seed phrase or private key.
-        </div>
-
-        <input
-          id="walletInput"
-          class="input"
-          placeholder="0x..."
-          autocomplete="off"
-        />
-
-        <button
-          class="primary"
-          onclick="saveWallet()"
-        >
-          💾 SAVE WALLET
-        </button>
-
-        <div
-          id="walletMessage"
-          class="status"
-        ></div>
+      <div class="small">
+        EVM / ETH wallet address
       </div>
 
-    </div>
+      <br>
 
-    <div class="card">
+      <input
+        id="walletInput"
+        placeholder="0x..."
+        autocomplete="off"
+      >
 
-      <b>💸 Withdraw VLX</b>
+      <button id="saveWallet">
+        💾 Save Wallet
+      </button>
 
-      <div class="small" style="margin-top:8px">
-        Minimum withdrawal:
-        <b>10,000 VLX</b>
-        <br><br>
-        Withdrawals will remain
-        <b>PENDING</b>
-        until VLX distribution is activated.
+      <br><br>
+
+      <div class="small">
+        Minimum withdrawal: 10,000 VLX
       </div>
+
+      <br>
 
       <input
         id="withdrawAmount"
-        class="input"
         type="number"
+        placeholder="Amount"
         min="10000"
-        placeholder="Enter VLX amount"
-      />
-
-      <button
-        class="primary"
-        onclick="withdraw()"
       >
-        💸 REQUEST WITHDRAW
+
+      <button id="withdrawBtn">
+        🚀 Withdraw
       </button>
 
-      <div
-        id="withdrawMessage"
-        class="status"
-      ></div>
+      <div id="withdrawMessage"></div>
 
     </div>
 
@@ -514,526 +414,562 @@ input {
 
 </div>
 
-<!-- NAVIGATION -->
-<div class="nav">
+<!-- NAV -->
 
-  <button
-    class="active"
-    onclick="showSection('mine', this)"
-  >
+<nav>
+
+  <button class="navBtn active" data-section="mine">
     ⛏️<br>Mine
   </button>
 
-  <button
-    onclick="showSection('tasks', this)"
-  >
-    📢<br>Tasks
+  <button class="navBtn" data-section="tasks">
+    🎯<br>Tasks
   </button>
 
-  <button
-    onclick="showSection('friends', this)"
-  >
+  <button class="navBtn" data-section="friends">
     👥<br>Friends
   </button>
 
-  <button
-    onclick="showSection('rank', this)"
-  >
+  <button class="navBtn" data-section="rank">
     🏆<br>Rank
   </button>
 
-  <button
-    onclick="showSection('wallet', this)"
-  >
+  <button class="navBtn" data-section="wallet">
     💰<br>Wallet
   </button>
 
-</div>
+</nav>
 
 <script>
-const tg = window.Telegram?.WebApp;
 
-if (tg) {
-  tg.ready();
-  tg.expand();
-}
+const tg = window.Telegram.WebApp;
 
-const initData = tg?.initData || "";
+tg.ready();
+tg.expand();
+
+const initData = tg.initData;
 
 let currentUser = null;
-let referralLink = "";
+let timerInterval = null;
 
-function headers() {
-  return {
+/* =========================
+   API
+========================= */
+
+async function api(url, options = {}) {
+
+  const headers = {
     "Content-Type": "application/json",
-    "X-Telegram-Init-Data": initData
+    "X-Telegram-Init-Data": initData,
+    ...(options.headers || {})
   };
-}
 
-function esc(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
 
-function showSection(name, button) {
-  document.querySelectorAll(".section")
-    .forEach(s => s.classList.remove("active"));
+  const text = await response.text();
 
-  document.getElementById(name)
-    .classList.add("active");
+  let data;
 
-  document.querySelectorAll(".nav button")
-    .forEach(b => b.classList.remove("active"));
-
-  button.classList.add("active");
-
-  if (name === "tasks") loadTasks();
-  if (name === "friends") loadReferral();
-  if (name === "rank") loadLeaderboard();
-}
-
-// =========================
-// START USER
-// =========================
-async function initUser() {
   try {
+    data = JSON.parse(text);
+  } catch (e) {
 
-    const params = new URLSearchParams(
-      window.location.search
+    console.error(
+      "Invalid JSON:",
+      url,
+      text
     );
 
-    let ref = params.get("ref") || "";
+    throw new Error(
+      `Server returned invalid response (${response.status})`
+    );
+  }
 
-    // Telegram start_param fallback
-    if (!ref && tg?.initDataUnsafe?.start_param) {
-      const startParam = tg.initDataUnsafe.start_param;
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Request failed"
+    );
+  }
 
-      // start_param may be referral ID
-      ref = startParam;
+  return data;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+function showError(message) {
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = message;
+  box.style.display = "block";
+}
+
+function clearError() {
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = "";
+  box.style.display = "none";
+}
+
+/* =========================
+   LOAD USER
+========================= */
+
+async function loadUser() {
+
+  try {
+
+    clearError();
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    let ref =
+      params.get("ref");
+
+    if (!ref) {
+      ref =
+        tg.initDataUnsafe?.start_param || "";
     }
 
-    const response = await fetch("/api/user", {
-      method: "POST",
-      headers: headers(),
-      body: JSON.stringify({
-        initData,
-        ref
-      })
-    });
+    const url =
+      ref
+        ? `/api/user?ref=${encodeURIComponent(ref)}`
+        : `/api/user`;
 
-    const data = await response.json();
+    const user =
+      await api(url);
 
-    if (!data.ok) {
-      throw new Error(data.error || "Authentication failed");
-    }
+    currentUser = user;
 
-    currentUser = data.user;
+    updateUserUI();
 
-    renderUser(currentUser);
+    startMiningTimer();
 
-    await loadWallet();
+  } catch (err) {
 
-  } catch (error) {
+    console.error(err);
 
-    document.getElementById("mineMessage").innerHTML =
-      `<span class="error">${esc(error.message)}</span>`;
+    showError(
+      err.message
+    );
   }
 }
 
-// =========================
-// RENDER USER
-// =========================
-function renderUser(user) {
+/* =========================
+   UPDATE UI
+========================= */
 
-  currentUser = user;
+function updateUserUI() {
 
-  document.getElementById("balance")
-    .textContent =
-      Number(user.totalBalance || 0)
-        .toFixed(2);
+  if (!currentUser) return;
 
-  const remaining =
-    Number(user.cycleRemaining || 0);
+  document.getElementById(
+    "balance"
+  ).textContent =
+    Number(currentUser.balance || 0)
+      .toFixed(4);
 
-  document.getElementById("timer")
-    .textContent =
-      formatTime(remaining);
+  document.getElementById(
+    "mining"
+  ).textContent =
+    Number(currentUser.mining || 0)
+      .toFixed(4);
 
-  const elapsed =
-    Math.max(
-      0,
-      (8 * 60 * 60) - remaining
+  document.getElementById(
+    "total"
+  ).textContent =
+    Number(currentUser.total || 0)
+      .toFixed(4);
+
+  document.getElementById(
+    "timer"
+  ).textContent =
+    formatTime(
+      Number(currentUser.remaining || 0)
     );
 
-  const percentage =
-    Math.min(
-      100,
-      (elapsed / (8 * 60 * 60)) * 100
+  const claimBtn =
+    document.getElementById(
+      "claimBtn"
     );
 
-  document.getElementById("progress")
-    .style.width = percentage + "%";
+  if (currentUser.canClaim) {
 
-  const button =
-    document.getElementById("claimButton");
-
-  if (user.canClaim) {
-
-    button.disabled = false;
-    button.textContent = "🎁 CLAIM VLX";
+    claimBtn.disabled = false;
+    claimBtn.textContent =
+      "✅ CLAIM VLX";
 
   } else {
 
-    button.disabled = true;
-    button.textContent = "⛏️ MINING...";
-
+    claimBtn.disabled = true;
+    claimBtn.textContent =
+      "⏳ MINING...";
   }
+
+  document.getElementById(
+    "walletInput"
+  ).value =
+    currentUser.wallet || "";
 }
 
-// =========================
-// MINING REFRESH
-// =========================
-async function refreshMining() {
+/* =========================
+   MINING TIMER
+========================= */
 
-  try {
-
-    const response = await fetch(
-      "/api/mining",
-      {
-        headers: headers()
-      }
-    );
-
-    const data = await response.json();
-
-    if (data.ok) {
-      renderUser(data.user);
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-// =========================
-// CLAIM
-// =========================
-async function claimMining() {
-
-  const button =
-    document.getElementById("claimButton");
-
-  const message =
-    document.getElementById("mineMessage");
-
-  button.disabled = true;
-  button.textContent = "⏳ CLAIMING...";
-
-  message.textContent = "";
-
-  try {
-
-    const response = await fetch(
-      "/api/claim",
-      {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify({
-          initData
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.error || "Claim failed");
-    }
-
-    renderUser(data.user);
-
-    message.innerHTML =
-      `<span class="success">
-        ✅ Claimed ${Number(data.reward).toFixed(2)} VLX
-      </span>`;
-
-  } catch (error) {
-
-    message.innerHTML =
-      `<span class="error">${esc(error.message)}</span>`;
-
-    await refreshMining();
-  }
-}
-
-// =========================
-// TIME
-// =========================
 function formatTime(seconds) {
 
-  seconds = Math.max(
-    0,
-    Math.floor(seconds)
-  );
+  seconds =
+    Math.max(
+      0,
+      Math.floor(seconds)
+    );
 
   const h =
     Math.floor(seconds / 3600);
 
   const m =
-    Math.floor((seconds % 3600) / 60);
+    Math.floor(
+      (seconds % 3600) / 60
+    );
 
   const s =
     seconds % 60;
 
-  return (
-    String(h).padStart(2, "0") +
-    ":" +
-    String(m).padStart(2, "0") +
-    ":" +
-    String(s).padStart(2, "0")
-  );
+  return [
+    h,
+    m,
+    s
+  ]
+    .map(
+      x =>
+        String(x).padStart(2, "0")
+    )
+    .join(":");
 }
 
-// =========================
-// TASKS
-// =========================
+function startMiningTimer() {
+
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
+  timerInterval =
+    setInterval(
+      async () => {
+
+        if (!currentUser)
+          return;
+
+        if (
+          Number(
+            currentUser.remaining
+          ) > 0
+        ) {
+
+          currentUser.remaining--;
+
+          const elapsed =
+            8 * 3600 -
+            currentUser.remaining;
+
+          currentUser.mining =
+            Math.min(
+              4.74 * (elapsed / 3600),
+              37.92
+            );
+
+          currentUser.total =
+            Number(
+              currentUser.balance
+            ) +
+            Number(
+              currentUser.mining
+            );
+
+          currentUser.canClaim =
+            currentUser.remaining <= 0;
+
+          updateUserUI();
+
+        } else {
+
+          currentUser.canClaim = true;
+
+          currentUser.mining =
+            37.92;
+
+          currentUser.total =
+            Number(
+              currentUser.balance
+            ) + 37.92;
+
+          updateUserUI();
+        }
+
+      },
+      1000
+    );
+}
+
+/* =========================
+   CLAIM
+========================= */
+
+document.getElementById(
+  "claimBtn"
+).addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      clearError();
+
+      const btn =
+        document.getElementById(
+          "claimBtn"
+        );
+
+      btn.disabled = true;
+      btn.textContent =
+        "⏳ CLAIMING...";
+
+      const result =
+        await api(
+          "/api/claim",
+          {
+            method: "POST",
+            body: JSON.stringify({})
+          }
+        );
+
+      currentUser =
+        result.user;
+
+      document.getElementById(
+        "claimMessage"
+      ).innerHTML =
+        `<div class="success">
+          ✅ ${Number(result.reward).toFixed(2)} VLX Claimed
+        </div>`;
+
+      updateUserUI();
+
+      startMiningTimer();
+
+    } catch (err) {
+
+      showError(
+        err.message
+      );
+
+      updateUserUI();
+    }
+
+  }
+);
+
+/* =========================
+   TASKS
+========================= */
+
 async function loadTasks() {
-
-  const box =
-    document.getElementById("tasksList");
-
-  box.innerHTML =
-    `<div class="message">Loading tasks...</div>`;
 
   try {
 
-    const response = await fetch(
-      "/api/tasks",
-      {
-        headers: headers()
-      }
-    );
+    const tasks =
+      await api(
+        "/api/tasks"
+      );
 
-    const data = await response.json();
+    const list =
+      document.getElementById(
+        "taskList"
+      );
 
-    if (!data.ok) {
-      throw new Error(data.error);
-    }
+    if (!tasks.length) {
 
-    if (!data.tasks.length) {
-
-      box.innerHTML =
-        `<div class="message">
-          📢 No tasks available right now.
+      list.innerHTML =
+        `<div class="small">
+          No tasks available.
         </div>`;
 
       return;
     }
 
-    box.innerHTML =
-      data.tasks.map(task => {
+    list.innerHTML =
+      tasks.map(
+        task => {
 
-        const claimed =
-          Number(task.claimed) === 1;
+          const claimed =
+            task.claimed;
 
-        return `
-          <div class="task">
+          return `
+            <div class="task">
 
-            <div class="task-title">
-              ${esc(task.title)}
+              <div class="task-title">
+                ${escapeHtml(task.title)}
+              </div>
+
+              <div class="task-reward">
+                🎁 ${Number(task.reward).toFixed(2)} VLX
+              </div>
+
+              <div class="task-actions">
+
+                <button
+                  class="secondary"
+                  onclick="openTask('${escapeAttr(task.url)}')"
+                >
+                  JOIN
+                </button>
+
+                <button
+                  ${claimed ? "disabled" : ""}
+                  onclick="claimTask(${task.id})"
+                >
+                  ${claimed ? "CLAIMED" : "VERIFY"}
+                </button>
+
+              </div>
+
             </div>
+          `;
+        }
+      ).join("");
 
-            <div class="task-reward">
-              🎁 +${Number(task.reward).toFixed(0)} VLX
-            </div>
+  } catch (err) {
 
-            <div class="task-buttons">
-
-              <a
-                class="join"
-                href="${esc(task.url)}"
-                target="_blank"
-              >
-                📢 JOIN
-              </a>
-
-              <button
-                class="verify"
-                onclick="claimTask(${task.id}, this)"
-                ${claimed ? "disabled" : ""}
-              >
-                ${claimed ? "✅ CLAIMED" : "✓ VERIFY"}
-              </button>
-
-            </div>
-
-          </div>
-        `;
-
-      }).join("");
-
-  } catch (error) {
-
-    box.innerHTML =
-      `<div class="message error">
-        ${esc(error.message)}
-      </div>`;
+    document.getElementById(
+      "taskList"
+    ).textContent =
+      err.message;
   }
 }
 
-// =========================
-// CLAIM TASK
-// =========================
-async function claimTask(taskId, button) {
+function openTask(url) {
 
-  button.disabled = true;
-  button.textContent = "⏳ VERIFYING...";
+  window.open(
+    url,
+    "_blank"
+  );
+}
+
+async function claimTask(taskId) {
 
   try {
 
-    const response = await fetch(
-      "/api/task/claim",
-      {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify({
-          initData,
-          taskId
-        })
-      }
+    clearError();
+
+    const result =
+      await api(
+        "/api/task/claim",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            taskId
+          })
+        }
+      );
+
+    currentUser =
+      result.user;
+
+    updateUserUI();
+
+    await loadTasks();
+
+    tg.showAlert(
+      `✅ ${Number(result.reward).toFixed(2)} VLX added`
     );
 
-    const data = await response.json();
+  } catch (err) {
 
-    if (!data.ok) {
-      throw new Error(data.error);
-    }
-
-    currentUser = data.user;
-    renderUser(data.user);
-
-    button.textContent = "✅ CLAIMED";
-
-    if (tg?.showPopup) {
-      tg.showPopup({
-        title: "Task Completed",
-        message:
-          `You received ${Number(data.reward).toFixed(0)} VLX`,
-        buttons: [
-          { type: "ok" }
-        ]
-      });
-    }
-
-  } catch (error) {
-
-    button.disabled = false;
-    button.textContent = "✓ VERIFY";
-
-    if (tg?.showAlert) {
-      tg.showAlert(error.message);
-    } else {
-      alert(error.message);
-    }
+    showError(
+      err.message
+    );
   }
 }
 
-// =========================
-// REFERRAL
-// =========================
+/* =========================
+   REFERRAL
+========================= */
+
 async function loadReferral() {
 
   try {
 
-    const response = await fetch(
-      "/api/referral",
-      {
-        headers: headers()
-      }
-    );
+    const data =
+      await api(
+        "/api/referral"
+      );
 
-    const data = await response.json();
+    document.getElementById(
+      "refCount"
+    ).textContent =
+      data.count;
 
-    if (!data.ok) return;
+    document.getElementById(
+      "refLink"
+    ).textContent =
+      data.link;
 
-    referralLink =
-      data.referralLink;
+    document.getElementById(
+      "copyRef"
+    ).onclick =
+      async () => {
 
-    document.getElementById("refLink")
-      .textContent =
-        referralLink;
+        await navigator.clipboard.writeText(
+          data.link
+        );
 
-    document.getElementById("refCount")
-      .textContent =
-        data.referrals;
+        tg.showAlert(
+          "Referral link copied!"
+        );
+      };
 
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+
+    document.getElementById(
+      "refLink"
+    ).textContent =
+      err.message;
   }
 }
 
-async function copyReferral() {
+/* =========================
+   LEADERBOARD
+========================= */
 
-  if (!referralLink) {
-    await loadReferral();
-  }
-
-  try {
-
-    await navigator.clipboard.writeText(
-      referralLink
-    );
-
-    if (tg?.showAlert) {
-      tg.showAlert(
-        "Referral link copied!"
-      );
-    }
-
-  } catch {
-
-    if (tg?.showAlert) {
-      tg.showAlert(
-        referralLink
-      );
-    }
-  }
-}
-
-// =========================
-// LEADERBOARD
-// =========================
 async function loadLeaderboard() {
 
-  const box =
-    document.getElementById("leaderboard");
-
-  box.innerHTML =
-    `<div class="message">Loading...</div>`;
-
   try {
 
-    const response = await fetch(
-      "/api/leaderboard",
-      {
-        headers: headers()
-      }
-    );
+    const data =
+      await api(
+        "/api/leaderboard"
+      );
 
-    const data = await response.json();
+    const box =
+      document.getElementById(
+        "leaderboard"
+      );
 
-    if (!data.ok) {
-      throw new Error(data.error);
-    }
-
-    if (!data.leaderboard.length) {
+    if (!data.length) {
 
       box.innerHTML =
-        `<div class="message">
+        `<div class="small">
           No users yet.
         </div>`;
 
@@ -1041,190 +977,250 @@ async function loadLeaderboard() {
     }
 
     box.innerHTML =
-      data.leaderboard.map(user => {
+      data.map(
+        user => `
+          <div class="rank-item">
 
-        const name =
-          user.username
-            ? "@" + user.username
-            : user.first_name;
-
-        return `
-          <div class="rank-row">
-
-            <div class="rank-number">
+            <div>
               #${user.rank}
+              ${escapeHtml(
+                user.first_name ||
+                user.username ||
+                "User"
+              )}
             </div>
 
-            <div class="rank-name">
-              ${esc(name)}
-            </div>
-
-            <div class="rank-balance">
-              ${Number(user.balance).toFixed(0)} VLX
+            <div>
+              ${Number(
+                user.balance
+              ).toFixed(2)} VLX
             </div>
 
           </div>
-        `;
+        `
+      ).join("");
 
-      }).join("");
+  } catch (err) {
 
-  } catch (error) {
-
-    box.innerHTML =
-      `<div class="message error">
-        ${esc(error.message)}
-      </div>`;
+    document.getElementById(
+      "leaderboard"
+    ).textContent =
+      err.message;
   }
 }
 
-// =========================
-// WALLET
-// =========================
-async function loadWallet() {
+/* =========================
+   WALLET
+========================= */
 
-  if (!currentUser) return;
+document.getElementById(
+  "saveWallet"
+).addEventListener(
+  "click",
+  async () => {
 
-  document.getElementById("walletInput")
-    .value =
-      currentUser.wallet || "";
-}
+    try {
 
-async function saveWallet() {
+      clearError();
 
-  const wallet =
-    document.getElementById("walletInput")
-      .value
-      .trim();
+      const wallet =
+        document.getElementById(
+          "walletInput"
+        ).value.trim();
 
-  const message =
-    document.getElementById("walletMessage");
+      await api(
+        "/api/wallet",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            wallet
+          })
+        }
+      );
 
-  message.textContent = "";
+      currentUser.wallet =
+        wallet;
 
-  if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+      tg.showAlert(
+        "✅ Wallet saved"
+      );
 
-    message.innerHTML =
-      `<span class="error">
-        Invalid EVM wallet address.
-      </span>`;
+    } catch (err) {
 
-    return;
-  }
-
-  try {
-
-    const response = await fetch(
-      "/api/wallet",
-      {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify({
-          initData,
-          wallet
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.error);
+      showError(
+        err.message
+      );
     }
 
-    currentUser.wallet =
-      data.wallet;
-
-    message.innerHTML =
-      `<span class="success">
-        ✅ Wallet saved successfully.
-      </span>`;
-
-  } catch (error) {
-
-    message.innerHTML =
-      `<span class="error">
-        ${esc(error.message)}
-      </span>`;
   }
-}
-
-// =========================
-// WITHDRAW
-// =========================
-async function withdraw() {
-
-  const amount =
-    Number(
-      document.getElementById("withdrawAmount")
-        .value
-    );
-
-  const message =
-    document.getElementById("withdrawMessage");
-
-  message.textContent = "";
-
-  if (!Number.isFinite(amount) || amount < 10000) {
-
-    message.innerHTML =
-      `<span class="error">
-        Minimum withdrawal is 10,000 VLX.
-      </span>`;
-
-    return;
-  }
-
-  try {
-
-    const response = await fetch(
-      "/api/withdraw",
-      {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify({
-          initData,
-          amount
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.error);
-    }
-
-    message.innerHTML =
-      `<span class="success">
-        ✅ Withdrawal submitted.<br>
-        Status: PENDING
-      </span>`;
-
-    document.getElementById("withdrawAmount")
-      .value = "";
-
-    await refreshMining();
-
-  } catch (error) {
-
-    message.innerHTML =
-      `<span class="error">
-        ${esc(error.message)}
-      </span>`;
-  }
-}
-
-// =========================
-// START
-// =========================
-initUser();
-
-// Refresh mining every 15 seconds
-setInterval(
-  refreshMining,
-  15000
 );
+
+/* =========================
+   WITHDRAW
+========================= */
+
+document.getElementById(
+  "withdrawBtn"
+).addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      clearError();
+
+      const amount =
+        Number(
+          document.getElementById(
+            "withdrawAmount"
+          ).value
+        );
+
+      const result =
+        await api(
+          "/api/withdraw",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              amount
+            })
+          }
+        );
+
+      currentUser =
+        result.user;
+
+      updateUserUI();
+
+      document.getElementById(
+        "withdrawMessage"
+      ).innerHTML =
+        `<div class="success">
+          ✅ Withdrawal submitted — PENDING
+        </div>`;
+
+      document.getElementById(
+        "withdrawAmount"
+      ).value = "";
+
+    } catch (err) {
+
+      showError(
+        err.message
+      );
+    }
+
+  }
+);
+
+/* =========================
+   NAVIGATION
+========================= */
+
+document.querySelectorAll(
+  ".navBtn"
+).forEach(
+  button => {
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        const section =
+          button.dataset.section;
+
+        document.querySelectorAll(
+          ".section"
+        ).forEach(
+          el =>
+            el.classList.remove(
+              "active"
+            )
+        );
+
+        document.getElementById(
+          section
+        ).classList.add(
+          "active"
+        );
+
+        document.querySelectorAll(
+          ".navBtn"
+        ).forEach(
+          el =>
+            el.classList.remove(
+              "active"
+            )
+        );
+
+        button.classList.add(
+          "active"
+        );
+
+        if (section === "tasks")
+          await loadTasks();
+
+        if (section === "friends")
+          await loadReferral();
+
+        if (section === "rank")
+          await loadLeaderboard();
+
+      }
+    );
+
+  }
+);
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHtml(value) {
+
+  return String(value || "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
+
+function escapeAttr(value) {
+
+  return String(value || "")
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    );
+}
+
+/* =========================
+   START
+========================= */
+
+loadUser();
+
 </script>
 
 </body>
-  </html>
+</html>
