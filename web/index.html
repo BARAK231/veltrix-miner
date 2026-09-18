@@ -1314,3 +1314,74 @@ async function addVeltrixTask() {
   }
 }
 </script>
+</script>
+
+<!-- VELTRIX ADMIN CLEANUP BUTTON -->
+<script>
+(function () {
+  const ADMIN_ID = "6011583020";
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg) return;
+
+  tg.ready();
+
+  const user = tg.initDataUnsafe?.user;
+
+  if (!user || String(user.id) !== ADMIN_ID) return;
+
+  const btn = document.createElement("button");
+
+  btn.textContent = "🧹 REMOVE DUPLICATE TASKS";
+  btn.style.cssText = `
+    width:100%;
+    padding:13px;
+    margin:10px 0;
+    border:0;
+    border-radius:10px;
+    background:#dc2626;
+    color:white;
+    font-weight:bold;
+  `;
+
+  btn.onclick = async function () {
+    btn.disabled = true;
+    btn.textContent = "⏳ Cleaning...";
+
+    try {
+      const response = await fetch("/api/admin/task/cleanup", {
+        method: "POST",
+        headers: {
+          "X-Telegram-Init-Data": tg.initData
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Cleanup failed");
+      }
+
+      alert(
+        "✅ Done!\n\n" +
+        data.deactivated +
+        " duplicate task(s) deactivated."
+      );
+
+      btn.textContent = "✅ DUPLICATES CLEANED";
+
+    } catch (err) {
+      alert("❌ " + err.message);
+      btn.disabled = false;
+      btn.textContent = "🧹 REMOVE DUPLICATE TASKS";
+    }
+  };
+
+  document.body.appendChild(btn);
+})();
+</script>
+
+</body>
+</html>
+</body>
+</html>
