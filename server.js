@@ -982,6 +982,51 @@ app.post(
     }
   }
 );
+/* =========================
+   CLEAN DUPLICATE TASKS
+========================= */
+
+app.post(
+  "/api/admin/task/cleanup",
+  adminAuth,
+  async (req, res) => {
+    try {
+      const result = await db(`
+        WITH duplicates AS (
+          SELECT
+            id,
+            ROW_NUMBER() OVER (
+              PARTITION BY COALESCE(channel, url)
+              ORDER BY id ASC
+            ) AS rn
+          FROM tasks
+          WHERE active = true
+        )
+        UPDATE tasks
+        SET active = false
+        WHERE id IN (
+          SELECT id
+          FROM duplicates
+          WHERE rn > 1
+        )
+        RETURNING *
+      `);
+
+      res.json({
+        success: true,
+        deactivated: result.rows.length,
+        tasks: result.rows
+      });
+
+    } catch (err) {
+      console.error(err);
+
+      res.status(500).json({
+        error: "Cleanup failed"
+      });
+    }
+  }
+);
 
 /* =========================
    ADMIN WITHDRAWALS
