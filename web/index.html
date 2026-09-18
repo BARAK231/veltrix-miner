@@ -1224,3 +1224,93 @@ loadUser();
 
 </body>
 </html>
+<!-- VELTRIX ADMIN TASK PANEL -->
+<div id="adminTaskPanel" style="display:none; padding:16px; margin:16px; background:#111827; border-radius:16px;">
+  <h3>🛠️ Admin — Add Task</h3>
+
+  <input id="adminTaskTitle"
+    placeholder="Task title"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
+
+  <input id="adminTaskUrl"
+    value="https://t.me/VELTRIX_M_EXCHANGE"
+    placeholder="Task URL"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
+
+  <input id="adminTaskChannel"
+    value="@VELTRIX_M_EXCHANGE"
+    placeholder="@channel"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
+
+  <input id="adminTaskReward"
+    type="number"
+    value="300"
+    placeholder="Reward"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
+
+  <button onclick="addVeltrixTask()"
+    style="width:100%;padding:13px;margin-top:8px;border:0;border-radius:10px;">
+    ➕ ADD TASK
+  </button>
+
+  <div id="adminTaskResult" style="margin-top:10px;"></div>
+</div>
+
+<script>
+(function () {
+  const ADMIN_ID = "6011583020";
+
+  const tg = window.Telegram?.WebApp;
+  if (!tg) return;
+
+  tg.ready();
+
+  const user = tg.initDataUnsafe?.user;
+
+  if (user && String(user.id) === ADMIN_ID) {
+    document.getElementById("adminTaskPanel").style.display = "block";
+  }
+})();
+
+async function addVeltrixTask() {
+  const tg = window.Telegram?.WebApp;
+  const resultBox = document.getElementById("adminTaskResult");
+
+  const title = document.getElementById("adminTaskTitle").value.trim();
+  const url = document.getElementById("adminTaskUrl").value.trim();
+  const channel = document.getElementById("adminTaskChannel").value.trim();
+  const reward = Number(document.getElementById("adminTaskReward").value);
+
+  if (!title || !url) {
+    resultBox.innerHTML = "❌ Title and URL are required";
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/admin/task", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Telegram-Init-Data": tg.initData
+      },
+      body: JSON.stringify({
+        title,
+        url,
+        channel,
+        reward
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      resultBox.innerHTML = "❌ " + (data.error || "Failed");
+      return;
+    }
+
+    resultBox.innerHTML = "✅ Task added successfully!";
+  } catch (err) {
+    resultBox.innerHTML = "❌ " + err.message;
+  }
+}
+</script>
