@@ -1222,6 +1222,7 @@ async function start() {
         `VELTRIX server running on port ${PORT}`
       );
     });
+    setInterval(checkMiningNotifications, 60 * 1000);
 
     bot.launch()
       .then(() => {
