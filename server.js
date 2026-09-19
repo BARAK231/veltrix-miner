@@ -94,6 +94,10 @@ async function initDatabase() {
       created_at BIGINT NOT NULL
     )
   `);
+    await db(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS mining_notified_cycle BIGINT NOT NULL DEFAULT 0
+  `);
 
   console.log("PostgreSQL database ready");
 }
