@@ -147,6 +147,69 @@ function publicUser(user) {
     cycleHours: CYCLE_HOURS
   };
 }
+/* =========================
+   MINING COMPLETE NOTIFICATION
+========================= */
+
+let notificationCheckRunning = false;
+
+async function checkMiningNotifications() {
+  if (notificationCheckRunning) return;
+
+  notificationCheckRunning = true;
+
+  try {
+    const result = await db(`
+      SELECT *
+      FROM users
+      WHERE EXTRACT(EPOCH FROM NOW())::BIGINT - cycle_start >= $1
+        AND mining_notified_cycle IS DISTINCT FROM cycle_start
+    `, [CYCLE_SECONDS]);
+
+    for (const user of result.rows) {
+      try {
+        await bot.telegram.sendMessage(
+          String(user.id),
+          `⛏️ VELTRIX Mining Complete!\n\n` +
+          `🎉 Your 8-hour mining cycle is complete.\n` +
+          `💰 Reward: ${(RATE * CYCLE_HOURS).toFixed(2)} VLX\n\n` +
+          `Open VELTRIX Miner and claim your reward 👇`,
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "⛏️ Claim VLX",
+                    web_app: {
+                      url: APP_URL
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        );
+
+        await db(`
+          UPDATE users
+          SET mining_notified_cycle = cycle_start
+          WHERE id = $1
+            AND mining_notified_cycle IS DISTINCT FROM cycle_start
+        `, [user.id]);
+
+      } catch (err) {
+        console.error(
+          `Notification failed for user ${user.id}:`,
+          err.message
+        );
+      }
+    }
+  } catch (err) {
+    console.error("Mining notification checker error:", err);
+  } finally {
+    notificationCheckRunning = false;
+  }
+}
 
 /* =========================
    TELEGRAM INIT DATA
