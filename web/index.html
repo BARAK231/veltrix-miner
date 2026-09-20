@@ -1467,46 +1467,6 @@ const title =
 </script>
 
 
-  const title = document.getElementById("adminTaskTitle").value.trim();
-  const url = document.getElementById("adminTaskUrl").value.trim();
-  const channel = document.getElementById("adminTaskChannel").value.trim();
-  const reward = Number(document.getElementById("adminTaskReward").value);
-
-  if (!title || !url) {
-    resultBox.innerHTML = "❌ Title and URL are required";
-    return;
-  }
-
-  try {
-    const response = await fetch("/api/admin/task", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Telegram-Init-Data": tg.initData
-      },
-      body: JSON.stringify({
-        title,
-        url,
-        channel,
-        reward
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      resultBox.innerHTML = "❌ " + (data.error || "Failed");
-      return;
-    }
-
-    resultBox.innerHTML = "✅ Task added successfully!";
-  } catch (err) {
-    resultBox.innerHTML = "❌ " + err.message;
-  }
-}
-</script>
-
-
 <!-- VELTRIX ADMIN CLEANUP BUTTON -->
 <script>
 (function () {
