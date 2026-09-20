@@ -73,6 +73,28 @@ async function initDatabase() {
       created_at BIGINT NOT NULL
     )
   `);
+    await db(`
+    CREATE TABLE IF NOT EXISTS x_accounts (
+      user_id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      x_user_id TEXT NOT NULL,
+      x_username TEXT,
+      access_token TEXT NOT NULL,
+      refresh_token TEXT,
+      expires_at BIGINT,
+      scope TEXT,
+      created_at BIGINT NOT NULL,
+      updated_at BIGINT NOT NULL
+    )
+  `);
+
+  await db(`
+    CREATE TABLE IF NOT EXISTS x_oauth_states (
+      state TEXT PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      code_verifier TEXT NOT NULL,
+      expires_at BIGINT NOT NULL
+    )
+  `);
 
   await db(`
     CREATE TABLE IF NOT EXISTS tasks (
