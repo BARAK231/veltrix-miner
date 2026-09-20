@@ -780,7 +780,8 @@ document.getElementById(
   }
 );
 
-/* =========================
+
+  /* =========================
    TASKS
 ========================= */
 
@@ -815,6 +816,10 @@ async function loadTasks() {
           const claimed =
             task.claimed;
 
+          const isXTask =
+            task.type === "x_follow" ||
+            task.type === "x_repost";
+
           return `
             <div class="task">
 
@@ -832,12 +837,18 @@ async function loadTasks() {
                   class="secondary"
                   onclick="openTask('${escapeAttr(task.url)}')"
                 >
-                  JOIN
+                  ${isXTask ? "OPEN X" : "JOIN"}
                 </button>
 
                 <button
                   ${claimed ? "disabled" : ""}
-                  onclick="claimTask(${task.id})"
+                  onclick="${
+                    claimed
+                      ? ""
+                      : isXTask
+                        ? `verifyXTask(${task.id})`
+                        : `claimTask(${task.id})`
+                  }"
                 >
                   ${claimed ? "CLAIMED" : "VERIFY"}
                 </button>
@@ -858,6 +869,7 @@ async function loadTasks() {
   }
 }
 
+
 function openTask(url) {
 
   window.open(
@@ -865,6 +877,11 @@ function openTask(url) {
     "_blank"
   );
 }
+
+
+/* =========================
+   NORMAL TELEGRAM TASK
+========================= */
 
 async function claimTask(taskId) {
 
@@ -902,6 +919,66 @@ async function claimTask(taskId) {
   }
 }
 
+
+/* =========================
+   X TASK VERIFICATION
+========================= */
+
+async function verifyXTask(taskId) {
+
+  try {
+
+    clearError();
+
+    const status =
+      await api(
+        "/api/x/status"
+      );
+
+    if (!status.connected) {
+
+      tg.showAlert(
+        "Connect your X account first."
+      );
+
+      window.open(
+        "/api/x/auth",
+        "_blank"
+      );
+
+      return;
+    }
+
+    const result =
+      await api(
+        "/api/x/verify-task",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            taskId
+          })
+        }
+      );
+
+    currentUser =
+      result.user;
+
+    updateUserUI();
+
+    await loadTasks();
+
+    tg.showAlert(
+      `✅ ${Number(result.reward).toFixed(2)} VLX added`
+    );
+
+  } catch (err) {
+
+    showError(
+      err.message
+    );
+  }
+    }
+      
 /* =========================
    REFERRAL
 ========================= */
