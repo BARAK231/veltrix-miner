@@ -940,11 +940,12 @@ async function verifyXTask(taskId) {
       tg.showAlert(
         "Connect your X account first."
       );
-
-      window.open(
-        "/api/x/auth",
-        "_blank"
-      );
+window.open(
+  `/api/x/auth?initData=${encodeURIComponent(
+    tg.initData
+  )}`,
+  "_blank"
+);
 
       return;
     }
