@@ -1696,6 +1696,73 @@ app.get("/api/admin/tasks", adminAuth, async (req, res) => {
 });
 
 /* =========================
+   ADMIN DELETE TASK
+========================= */
+
+app.delete("/api/admin/task/:id", adminAuth, async (req, res) => {
+  try {
+    const taskId = Number(req.params.id);
+
+    if (!taskId) {
+      return res.status(400).json({
+        error: "Invalid task ID"
+      });
+    }
+
+    const client = await pool.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      await client.query(
+        `
+        DELETE FROM task_claims
+        WHERE task_id = $1
+        `,
+        [taskId]
+      );
+
+      const result = await client.query(
+        `
+        DELETE FROM tasks
+        WHERE id = $1
+        RETURNING *
+        `,
+        [taskId]
+      );
+
+      if (!result.rows.length) {
+        await client.query("ROLLBACK");
+
+        return res.status(404).json({
+          error: "Task not found"
+        });
+      }
+
+      await client.query("COMMIT");
+
+      res.json({
+        success: true,
+        task: result.rows[0]
+      });
+
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
+
+  } catch (err) {
+    console.error("Task deletion failed:", err);
+
+    res.status(500).json({
+      error: "Task deletion failed"
+    });
+  }
+});
+
+/* =========================
    ADMIN TASK TOGGLE
 ========================= */
 
