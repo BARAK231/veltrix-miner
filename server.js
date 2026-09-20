@@ -53,6 +53,306 @@ const X_REPOST_POST_ID = "2101180648618959312";
 const X_FOLLOW_REWARD = 50;
 const X_REPOST_REWARD = 35;
 /* =========================
+   X OAUTH 2.0
+========================= */
+
+function base64Url(buffer) {
+  return buffer
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function createPKCE() {
+  const verifier = base64Url(
+    crypto.randomBytes(32)
+  );
+
+  const challenge = base64Url(
+    crypto
+      .createHash("sha256")
+      .update(verifier)
+      .digest()
+  );
+
+  return {
+    verifier,
+    challenge
+  };
+}
+
+/* Start X login */
+app.get("/api/x/auth", auth, async (req, res) => {
+  try {
+    if (!X_CLIENT_ID) {
+      return res.status(500).send("X_CLIENT_ID is missing");
+    }
+
+    const { verifier, challenge } = createPKCE();
+
+    const state = base64Url(
+      crypto.randomBytes(32)
+    );
+
+    const expiresAt = now() + 600;
+
+    await db(
+      `
+      INSERT INTO x_oauth_states
+        (state, user_id, code_verifier, expires_at)
+      VALUES
+        ($1, $2, $3, $4)
+      `,
+      [
+        state,
+        req.tgUser.id,
+        verifier,
+        expiresAt
+      ]
+    );
+
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: X_CLIENT_ID,
+      redirect_uri: X_CALLBACK_URL,
+      scope: "tweet.read users.read follows.read offline.access",
+      state,
+      code_challenge: challenge,
+      code_challenge_method: "S256"
+    });
+
+    const url =
+      `https://x.com/i/oauth2/authorize?${params.toString()}`;
+
+    res.redirect(url);
+
+  } catch (err) {
+    console.error("X OAuth start error:", err);
+
+    res.status(500).send(
+      "X authentication could not be started"
+    );
+  }
+});
+
+/* X callback */
+app.get("/api/x/callback", async (req, res) => {
+  try {
+    const {
+      code,
+      state,
+      error
+    } = req.query;
+
+    if (error) {
+      return res.status(400).send(
+        `X authorization failed: ${error}`
+      );
+    }
+
+    if (!code || !state) {
+      return res.status(400).send(
+        "Invalid X OAuth response"
+      );
+    }
+
+    const stateResult = await db(
+      `
+      SELECT *
+      FROM x_oauth_states
+      WHERE state = $1
+        AND expires_at > $2
+      `,
+      [
+        state,
+        now()
+      ]
+    );
+
+    const oauthState = stateResult.rows[0];
+
+    if (!oauthState) {
+      return res.status(400).send(
+        "Invalid or expired OAuth state"
+      );
+    }
+
+    await db(
+      `
+      DELETE FROM x_oauth_states
+      WHERE state = $1
+      `,
+      [state]
+    );
+
+    const basicAuth = Buffer
+      .from(
+        `${X_CLIENT_ID}:${X_CLIENT_SECRET}`
+      )
+      .toString("base64");
+
+    const tokenResponse = await fetch(
+      "https://api.x.com/2/oauth2/token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/x-www-form-urlencoded",
+          "Authorization":
+            `Basic ${basicAuth}`
+        },
+        body: new URLSearchParams({
+          code: String(code),
+          grant_type: "authorization_code",
+          client_id: X_CLIENT_ID,
+          redirect_uri: X_CALLBACK_URL,
+          code_verifier:
+            oauthState.code_verifier
+        })
+      }
+    );
+
+    const tokenData =
+      await tokenResponse.json();
+
+    if (!tokenResponse.ok) {
+      console.error(
+        "X token error:",
+        tokenData
+      );
+
+      return res.status(400).send(
+        "X token exchange failed"
+      );
+    }
+
+    const meResponse = await fetch(
+      "https://api.x.com/2/users/me?user.fields=username",
+      {
+        headers: {
+          Authorization:
+            `Bearer ${tokenData.access_token}`
+        }
+      }
+    );
+
+    const meData =
+      await meResponse.json();
+
+    if (!meResponse.ok || !meData.data) {
+      console.error(
+        "X user error:",
+        meData
+      );
+
+      return res.status(400).send(
+        "Could not get X account"
+      );
+    }
+
+    const expiresAt =
+      now() +
+      Number(tokenData.expires_in || 7200);
+
+    await db(
+      `
+      INSERT INTO x_accounts
+        (
+          user_id,
+          x_user_id,
+          x_username,
+          access_token,
+          refresh_token,
+          expires_at,
+          scope,
+          created_at,
+          updated_at
+        )
+      VALUES
+        ($1,$2,$3,$4,$5,$6,$7,$8,$8)
+      ON CONFLICT (user_id)
+      DO UPDATE SET
+        x_user_id = EXCLUDED.x_user_id,
+        x_username = EXCLUDED.x_username,
+        access_token = EXCLUDED.access_token,
+        refresh_token = EXCLUDED.refresh_token,
+        expires_at = EXCLUDED.expires_at,
+        scope = EXCLUDED.scope,
+        updated_at = EXCLUDED.updated_at
+      `,
+      [
+        oauthState.user_id,
+        meData.data.id,
+        meData.data.username || "",
+        tokenData.access_token,
+        tokenData.refresh_token || null,
+        expiresAt,
+        tokenData.scope || "",
+        now()
+      ]
+    );
+
+    res.redirect(
+      `${APP_URL}?x_connected=1`
+    );
+
+  } catch (err) {
+    console.error(
+      "X OAuth callback error:",
+      err
+    );
+
+    res.status(500).send(
+      "X authentication failed"
+    );
+  }
+});
+
+/* X connection status */
+app.get("/api/x/status", auth, async (req, res) => {
+  try {
+    const result = await db(
+      `
+      SELECT
+        x_user_id,
+        x_username,
+        expires_at
+      FROM x_accounts
+      WHERE user_id = $1
+      `,
+      [req.tgUser.id]
+    );
+
+    if (!result.rows.length) {
+      return res.json({
+        connected: false
+      });
+    }
+
+    const account = result.rows[0];
+
+    res.json({
+      connected: true,
+      x_user_id: account.x_user_id,
+      x_username: account.x_username || "",
+      expires_at: Number(
+        account.expires_at || 0
+      )
+    });
+
+  } catch (err) {
+    console.error(
+      "X status error:",
+      err
+    );
+
+    res.status(500).json({
+      error: "X status failed"
+    });
+  }
+});
+/* =========================
    DATABASE
 ========================= */
 
