@@ -352,6 +352,296 @@ app.get("/api/x/status", auth, async (req, res) => {
     });
   }
 });
+ /* =========================
+    X TASK VERIFICATION
+ ========================= */
+
+async function getXAccount(userId) {
+  const result = await db(
+    `
+    SELECT *
+    FROM x_accounts
+    WHERE user_id = $1
+    `,
+    [userId]
+  );
+
+  return result.rows[0] || null;
+}
+
+async function getXOfficialUserId(accessToken) {
+  const response = await fetch(
+    `https://api.x.com/2/users/by/username/${X_OFFICIAL_USERNAME}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || !data.data) {
+    throw new Error(
+      data.detail || "Could not find VELTRIX X account"
+    );
+  }
+
+  return data.data.id;
+}
+
+/* Check Follow */
+async function verifyXFollow(accessToken, xUserId) {
+  const officialId =
+    await getXOfficialUserId(accessToken);
+
+  let paginationToken = null;
+
+  for (let page = 0; page < 20; page++) {
+    const params = new URLSearchParams({
+      max_results: "1000",
+      "user.fields": "id,username"
+    });
+
+    if (paginationToken) {
+      params.set(
+        "pagination_token",
+        paginationToken
+      );
+    }
+
+    const response = await fetch(
+      `https://api.x.com/2/users/${xUserId}/following?${params.toString()}`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.detail || "X Follow verification failed"
+      );
+    }
+
+    const following = data.data || [];
+
+    const found = following.some(
+      user => String(user.id) === String(officialId)
+    );
+
+    if (found) return true;
+
+    paginationToken =
+      data.meta?.next_token || null;
+
+    if (!paginationToken) break;
+  }
+
+  return false;
+}
+
+/* Check Repost */
+async function verifyXRepost(accessToken, xUserId) {
+  const params = new URLSearchParams({
+    max_results: "100",
+    "user.fields": "id,username"
+  });
+
+  const response = await fetch(
+    `https://api.x.com/2/tweets/${X_REPOST_POST_ID}/retweeted_by?${params.toString()}`,
+    {
+      headers: {
+        Authorization:
+          `Bearer ${accessToken}`
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.detail || "X Repost verification failed"
+    );
+  }
+
+  const users = data.data || [];
+
+  return users.some(
+    user => String(user.id) === String(xUserId)
+  );
+}
+
+/* Verify X task */
+app.post(
+  "/api/x/verify-task",
+  auth,
+  async (req, res) => {
+    try {
+      const taskId =
+        Number(req.body.taskId);
+
+      if (!taskId) {
+        return res.status(400).json({
+          error: "Invalid task"
+        });
+      }
+
+      const taskResult = await db(
+        `
+        SELECT *
+        FROM tasks
+        WHERE id = $1
+          AND active = true
+          AND type IN ('x_follow', 'x_repost')
+        `,
+        [taskId]
+      );
+
+      const task = taskResult.rows[0];
+
+      if (!task) {
+        return res.status(404).json({
+          error: "X task not found"
+        });
+      }
+
+      const account =
+        await getXAccount(req.tgUser.id);
+
+      if (!account) {
+        return res.status(400).json({
+          error:
+            "Connect your X account first"
+        });
+      }
+
+      const already = await db(
+        `
+        SELECT 1
+        FROM task_claims
+        WHERE user_id = $1
+          AND task_id = $2
+        `,
+        [
+          req.tgUser.id,
+          taskId
+        ]
+      );
+
+      if (already.rows.length) {
+        return res.status(400).json({
+          error: "Task already claimed"
+        });
+      }
+
+      let verified = false;
+
+      if (task.type === "x_follow") {
+        verified =
+          await verifyXFollow(
+            account.access_token,
+            account.x_user_id
+          );
+      }
+
+      if (task.type === "x_repost") {
+        verified =
+          await verifyXRepost(
+            account.access_token,
+            account.x_user_id
+          );
+      }
+
+      if (!verified) {
+        return res.status(400).json({
+          error:
+            "Task not completed yet"
+        });
+      }
+
+      const client =
+        await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        const claim =
+          await client.query(
+            `
+            INSERT INTO task_claims
+              (user_id, task_id, claimed_at)
+            VALUES
+              ($1, $2, $3)
+            ON CONFLICT (user_id, task_id)
+            DO NOTHING
+            RETURNING *
+            `,
+            [
+              req.tgUser.id,
+              taskId,
+              now()
+            ]
+          );
+
+        if (!claim.rows.length) {
+          await client.query("ROLLBACK");
+
+          return res.status(400).json({
+            error: "Task already claimed"
+          });
+        }
+
+        await client.query(
+          `
+          UPDATE users
+          SET balance = balance + $1
+          WHERE id = $2
+          `,
+          [
+            Number(task.reward),
+            req.tgUser.id
+          ]
+        );
+
+        await client.query("COMMIT");
+
+      } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+      } finally {
+        client.release();
+      }
+
+      const user =
+        await getUser(req.tgUser.id);
+
+      res.json({
+        success: true,
+        verified: true,
+        reward: Number(task.reward),
+        user: publicUser(user)
+      });
+
+    } catch (err) {
+      console.error(
+        "X task verification error:",
+        err
+      );
+
+      res.status(500).json({
+        error:
+          err.message ||
+          "X verification failed"
+      });
+    }
+  }
+);
 /* =========================
    DATABASE
 ========================= */
