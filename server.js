@@ -83,7 +83,7 @@ function createPKCE() {
 }
 
 /* Start X login */
-app.get("/api/x/auth", auth, async (req, res) => {
+app.get("/api/x/auth", async (req, res) => {
   try {
     if (!X_CLIENT_ID) {
       return res.status(500).send("X_CLIENT_ID is missing");
