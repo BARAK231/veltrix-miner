@@ -41,7 +41,17 @@ const pool = new Pool({
 });
 
 const bot = new Telegraf(BOT_TOKEN);
+const X_CLIENT_ID = process.env.X_CLIENT_ID;
+const X_CLIENT_SECRET = process.env.X_CLIENT_SECRET;
 
+const X_CALLBACK_URL =
+  `${APP_URL}/api/x/callback`;
+
+const X_OFFICIAL_USERNAME = "VeltrixExchang";
+const X_REPOST_POST_ID = "2101180648618959312";
+
+const X_FOLLOW_REWARD = 50;
+const X_REPOST_REWARD = 35;
 /* =========================
    DATABASE
 ========================= */
