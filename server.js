@@ -430,6 +430,15 @@ async function initDatabase() {
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS mining_notified_cycle BIGINT NOT NULL DEFAULT 0
   `);
+    await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'telegram'
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS target_id TEXT
+  `);
 
   console.log("PostgreSQL database ready");
 }
