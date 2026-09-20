@@ -89,13 +89,28 @@ app.get("/api/x/auth", async (req, res) => {
       return res.status(500).send("X_CLIENT_ID is missing");
     }
 
-    const { verifier, challenge } = createPKCE();
+    const initData =
+      req.query.initData;
 
-    const state = base64Url(
-      crypto.randomBytes(32)
-    );
+    const tgUser =
+      verifyTelegramInitData(initData);
 
-    const expiresAt = now() + 600;
+    if (!tgUser) {
+      return res.status(401).send(
+        "Telegram authentication failed"
+      );
+    }
+
+    const { verifier, challenge } =
+      createPKCE();
+
+    const state =
+      base64Url(
+        crypto.randomBytes(32)
+      );
+
+    const expiresAt =
+      now() + 600;
 
     await db(
       `
@@ -106,21 +121,23 @@ app.get("/api/x/auth", async (req, res) => {
       `,
       [
         state,
-        req.tgUser.id,
+        tgUser.id,
         verifier,
         expiresAt
       ]
     );
 
-    const params = new URLSearchParams({
-      response_type: "code",
-      client_id: X_CLIENT_ID,
-      redirect_uri: X_CALLBACK_URL,
-      scope: "tweet.read users.read follows.read offline.access",
-      state,
-      code_challenge: challenge,
-      code_challenge_method: "S256"
-    });
+    const params =
+      new URLSearchParams({
+        response_type: "code",
+        client_id: X_CLIENT_ID,
+        redirect_uri: X_CALLBACK_URL,
+        scope:
+          "tweet.read users.read follows.read offline.access",
+        state,
+        code_challenge: challenge,
+        code_challenge_method: "S256"
+      });
 
     const url =
       `https://x.com/i/oauth2/authorize?${params.toString()}`;
@@ -128,14 +145,16 @@ app.get("/api/x/auth", async (req, res) => {
     res.redirect(url);
 
   } catch (err) {
-    console.error("X OAuth start error:", err);
+    console.error(
+      "X OAuth start error:",
+      err
+    );
 
     res.status(500).send(
       "X authentication could not be started"
     );
   }
 });
-
 /* X callback */
 app.get("/api/x/callback", async (req, res) => {
   try {
