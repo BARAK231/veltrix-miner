@@ -1356,6 +1356,113 @@ async function addVeltrixTask() {
   const tg = window.Telegram?.WebApp;
   const resultBox = document.getElementById("adminTaskResult");
 
+  <script>
+async function loadAdminTasks() {
+  const tg = window.Telegram?.WebApp;
+  const list = document.getElementById("adminTaskList");
+
+  if (!tg || !list) return;
+
+  try {
+    const response = await fetch("/api/admin/tasks", {
+      headers: {
+        "X-Telegram-Init-Data": tg.initData
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to load tasks");
+    }
+
+    if (!data.length) {
+      list.innerHTML =
+        `<div style="padding:10px;">No tasks found.</div>`;
+      return;
+    }
+
+    list.innerHTML = `
+      <h3>📋 Manage Tasks</h3>
+
+      ${data.map(task => `
+        <div style="
+          padding:10px;
+          margin:8px 0;
+          background:#1f2937;
+          border-radius:10px;
+        ">
+          <div style="font-weight:bold;">
+            ${escapeHtml(task.title)}
+          </div>
+
+          <div style="font-size:13px;margin-top:4px;">
+            🎁 ${Number(task.reward).toFixed(2)} VLX
+          </div>
+
+          <button
+            onclick="deleteVeltrixTask(${task.id})"
+            style="
+              width:100%;
+              padding:10px;
+              margin-top:8px;
+              border:0;
+              border-radius:8px;
+              background:#dc2626;
+              color:white;
+              font-weight:bold;
+            "
+          >
+            🗑️ DELETE TASK
+          </button>
+        </div>
+      `).join("")}
+    `;
+
+  } catch (err) {
+    list.innerHTML =
+      `<div style="color:#f87171;">❌ ${err.message}</div>`;
+  }
+}
+
+async function deleteVeltrixTask(taskId) {
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg) return;
+
+  if (!confirm("Are you sure you want to delete this task?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `/api/admin/task/${taskId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "X-Telegram-Init-Data": tg.initData
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Task deletion failed"
+      );
+    }
+
+    alert("✅ Task deleted successfully");
+
+    await loadAdminTasks();
+
+  } catch (err) {
+    alert("❌ " + err.message);
+  }
+}
+</script>
+
   const title = document.getElementById("adminTaskTitle").value.trim();
   const url = document.getElementById("adminTaskUrl").value.trim();
   const channel = document.getElementById("adminTaskChannel").value.trim();
@@ -1394,7 +1501,7 @@ async function addVeltrixTask() {
   }
 }
 </script>
-</script>
+
 
 <!-- VELTRIX ADMIN CLEANUP BUTTON -->
 <script>
