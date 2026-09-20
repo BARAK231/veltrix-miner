@@ -439,7 +439,41 @@ async function initDatabase() {
     ALTER TABLE tasks
     ADD COLUMN IF NOT EXISTS target_id TEXT
   `);
+  await db(`
+    INSERT INTO tasks
+      (title, url, channel, reward, active, type, target_id)
+    SELECT
+      'Follow VELTRIX on X',
+      'https://x.com/VeltrixExchang',
+      NULL,
+      50,
+      true,
+      'x_follow',
+      NULL
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM tasks
+      WHERE type = 'x_follow'
+    )
+  `);
 
+  await db(`
+    INSERT INTO tasks
+      (title, url, channel, reward, active, type, target_id)
+    SELECT
+      'Repost VELTRIX post on X',
+      'https://x.com/VeltrixExchang/status/2101180648618959312',
+      NULL,
+      35,
+      true,
+      'x_repost',
+      '2101180648618959312'
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM tasks
+      WHERE type = 'x_repost'
+    )
+  `);
   console.log("PostgreSQL database ready");
 }
 
