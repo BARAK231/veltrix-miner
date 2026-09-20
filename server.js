@@ -1187,6 +1187,8 @@ app.get("/api/tasks", auth, async (req, res) => {
         t.channel,
         t.reward,
         t.active,
+        t.type,
+        t.target_id,
         CASE
           WHEN tc.user_id IS NULL THEN false
           ELSE true
