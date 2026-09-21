@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -252,6 +253,61 @@
       padding: 12px 0;
       border-bottom: 1px solid #202b36;
     }
+
+    /* =========================
+       ADMIN
+    ========================= */
+
+    #adminTaskPanel {
+      display: none;
+      max-width: 520px;
+      margin: 0 auto;
+      padding-bottom: 100px;
+    }
+
+    .admin-card {
+      background: #121820;
+      border: 1px solid #202b36;
+      border-radius: 18px;
+      margin: 12px 14px;
+      padding: 18px;
+    }
+
+    .admin-title {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .admin-task {
+      background: #171f28;
+      border: 1px solid #27313d;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .admin-task-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .admin-task-url {
+      color: #8d98a5;
+      font-size: 12px;
+      word-break: break-all;
+      margin-top: 6px;
+    }
+
+    .admin-delete {
+      margin-top: 10px;
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .admin-result {
+      margin-top: 10px;
+      font-size: 13px;
+    }
   </style>
 </head>
 
@@ -271,18 +327,29 @@
 
     <div class="card balance">
       <div class="balance-title">CLAIMED BALANCE</div>
-      <div id="balance" class="balance-number">0.0000</div>
-      <div class="vlx">VLX</div>
+
+      <div id="balance" class="balance-number">
+        0.0000
+      </div>
+
+      <div class="vlx">
+        VLX
+      </div>
     </div>
 
     <div class="card mining-box">
-      <div class="mining-status">⛏️ MINING</div>
+
+      <div class="mining-status">
+        ⛏️ MINING
+      </div>
 
       <div id="mining" class="mining-number">
         0.0000
       </div>
 
-      <div class="vlx">VLX</div>
+      <div class="vlx">
+        VLX
+      </div>
 
       <div class="rate">
         ⚡ 4.74 VLX / hour
@@ -297,50 +364,89 @@
       </button>
 
       <div id="claimMessage"></div>
+
     </div>
 
     <div class="card">
+
       <div class="row">
+
         <div>
-          <div id="total">0.0000</div>
-          <div class="small">TOTAL</div>
+          <div id="total">
+            0.0000
+          </div>
+
+          <div class="small">
+            TOTAL
+          </div>
         </div>
 
         <div>
-          <div>8h</div>
-          <div class="small">CYCLE</div>
+          <div>
+            8h
+          </div>
+
+          <div class="small">
+            CYCLE
+          </div>
         </div>
+
       </div>
+
     </div>
 
   </section>
+
 
   <!-- TASKS -->
   <section id="tasks" class="section">
 
     <div class="card">
-      <h3>🎯 Tasks</h3>
-      <div id="taskList">Loading...</div>
+
+      <h3>
+        🎯 Tasks
+      </h3>
+
+      <div id="taskList">
+        Loading...
+      </div>
+
     </div>
 
   </section>
+
 
   <!-- FRIENDS -->
   <section id="friends" class="section">
 
     <div class="card">
-      <h3>👥 Friends</h3>
+
+      <h3>
+        👥 Friends
+      </h3>
 
       <div class="row">
+
         <div>
-          <div id="refCount">0</div>
-          <div class="small">FRIENDS</div>
+          <div id="refCount">
+            0
+          </div>
+
+          <div class="small">
+            FRIENDS
+          </div>
         </div>
 
         <div>
-          <div>300</div>
-          <div class="small">BONUS</div>
+          <div>
+            300
+          </div>
+
+          <div class="small">
+            BONUS
+          </div>
         </div>
+
       </div>
 
       <div id="refLink" class="friend-link">
@@ -350,26 +456,38 @@
       <button id="copyRef">
         📋 Copy Referral Link
       </button>
+
     </div>
 
   </section>
+
 
   <!-- RANK -->
   <section id="rank" class="section">
 
     <div class="card">
-      <h3>🏆 Rank</h3>
-      <div id="leaderboard">Loading...</div>
+
+      <h3>
+        🏆 Rank
+      </h3>
+
+      <div id="leaderboard">
+        Loading...
+      </div>
+
     </div>
 
   </section>
+
 
   <!-- WALLET -->
   <section id="wallet" class="section">
 
     <div class="card">
 
-      <h3>💰 Wallet</h3>
+      <h3>
+        💰 Wallet
+      </h3>
 
       <div class="small">
         EVM / ETH wallet address
@@ -414,67 +532,175 @@
 
 </div>
 
+
 <!-- NAV -->
 
 <nav>
 
-  <button class="navBtn active" data-section="mine">
-    ⛏️<br>Mine
+  <button
+    class="navBtn active"
+    data-section="mine"
+  >
+    ⛏️<br>
+    Mine
   </button>
 
-  <button class="navBtn" data-section="tasks">
-    🎯<br>Tasks
+  <button
+    class="navBtn"
+    data-section="tasks"
+  >
+    🎯<br>
+    Tasks
   </button>
 
-  <button class="navBtn" data-section="friends">
-    👥<br>Friends
+  <button
+    class="navBtn"
+    data-section="friends"
+  >
+    👥<br>
+    Friends
   </button>
 
-  <button class="navBtn" data-section="rank">
-    🏆<br>Rank
+  <button
+    class="navBtn"
+    data-section="rank"
+  >
+    🏆<br>
+    Rank
   </button>
 
-  <button class="navBtn" data-section="wallet">
-    💰<br>Wallet
+  <button
+    class="navBtn"
+    data-section="wallet"
+  >
+    💰<br>
+    Wallet
   </button>
 
 </nav>
 
+
+<!-- =========================
+     ADMIN TASK PANEL
+========================= -->
+
+<div
+  id="adminTaskPanel"
+>
+
+  <div class="admin-card">
+
+    <h3 class="admin-title">
+      🛠️ Admin — Task Management
+    </h3>
+
+    <input
+      id="adminTaskTitle"
+      placeholder="Task title"
+    >
+
+    <input
+      id="adminTaskUrl"
+      value="https://t.me/VELTRIX_M_EXCHANGE"
+      placeholder="Task URL"
+    >
+
+    <input
+      id="adminTaskChannel"
+      value="@VELTRIX_M_EXCHANGE"
+      placeholder="@channel"
+    >
+
+    <input
+      id="adminTaskReward"
+      type="number"
+      value="300"
+      placeholder="Reward"
+      min="0"
+    >
+
+    <button
+      id="addTaskBtn"
+    >
+      ➕ ADD TASK
+    </button>
+
+    <div
+      id="adminTaskResult"
+      class="admin-result"
+    ></div>
+
+  </div>
+
+
+  <div class="admin-card">
+
+    <h3 class="admin-title">
+      📋 Manage Tasks
+    </h3>
+
+    <div id="adminTaskList">
+      Loading...
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
 
-const tg = window.Telegram.WebApp;
+const tg =
+  window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
-const initData = tg.initData;
+const initData =
+  tg.initData;
 
 let currentUser = null;
 let timerInterval = null;
+
 
 /* =========================
    API
 ========================= */
 
-async function api(url, options = {}) {
+async function api(
+  url,
+  options = {}
+) {
 
   const headers = {
-    "Content-Type": "application/json",
-    "X-Telegram-Init-Data": initData,
+    "Content-Type":
+      "application/json",
+
+    "X-Telegram-Init-Data":
+      initData,
+
     ...(options.headers || {})
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+        headers
+      }
+    );
 
-  const text = await response.text();
+  const text =
+    await response.text();
 
   let data;
 
   try {
-    data = JSON.parse(text);
+
+    data =
+      JSON.parse(text);
+
   } catch (e) {
 
     console.error(
@@ -489,35 +715,52 @@ async function api(url, options = {}) {
   }
 
   if (!response.ok) {
+
     throw new Error(
-      data.error || "Request failed"
+      data.error ||
+      "Request failed"
     );
   }
 
   return data;
 }
 
+
 /* =========================
    ERROR
 ========================= */
 
-function showError(message) {
+function showError(
+  message
+) {
 
   const box =
-    document.getElementById("errorBox");
+    document.getElementById(
+      "errorBox"
+    );
 
-  box.textContent = message;
-  box.style.display = "block";
+  box.textContent =
+    message;
+
+  box.style.display =
+    "block";
 }
+
 
 function clearError() {
 
   const box =
-    document.getElementById("errorBox");
+    document.getElementById(
+      "errorBox"
+    );
 
-  box.textContent = "";
-  box.style.display = "none";
+  box.textContent =
+    "";
+
+  box.style.display =
+    "none";
 }
+
 
 /* =========================
    LOAD USER
@@ -538,8 +781,11 @@ async function loadUser() {
       params.get("ref");
 
     if (!ref) {
+
       ref =
-        tg.initDataUnsafe?.start_param || "";
+        tg.initDataUnsafe
+          ?.start_param ||
+        "";
     }
 
     const url =
@@ -550,7 +796,8 @@ async function loadUser() {
     const user =
       await api(url);
 
-    currentUser = user;
+    currentUser =
+      user;
 
     updateUserUI();
 
@@ -566,37 +813,44 @@ async function loadUser() {
   }
 }
 
+
 /* =========================
    UPDATE UI
 ========================= */
 
 function updateUserUI() {
 
-  if (!currentUser) return;
+  if (!currentUser)
+    return;
 
   document.getElementById(
     "balance"
   ).textContent =
-    Number(currentUser.balance || 0)
-      .toFixed(4);
+    Number(
+      currentUser.balance || 0
+    ).toFixed(4);
 
   document.getElementById(
     "mining"
   ).textContent =
-    Number(currentUser.mining || 0)
-      .toFixed(4);
+    Number(
+      currentUser.mining || 0
+    ).toFixed(4);
 
   document.getElementById(
     "total"
   ).textContent =
-    Number(currentUser.total || 0)
-      .toFixed(4);
+    Number(
+      currentUser.total || 0
+    ).toFixed(4);
 
   document.getElementById(
     "timer"
   ).textContent =
     formatTime(
-      Number(currentUser.remaining || 0)
+      Number(
+        currentUser.remaining || 0
+      )
     );
 
   const claimBtn =
@@ -604,15 +858,21 @@ function updateUserUI() {
       "claimBtn"
     );
 
-  if (currentUser.canClaim) {
+  if (
+    currentUser.canClaim
+  ) {
 
-    claimBtn.disabled = false;
+    claimBtn.disabled =
+      false;
+
     claimBtn.textContent =
       "✅ CLAIM VLX";
 
   } else {
 
-    claimBtn.disabled = true;
+    claimBtn.disabled =
+      true;
+
     claimBtn.textContent =
       "⏳ MINING...";
   }
@@ -620,14 +880,18 @@ function updateUserUI() {
   document.getElementById(
     "walletInput"
   ).value =
-    currentUser.wallet || "";
+    currentUser.wallet ||
+    "";
 }
+
 
 /* =========================
    MINING TIMER
 ========================= */
 
-function formatTime(seconds) {
+function formatTime(
+  seconds
+) {
 
   seconds =
     Math.max(
@@ -636,7 +900,9 @@ function formatTime(seconds) {
     );
 
   const h =
-    Math.floor(seconds / 3600);
+    Math.floor(
+      seconds / 3600
+    );
 
   const m =
     Math.floor(
@@ -653,15 +919,20 @@ function formatTime(seconds) {
   ]
     .map(
       x =>
-        String(x).padStart(2, "0")
+        String(x)
+          .padStart(2, "0")
     )
     .join(":");
 }
 
+
 function startMiningTimer() {
 
   if (timerInterval) {
-    clearInterval(timerInterval);
+
+    clearInterval(
+      timerInterval
+    );
   }
 
   timerInterval =
@@ -685,7 +956,11 @@ function startMiningTimer() {
 
           currentUser.mining =
             Math.min(
-              4.74 * (elapsed / 3600),
+              4.74 *
+              (
+                elapsed /
+                3600
+              ),
               37.92
             );
 
@@ -704,7 +979,8 @@ function startMiningTimer() {
 
         } else {
 
-          currentUser.canClaim = true;
+          currentUser.canClaim =
+            true;
 
           currentUser.mining =
             37.92;
@@ -712,7 +988,8 @@ function startMiningTimer() {
           currentUser.total =
             Number(
               currentUser.balance
-            ) + 37.92;
+            ) +
+            37.92;
 
           updateUserUI();
         }
@@ -722,66 +999,72 @@ function startMiningTimer() {
     );
 }
 
+
 /* =========================
    CLAIM
 ========================= */
 
-document.getElementById(
-  "claimBtn"
-).addEventListener(
-  "click",
-  async () => {
+document
+  .getElementById(
+    "claimBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
 
-    try {
+      try {
 
-      clearError();
+        clearError();
 
-      const btn =
+        const btn =
+          document.getElementById(
+            "claimBtn"
+          );
+
+        btn.disabled =
+          true;
+
+        btn.textContent =
+          "⏳ CLAIMING...";
+
+        const result =
+          await api(
+            "/api/claim",
+            {
+              method: "POST",
+              body:
+                JSON.stringify({})
+            }
+          );
+
+        currentUser =
+          result.user;
+
         document.getElementById(
-          "claimBtn"
+          "claimMessage"
+        ).innerHTML =
+          `<div class="success">
+            ✅ ${Number(result.reward).toFixed(2)} VLX Claimed
+          </div>`;
+
+        updateUserUI();
+
+        startMiningTimer();
+
+      } catch (err) {
+
+        showError(
+          err.message
         );
 
-      btn.disabled = true;
-      btn.textContent =
-        "⏳ CLAIMING...";
+        updateUserUI();
+      }
 
-      const result =
-        await api(
-          "/api/claim",
-          {
-            method: "POST",
-            body: JSON.stringify({})
-          }
-        );
-
-      currentUser =
-        result.user;
-
-      document.getElementById(
-        "claimMessage"
-      ).innerHTML =
-        `<div class="success">
-          ✅ ${Number(result.reward).toFixed(2)} VLX Claimed
-        </div>`;
-
-      updateUserUI();
-
-      startMiningTimer();
-
-    } catch (err) {
-
-      showError(
-        err.message
-      );
-
-      updateUserUI();
     }
-
-  }
-);
+  );
 
 
-  /* =========================
+/* =========================
    TASKS
 ========================= */
 
@@ -810,55 +1093,78 @@ async function loadTasks() {
     }
 
     list.innerHTML =
-      tasks.map(
-        task => {
+      tasks
+        .map(
+          task => {
 
-          const claimed =
-            task.claimed;
+            const claimed =
+              task.claimed;
 
-          const isXTask =
-            task.type === "x_follow" ||
-            task.type === "x_repost";
+            const isXTask =
+              task.type ===
+                "x_follow" ||
+              task.type ===
+                "x_repost";
 
-          return `
-            <div class="task">
+            return `
+              <div class="task">
 
-              <div class="task-title">
-                ${escapeHtml(task.title)}
+                <div class="task-title">
+                  ${escapeHtml(
+                    task.title
+                  )}
+                </div>
+
+                <div class="task-reward">
+                  🎁 ${
+                    Number(
+                      task.reward
+                    ).toFixed(2)
+                  } VLX
+                </div>
+
+                <div class="task-actions">
+
+                  <button
+                    class="secondary"
+                    onclick="openTask('${escapeAttr(task.url)}')"
+                  >
+                    ${
+                      isXTask
+                        ? "OPEN X"
+                        : "JOIN"
+                    }
+                  </button>
+
+                  <button
+                    ${
+                      claimed
+                        ? "disabled"
+                        : ""
+                    }
+
+                    onclick="${
+                      claimed
+                        ? ""
+                        : isXTask
+                          ? `verifyXTask(${task.id})`
+                          : `claimTask(${task.id})`
+                    }"
+                  >
+                    ${
+                      claimed
+                        ? "CLAIMED"
+                        : "VERIFY"
+                    }
+                  </button>
+
+                </div>
+
               </div>
-
-              <div class="task-reward">
-                🎁 ${Number(task.reward).toFixed(2)} VLX
-              </div>
-
-              <div class="task-actions">
-
-                <button
-                  class="secondary"
-                  onclick="openTask('${escapeAttr(task.url)}')"
-                >
-                  ${isXTask ? "OPEN X" : "JOIN"}
-                </button>
-
-                <button
-                  ${claimed ? "disabled" : ""}
-                  onclick="${
-                    claimed
-                      ? ""
-                      : isXTask
-                        ? `verifyXTask(${task.id})`
-                        : `claimTask(${task.id})`
-                  }"
-                >
-                  ${claimed ? "CLAIMED" : "VERIFY"}
-                </button>
-
-              </div>
-
-            </div>
-          `;
-        }
-      ).join("");
+            `;
+          }
+        )
+        .join("");
 
   } catch (err) {
 
@@ -883,7 +1189,9 @@ function openTask(url) {
    NORMAL TELEGRAM TASK
 ========================= */
 
-async function claimTask(taskId) {
+async function claimTask(
+  taskId
+) {
 
   try {
 
@@ -894,9 +1202,10 @@ async function claimTask(taskId) {
         "/api/task/claim",
         {
           method: "POST",
-          body: JSON.stringify({
-            taskId
-          })
+          body:
+            JSON.stringify({
+              taskId
+            })
         }
       );
 
@@ -908,7 +1217,11 @@ async function claimTask(taskId) {
     await loadTasks();
 
     tg.showAlert(
-      `✅ ${Number(result.reward).toFixed(2)} VLX added`
+      `✅ ${
+        Number(
+          result.reward
+        ).toFixed(2)
+      } VLX added`
     );
 
   } catch (err) {
@@ -924,7 +1237,9 @@ async function claimTask(taskId) {
    X TASK VERIFICATION
 ========================= */
 
-async function verifyXTask(taskId) {
+async function verifyXTask(
+  taskId
+) {
 
   try {
 
@@ -940,12 +1255,13 @@ async function verifyXTask(taskId) {
       tg.showAlert(
         "Connect your X account first."
       );
-window.open(
-  `/api/x/auth?initData=${encodeURIComponent(
-    tg.initData
-  )}`,
-  "_blank"
-);
+
+      window.open(
+        `/api/x/auth?initData=${encodeURIComponent(
+          tg.initData
+        )}`,
+        "_blank"
+      );
 
       return;
     }
@@ -955,9 +1271,10 @@ window.open(
         "/api/x/verify-task",
         {
           method: "POST",
-          body: JSON.stringify({
-            taskId
-          })
+          body:
+            JSON.stringify({
+              taskId
+            })
         }
       );
 
@@ -969,7 +1286,11 @@ window.open(
     await loadTasks();
 
     tg.showAlert(
-      `✅ ${Number(result.reward).toFixed(2)} VLX added`
+      `✅ ${
+        Number(
+          result.reward
+        ).toFixed(2)
+      } VLX added`
     );
 
   } catch (err) {
@@ -978,8 +1299,9 @@ window.open(
       err.message
     );
   }
-    }
-      
+}
+
+
 /* =========================
    REFERRAL
 ========================= */
@@ -1008,9 +1330,10 @@ async function loadReferral() {
     ).onclick =
       async () => {
 
-        await navigator.clipboard.writeText(
-          data.link
-        );
+        await navigator.clipboard
+          .writeText(
+            data.link
+          );
 
         tg.showAlert(
           "Referral link copied!"
@@ -1025,6 +1348,7 @@ async function loadReferral() {
       err.message;
   }
 }
+
 
 /* =========================
    LEADERBOARD
@@ -1055,28 +1379,34 @@ async function loadLeaderboard() {
     }
 
     box.innerHTML =
-      data.map(
-        user => `
-          <div class="rank-item">
+      data
+        .map(
+          user => `
+            <div class="rank-item">
 
-            <div>
-              #${user.rank}
-              ${escapeHtml(
-                user.first_name ||
-                user.username ||
-                "User"
-              )}
+              <div>
+                #${user.rank}
+                ${
+                  escapeHtml(
+                    user.first_name ||
+                    user.username ||
+                    "User"
+                  )
+                }
+              </div>
+
+              <div>
+                ${
+                  Number(
+                    user.balance
+                  ).toFixed(2)
+                } VLX
+              </div>
+
             </div>
-
-            <div>
-              ${Number(
-                user.balance
-              ).toFixed(2)} VLX
-            </div>
-
-          </div>
-        `
-      ).join("");
+          `
+        )
+        .join("");
 
   } catch (err) {
 
@@ -1087,176 +1417,215 @@ async function loadLeaderboard() {
   }
 }
 
+
 /* =========================
    WALLET
 ========================= */
 
-document.getElementById(
-  "saveWallet"
-).addEventListener(
-  "click",
-  async () => {
+document
+  .getElementById(
+    "saveWallet"
+  )
+  .addEventListener(
+    "click",
+    async () => {
 
-    try {
+      try {
 
-      clearError();
+        clearError();
 
-      const wallet =
-        document.getElementById(
-          "walletInput"
-        ).value.trim();
+        const wallet =
+          document
+            .getElementById(
+              "walletInput"
+            )
+            .value
+            .trim();
 
-      await api(
-        "/api/wallet",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            wallet
-          })
-        }
-      );
+        await api(
+          "/api/wallet",
+          {
+            method: "POST",
+            body:
+              JSON.stringify({
+                wallet
+              })
+          }
+        );
 
-      currentUser.wallet =
-        wallet;
+        currentUser.wallet =
+          wallet;
 
-      tg.showAlert(
-        "✅ Wallet saved"
-      );
+        tg.showAlert(
+          "✅ Wallet saved"
+        );
 
-    } catch (err) {
+      } catch (err) {
 
-      showError(
-        err.message
-      );
+        showError(
+          err.message
+        );
+      }
+
     }
+  );
 
-  }
-);
 
 /* =========================
    WITHDRAW
 ========================= */
 
-document.getElementById(
-  "withdrawBtn"
-).addEventListener(
-  "click",
-  async () => {
+document
+  .getElementById(
+    "withdrawBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
 
-    try {
+      try {
 
-      clearError();
+        clearError();
 
-      const amount =
-        Number(
-          document.getElementById(
-            "withdrawAmount"
-          ).value
+        const amount =
+          Number(
+            document
+              .getElementById(
+                "withdrawAmount"
+              )
+              .value
+          );
+
+        const result =
+          await api(
+            "/api/withdraw",
+            {
+              method: "POST",
+              body:
+                JSON.stringify({
+                  amount
+                })
+            }
+          );
+
+        currentUser =
+          result.user;
+
+        updateUserUI();
+
+        document.getElementById(
+          "withdrawMessage"
+        ).innerHTML =
+          `<div class="success">
+            ✅ Withdrawal submitted — PENDING
+          </div>`;
+
+        document.getElementById(
+          "withdrawAmount"
+        ).value = "";
+
+      } catch (err) {
+
+        showError(
+          err.message
         );
+      }
 
-      const result =
-        await api(
-          "/api/withdraw",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              amount
-            })
-          }
-        );
-
-      currentUser =
-        result.user;
-
-      updateUserUI();
-
-      document.getElementById(
-        "withdrawMessage"
-      ).innerHTML =
-        `<div class="success">
-          ✅ Withdrawal submitted — PENDING
-        </div>`;
-
-      document.getElementById(
-        "withdrawAmount"
-      ).value = "";
-
-    } catch (err) {
-
-      showError(
-        err.message
-      );
     }
+  );
 
-  }
-);
 
 /* =========================
    NAVIGATION
 ========================= */
 
-document.querySelectorAll(
-  ".navBtn"
-).forEach(
-  button => {
+document
+  .querySelectorAll(
+    ".navBtn"
+  )
+  .forEach(
+    button => {
 
-    button.addEventListener(
-      "click",
-      async () => {
+      button.addEventListener(
+        "click",
+        async () => {
 
-        const section =
-          button.dataset.section;
+          const section =
+            button.dataset.section;
 
-        document.querySelectorAll(
-          ".section"
-        ).forEach(
-          el =>
-            el.classList.remove(
-              "active"
+          document
+            .querySelectorAll(
+              ".section"
             )
-        );
+            .forEach(
+              el =>
+                el.classList.remove(
+                  "active"
+                )
+            );
 
-        document.getElementById(
-          section
-        ).classList.add(
-          "active"
-        );
-
-        document.querySelectorAll(
-          ".navBtn"
-        ).forEach(
-          el =>
-            el.classList.remove(
-              "active"
+          document
+            .getElementById(
+              section
             )
-        );
+            .classList.add(
+              "active"
+            );
 
-        button.classList.add(
-          "active"
-        );
+          document
+            .querySelectorAll(
+              ".navBtn"
+            )
+            .forEach(
+              el =>
+                el.classList.remove(
+                  "active"
+                )
+            );
 
-        if (section === "tasks")
-          await loadTasks();
+          button.classList.add(
+            "active"
+          );
 
-        if (section === "friends")
-          await loadReferral();
+          if (
+            section ===
+            "tasks"
+          ) {
+            await loadTasks();
+          }
 
-        if (section === "rank")
-          await loadLeaderboard();
+          if (
+            section ===
+            "friends"
+          ) {
+            await loadReferral();
+          }
 
-      }
-    );
+          if (
+            section ===
+            "rank"
+          ) {
+            await loadLeaderboard();
+          }
 
-  }
-);
+        }
+      );
+
+    }
+  );
+
 
 /* =========================
    ESCAPE
 ========================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
-  return String(value || "")
+  return String(
+    value || ""
+  )
     .replace(
       /&/g,
       "&amp;"
@@ -1279,9 +1648,14 @@ function escapeHtml(value) {
     );
 }
 
-function escapeAttr(value) {
 
-  return String(value || "")
+function escapeAttr(
+  value
+) {
+
+  return String(
+    value || ""
+  )
     .replace(
       /\\/g,
       "\\\\"
@@ -1292,302 +1666,219 @@ function escapeAttr(value) {
     );
 }
 
-/* =========================
-   START
-========================= */
-
-loadUser();
-
-</script>
-
-</body>
-</html>
-<!-- VELTRIX ADMIN TASK PANEL -->
-<div id="adminTaskPanel" style="display:none; padding:16px; margin:16px; background:#111827; border-radius:16px;">
-  <h3>🛠️ Admin — Add Task</h3>
-
-  <input id="adminTaskTitle"
-    placeholder="Task title"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
-
-  <input id="adminTaskUrl"
-    value="https://t.me/VELTRIX_M_EXCHANGE"
-    placeholder="Task URL"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
-
-  <input id="adminTaskChannel"
-    value="@VELTRIX_M_EXCHANGE"
-    placeholder="@channel"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
-
-  <input id="adminTaskReward"
-    type="number"
-    value="300"
-    placeholder="Reward"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;">
-
-  <button onclick="addVeltrixTask()"
-    style="width:100%;padding:13px;margin-top:8px;border:0;border-radius:10px;">
-    ➕ ADD TASK
-  </button>
-
-  <div id="adminTaskResult" style="margin-top:10px;"></div>
-</div>
-
-<div id="adminTaskList" style="margin-top:14px;"></div>
-
-<script>
-(function () {
-  const ADMIN_ID = "6011583020";
-
-  const tg = window.Telegram?.WebApp;
-  if (!tg) return;
-
-  tg.ready();
-
-  const user = tg.initDataUnsafe?.user;
-
-  if (user && String(user.id) === ADMIN_ID) {
-    document.getElementById("adminTaskPanel").style.display = "block";
-  }
-})();
-
-async function addVeltrixTask() {
-  const tg = window.Telegram?.WebApp;
-  const resultBox = document.getElementById("adminTaskResult");
-
-  <script>
-async function loadAdminTasks() {
-  const tg = window.Telegram?.WebApp;
-  const list = document.getElementById("adminTaskList");
-
-  if (!tg || !list) return;
-
-  try {
-    const response = await fetch("/api/admin/tasks", {
-      headers: {
-        "X-Telegram-Init-Data": tg.initData
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to load tasks");
-    }
-
-    if (!data.length) {
-      list.innerHTML =
-        `<div style="padding:10px;">No tasks found.</div>`;
-      return;
-    }
-
-    list.innerHTML = `
-      <h3>📋 Manage Tasks</h3>
-
-      ${data.map(task => `
-        <div style="
-          padding:10px;
-          margin:8px 0;
-          background:#1f2937;
-<!-- VELTRIX ADMIN TASK PANEL -->
-
-<div
-  id="adminTaskPanel"
-  style="
-    display:none;
-    padding:16px;
-    margin:16px;
-    background:#111827;
-    border-radius:16px;
-  "
->
-  <h3>🛠️ Admin — Add Task</h3>
-
-  <input
-    id="adminTaskTitle"
-    placeholder="Task title"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
-  >
-
-  <input
-    id="adminTaskUrl"
-    value="https://t.me/VELTRIX_M_EXCHANGE"
-    placeholder="Task URL"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
-  >
-
-  <input
-    id="adminTaskChannel"
-    value="@VELTRIX_M_EXCHANGE"
-    placeholder="@channel"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
-  >
-
-  <input
-    id="adminTaskReward"
-    type="number"
-    value="300"
-    placeholder="Reward"
-    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
-  >
-
-  <button
-    onclick="addVeltrixTask()"
-    style="width:100%;padding:13px;margin-top:8px;border:0;border-radius:10px;"
-  >
-    ➕ ADD TASK
-  </button>
-
-  <div id="adminTaskResult" style="margin-top:10px;"></div>
-
-  <div id="adminTaskList" style="margin-top:14px;"></div>
-</div>
-
-<script>
-
-(function () {
-
-  const ADMIN_ID = "6011583020";
-  const tg = window.Telegram?.WebApp;
-
-  if (!tg) return;
-
-  tg.ready();
-
-  const user = tg.initDataUnsafe?.user;
-
-  if (user && String(user.id) === ADMIN_ID) {
-
-    const panel =
-      document.getElementById("adminTaskPanel");
-
-    if (panel) {
-
-      panel.style.display = "block";
-
-      loadAdminTasks();
-
-    }
-
-  }
-
-})();
-
 
 /* =========================
-   ADD TASK
+   ADMIN SECURITY
 ========================= */
 
-async function addVeltrixTask() {
+const ADMIN_ID =
+  "6011583020";
 
-  const tg = window.Telegram?.WebApp;
 
-  const resultBox =
-    document.getElementById("adminTaskResult");
+function isAdmin() {
 
-  const title =
-    document.getElementById("adminTaskTitle")
-      .value.trim();
+  const user =
+    tg.initDataUnsafe?.user;
 
-  const url =
-    document.getElementById("adminTaskUrl")
-      .value.trim();
-
-  const channel =
-    document.getElementById("adminTaskChannel")
-      .value.trim();
-
-  const reward =
-    Number(
-      document.getElementById("adminTaskReward")
-        .value
-    );
-
-  if (!title || !url) {
-
-    resultBox.innerHTML =
-      "❌ Title and URL are required";
-
-    return;
-  }
-
-  try {
-
-    const response =
-      await fetch("/api/admin/task", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          "X-Telegram-Init-Data": tg.initData
-        },
-
-        body: JSON.stringify({
-          title,
-          url,
-          channel,
-          reward
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-
-      resultBox.innerHTML =
-        "❌ " +
-        (data.error || "Failed");
-
-      return;
-    }
-
-    resultBox.innerHTML =
-      "✅ Task added successfully!";
-
-    document.getElementById(
-      "adminTaskTitle"
-    ).value = "";
-
-    await loadAdminTasks();
-
-  } catch (err) {
-
-    resultBox.innerHTML =
-      "❌ " + err.message;
-
-  }
-
+  return (
+    user &&
+    String(user.id) ===
+      ADMIN_ID
+  );
 }
 
 
 /* =========================
-   LOAD ADMIN TASKS
+   ADMIN INIT
+========================= */
+
+function initAdminPanel() {
+
+  if (!isAdmin()) {
+
+    const panel =
+      document.getElementById(
+        "adminTaskPanel"
+      );
+
+    if (panel) {
+
+      panel.style.display =
+        "none";
+    }
+
+    return;
+  }
+
+  const panel =
+    document.getElementById(
+      "adminTaskPanel"
+    );
+
+  if (!panel)
+    return;
+
+  panel.style.display =
+    "block";
+
+  loadAdminTasks();
+}
+
+
+/* =========================
+   ADMIN ADD TASK
+========================= */
+
+document
+  .getElementById(
+    "addTaskBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
+
+      if (!isAdmin()) {
+
+        tg.showAlert(
+          "❌ Admin access required."
+        );
+
+        return;
+      }
+
+      const resultBox =
+        document.getElementById(
+          "adminTaskResult"
+        );
+
+      const title =
+        document
+          .getElementById(
+            "adminTaskTitle"
+          )
+          .value
+          .trim();
+
+      const url =
+        document
+          .getElementById(
+            "adminTaskUrl"
+          )
+          .value
+          .trim();
+
+      const channel =
+        document
+          .getElementById(
+            "adminTaskChannel"
+          )
+          .value
+          .trim();
+
+      const reward =
+        Number(
+          document
+            .getElementById(
+              "adminTaskReward"
+            )
+            .value
+        );
+
+      if (!title || !url) {
+
+        resultBox.textContent =
+          "❌ Title and URL are required.";
+
+        return;
+      }
+
+      try {
+
+        resultBox.textContent =
+          "⏳ Adding task...";
+
+        const result =
+          await api(
+            "/api/admin/task",
+            {
+              method: "POST",
+
+              body:
+                JSON.stringify({
+                  title,
+                  url,
+                  channel,
+                  reward
+                })
+            }
+          );
+
+        resultBox.innerHTML =
+          `<span class="success">
+            ✅ Task added successfully.
+          </span>`;
+
+        document
+          .getElementById(
+            "adminTaskTitle"
+          )
+          .value = "";
+
+        await loadAdminTasks();
+
+        await loadTasks();
+
+      } catch (err) {
+
+        resultBox.innerHTML =
+          `<span style="color:#ff8b8b;">
+            ❌ ${escapeHtml(
+              err.message
+            )}
+          </span>`;
+      }
+
+    }
+  );
+
+
+/* =========================
+   ADMIN LOAD TASKS
 ========================= */
 
 async function loadAdminTasks() {
 
-  const tg = window.Telegram?.WebApp;
+  if (!isAdmin())
+    return;
 
   const list =
-    document.getElementById("adminTaskList");
+    document.getElementById(
+      "adminTaskList"
+    );
 
-  if (!tg || !list) return;
+  if (!list)
+    return;
 
   try {
 
+    list.innerHTML =
+      `<div class="small">
+        Loading tasks...
+      </div>`;
+
     const response =
-      await fetch("/api/admin/tasks", {
+      await fetch(
+        "/api/admin/tasks",
+        {
+          headers: {
+            "Content-Type":
+              "application/json",
 
-        headers: {
-          "X-Telegram-Init-Data":
-            tg.initData
+            "X-Telegram-Init-Data":
+              tg.initData
+          }
         }
-
-      });
+      );
 
     const data =
       await response.json();
@@ -1598,109 +1889,106 @@ async function loadAdminTasks() {
         data.error ||
         "Failed to load tasks"
       );
-
     }
 
     if (!data.length) {
 
       list.innerHTML =
-        `<div style="padding:10px;">
+        `<div class="small">
           No tasks found.
         </div>`;
 
       return;
     }
 
-    list.innerHTML = `
+    list.innerHTML =
+      data
+        .map(
+          task => `
 
-      <h3>📋 Manage Tasks</h3>
+            <div class="admin-task">
 
-      ${data.map(task => `
+              <div class="admin-task-title">
+                ${escapeHtml(
+                  task.title
+                )}
+              </div>
 
-        <div
-          style="
-            padding:10px;
-            margin:8px 0;
-            background:#1f2937;
-            border-radius:10px;
-          "
-        >
+              <div class="small">
+                🎁 ${
+                  Number(
+                    task.reward
+                  ).toFixed(2)
+                } VLX
+              </div>
 
-          <div style="font-weight:bold;">
-            ${escapeHtml(task.title)}
-          </div>
+              ${
+                task.channel
+                  ? `
+                    <div class="small">
+                      📢 ${escapeHtml(
+                        task.channel
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
 
-          <div
-            style="
-              font-size:13px;
-              margin-top:4px;
-            "
-          >
-            🎁 ${Number(task.reward).toFixed(2)} VLX
-          </div>
+              <div class="admin-task-url">
+                ${escapeHtml(
+                  task.url
+                )}
+              </div>
 
-          <div
-            style="
-              font-size:12px;
-              color:#9ca3af;
-              margin-top:4px;
-              word-break:break-all;
-            "
-          >
-            ${escapeHtml(task.url)}
-          </div>
+              <button
+                class="admin-delete"
+                onclick="deleteVeltrixTask(${Number(task.id)})"
+              >
+                🗑️ DELETE TASK
+              </button>
 
-          <button
-            onclick="deleteVeltrixTask(${task.id})"
-            style="
-              width:100%;
-              padding:10px;
-              margin-top:8px;
-              border:0;
-              border-radius:8px;
-              background:#dc2626;
-              color:white;
-              font-weight:bold;
-            "
-          >
-            🗑️ DELETE TASK
-          </button>
+            </div>
 
-        </div>
-
-      `).join("")}
-
-    `;
+          `
+        )
+        .join("");
 
   } catch (err) {
 
     list.innerHTML =
-      `<div style="color:#f87171;">
-        ❌ ${escapeHtml(err.message)}
+      `<div style="color:#ff8b8b;">
+        ❌ ${escapeHtml(
+          err.message
+        )}
       </div>`;
-
   }
-
 }
 
 
 /* =========================
-   DELETE TASK
+   ADMIN DELETE TASK
 ========================= */
 
-async function deleteVeltrixTask(taskId) {
+async function deleteVeltrixTask(
+  taskId
+) {
 
-  const tg = window.Telegram?.WebApp;
+  if (!isAdmin()) {
 
-  if (!tg) return;
+    tg.showAlert(
+      "❌ Admin access required."
+    );
 
-  if (
-    !confirm(
-      "Are you sure you want to delete this task?"
-    )
-  ) {
     return;
   }
+
+  const confirmed =
+    window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+
+  if (!confirmed)
+    return;
 
   try {
 
@@ -1711,6 +1999,9 @@ async function deleteVeltrixTask(taskId) {
           method: "DELETE",
 
           headers: {
+            "Content-Type":
+              "application/json",
+
             "X-Telegram-Init-Data":
               tg.initData
           }
@@ -1726,204 +2017,33 @@ async function deleteVeltrixTask(taskId) {
         data.error ||
         "Task deletion failed"
       );
-
     }
 
-    alert(
-      "✅ Task deleted successfully"
+    tg.showAlert(
+      "✅ Task deleted successfully."
     );
 
     await loadAdminTasks();
 
+    await loadTasks();
+
   } catch (err) {
 
-    alert(
+    tg.showAlert(
       "❌ " + err.message
     );
-
   }
-
 }
 
 
 /* =========================
-   CLEANUP DUPLICATES
+   START
 ========================= */
 
-(function () {
+loadUser();
 
-  const ADMIN_ID = "6011583020";
-  const tg = window.Telegram?.WebApp;
+initAdminPanel();
 
-  if (!tg) return;
-
-  tg.ready();
-
-  const user =
-    tg.initDataUnsafe?.user;
-
-  if (
-    !user ||
-    String(user.id) !== ADMIN_ID
-  ) {
-    return;
-  }
-
-  const btn =
-    document.createElement("button");
-
-  btn.textContent =
-    "🧹 REMOVE DUPLICATE TASKS";
-
-  btn.style.cssText = `
-    width:100%;
-    padding:13px;
-    margin:10px 0;
-    border:0;
-    border-radius:10px;
-    background:#dc2626;
-    color:white;
-    font-weight:bold;
-  `;
-
-  btn.onclick = async function () {
-
-    btn.disabled = true;
-    btn.textContent = "⏳ Cleaning...";
-
-    try {
-
-      const response =
-        await fetch(
-          "/api/admin/task/cleanup",
-          {
-            method: "POST",
-
-            headers: {
-              "X-Telegram-Init-Data":
-                tg.initData
-            }
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Cleanup failed"
-        );
-
-      }
-
-      alert(
-        "✅ Done!\n\n" +
-        data.deactivated +
-        " duplicate task(s) deactivated."
-      );
-
-      btn.textContent =
-        "✅ DUPLICATES CLEANED";
-
-    } catch (err) {
-
-      alert(
-        "❌ " + err.message
-      );
-
-      btn.disabled = false;
-
-      btn.textContent =
-        "🧹 REMOVE DUPLICATE TASKS";
-
-    }
-
-  };
-
-  const panel =
-    document.getElementById(
-      "adminTaskPanel"
-    );
-
-  if (panel) {
-
-    panel.appendChild(btn);
-
-  }
-
-})();
-
-</script>
-
-</body>
-</html>
-
-
-<!-- VELTRIX ADMIN CLEANUP BUTTON -->
-<script>
-(function () {
-  const ADMIN_ID = "6011583020";
-  const tg = window.Telegram?.WebApp;
-
-  if (!tg) return;
-
-  tg.ready();
-
-  const user = tg.initDataUnsafe?.user;
-
-  if (!user || String(user.id) !== ADMIN_ID) return;
-
-  const btn = document.createElement("button");
-
-  btn.textContent = "🧹 REMOVE DUPLICATE TASKS";
-  btn.style.cssText = `
-    width:100%;
-    padding:13px;
-    margin:10px 0;
-    border:0;
-    border-radius:10px;
-    background:#dc2626;
-    color:white;
-    font-weight:bold;
-  `;
-
-  btn.onclick = async function () {
-    btn.disabled = true;
-    btn.textContent = "⏳ Cleaning...";
-
-    try {
-      const response = await fetch("/api/admin/task/cleanup", {
-        method: "POST",
-        headers: {
-          "X-Telegram-Init-Data": tg.initData
-        }
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Cleanup failed");
-      }
-
-      alert(
-        "✅ Done!\n\n" +
-        data.deactivated +
-        " duplicate task(s) deactivated."
-      );
-
-      btn.textContent = "✅ DUPLICATES CLEANED";
-
-    } catch (err) {
-      alert("❌ " + err.message);
-      btn.disabled = false;
-      btn.textContent = "🧹 REMOVE DUPLICATE TASKS";
-    }
-  };
-
-  document.getElementById("adminTaskPanel").appendChild(btn);
-})();
 </script>
 
 </body>
