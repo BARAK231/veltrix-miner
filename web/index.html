@@ -1390,14 +1390,264 @@ async function loadAdminTasks() {
           padding:10px;
           margin:8px 0;
           background:#1f2937;
-          border-radius:10px;
-        ">
+<!-- VELTRIX ADMIN TASK PANEL -->
+
+<div
+  id="adminTaskPanel"
+  style="
+    display:none;
+    padding:16px;
+    margin:16px;
+    background:#111827;
+    border-radius:16px;
+  "
+>
+  <h3>🛠️ Admin — Add Task</h3>
+
+  <input
+    id="adminTaskTitle"
+    placeholder="Task title"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
+  >
+
+  <input
+    id="adminTaskUrl"
+    value="https://t.me/VELTRIX_M_EXCHANGE"
+    placeholder="Task URL"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
+  >
+
+  <input
+    id="adminTaskChannel"
+    value="@VELTRIX_M_EXCHANGE"
+    placeholder="@channel"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
+  >
+
+  <input
+    id="adminTaskReward"
+    type="number"
+    value="300"
+    placeholder="Reward"
+    style="width:100%;padding:12px;margin:6px 0;border-radius:10px;"
+  >
+
+  <button
+    onclick="addVeltrixTask()"
+    style="width:100%;padding:13px;margin-top:8px;border:0;border-radius:10px;"
+  >
+    ➕ ADD TASK
+  </button>
+
+  <div id="adminTaskResult" style="margin-top:10px;"></div>
+
+  <div id="adminTaskList" style="margin-top:14px;"></div>
+</div>
+
+<script>
+
+(function () {
+
+  const ADMIN_ID = "6011583020";
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg) return;
+
+  tg.ready();
+
+  const user = tg.initDataUnsafe?.user;
+
+  if (user && String(user.id) === ADMIN_ID) {
+
+    const panel =
+      document.getElementById("adminTaskPanel");
+
+    if (panel) {
+
+      panel.style.display = "block";
+
+      loadAdminTasks();
+
+    }
+
+  }
+
+})();
+
+
+/* =========================
+   ADD TASK
+========================= */
+
+async function addVeltrixTask() {
+
+  const tg = window.Telegram?.WebApp;
+
+  const resultBox =
+    document.getElementById("adminTaskResult");
+
+  const title =
+    document.getElementById("adminTaskTitle")
+      .value.trim();
+
+  const url =
+    document.getElementById("adminTaskUrl")
+      .value.trim();
+
+  const channel =
+    document.getElementById("adminTaskChannel")
+      .value.trim();
+
+  const reward =
+    Number(
+      document.getElementById("adminTaskReward")
+        .value
+    );
+
+  if (!title || !url) {
+
+    resultBox.innerHTML =
+      "❌ Title and URL are required";
+
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch("/api/admin/task", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "X-Telegram-Init-Data": tg.initData
+        },
+
+        body: JSON.stringify({
+          title,
+          url,
+          channel,
+          reward
+        })
+
+      });
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      resultBox.innerHTML =
+        "❌ " +
+        (data.error || "Failed");
+
+      return;
+    }
+
+    resultBox.innerHTML =
+      "✅ Task added successfully!";
+
+    document.getElementById(
+      "adminTaskTitle"
+    ).value = "";
+
+    await loadAdminTasks();
+
+  } catch (err) {
+
+    resultBox.innerHTML =
+      "❌ " + err.message;
+
+  }
+
+}
+
+
+/* =========================
+   LOAD ADMIN TASKS
+========================= */
+
+async function loadAdminTasks() {
+
+  const tg = window.Telegram?.WebApp;
+
+  const list =
+    document.getElementById("adminTaskList");
+
+  if (!tg || !list) return;
+
+  try {
+
+    const response =
+      await fetch("/api/admin/tasks", {
+
+        headers: {
+          "X-Telegram-Init-Data":
+            tg.initData
+        }
+
+      });
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Failed to load tasks"
+      );
+
+    }
+
+    if (!data.length) {
+
+      list.innerHTML =
+        `<div style="padding:10px;">
+          No tasks found.
+        </div>`;
+
+      return;
+    }
+
+    list.innerHTML = `
+
+      <h3>📋 Manage Tasks</h3>
+
+      ${data.map(task => `
+
+        <div
+          style="
+            padding:10px;
+            margin:8px 0;
+            background:#1f2937;
+            border-radius:10px;
+          "
+        >
+
           <div style="font-weight:bold;">
             ${escapeHtml(task.title)}
           </div>
 
-          <div style="font-size:13px;margin-top:4px;">
+          <div
+            style="
+              font-size:13px;
+              margin-top:4px;
+            "
+          >
             🎁 ${Number(task.reward).toFixed(2)} VLX
+          </div>
+
+          <div
+            style="
+              font-size:12px;
+              color:#9ca3af;
+              margin-top:4px;
+              word-break:break-all;
+            "
+          >
+            ${escapeHtml(task.url)}
           </div>
 
           <button
@@ -1415,56 +1665,200 @@ async function loadAdminTasks() {
           >
             🗑️ DELETE TASK
           </button>
+
         </div>
+
       `).join("")}
+
     `;
 
   } catch (err) {
+
     list.innerHTML =
-      `<div style="color:#f87171;">❌ ${err.message}</div>`;
+      `<div style="color:#f87171;">
+        ❌ ${escapeHtml(err.message)}
+      </div>`;
+
   }
+
 }
 
+
+/* =========================
+   DELETE TASK
+========================= */
+
 async function deleteVeltrixTask(taskId) {
+
   const tg = window.Telegram?.WebApp;
 
   if (!tg) return;
 
-  if (!confirm("Are you sure you want to delete this task?")) {
+  if (
+    !confirm(
+      "Are you sure you want to delete this task?"
+    )
+  ) {
     return;
   }
 
   try {
-    const response = await fetch(
-      `/api/admin/task/${taskId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "X-Telegram-Init-Data": tg.initData
-        }
-      }
-    );
 
-    const data = await response.json();
+    const response =
+      await fetch(
+        `/api/admin/task/${taskId}`,
+        {
+          method: "DELETE",
+
+          headers: {
+            "X-Telegram-Init-Data":
+              tg.initData
+          }
+        }
+      );
+
+    const data =
+      await response.json();
 
     if (!response.ok) {
+
       throw new Error(
-        data.error || "Task deletion failed"
+        data.error ||
+        "Task deletion failed"
       );
+
     }
 
-    alert("✅ Task deleted successfully");
+    alert(
+      "✅ Task deleted successfully"
+    );
 
     await loadAdminTasks();
 
   } catch (err) {
-    alert("❌ " + err.message);
-  }
-}
+
+    alert(
+      "❌ " + err.message
+    );
+
   }
 
-const title =
+}
+
+
+/* =========================
+   CLEANUP DUPLICATES
+========================= */
+
+(function () {
+
+  const ADMIN_ID = "6011583020";
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg) return;
+
+  tg.ready();
+
+  const user =
+    tg.initDataUnsafe?.user;
+
+  if (
+    !user ||
+    String(user.id) !== ADMIN_ID
+  ) {
+    return;
+  }
+
+  const btn =
+    document.createElement("button");
+
+  btn.textContent =
+    "🧹 REMOVE DUPLICATE TASKS";
+
+  btn.style.cssText = `
+    width:100%;
+    padding:13px;
+    margin:10px 0;
+    border:0;
+    border-radius:10px;
+    background:#dc2626;
+    color:white;
+    font-weight:bold;
+  `;
+
+  btn.onclick = async function () {
+
+    btn.disabled = true;
+    btn.textContent = "⏳ Cleaning...";
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/task/cleanup",
+          {
+            method: "POST",
+
+            headers: {
+              "X-Telegram-Init-Data":
+                tg.initData
+            }
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Cleanup failed"
+        );
+
+      }
+
+      alert(
+        "✅ Done!\n\n" +
+        data.deactivated +
+        " duplicate task(s) deactivated."
+      );
+
+      btn.textContent =
+        "✅ DUPLICATES CLEANED";
+
+    } catch (err) {
+
+      alert(
+        "❌ " + err.message
+      );
+
+      btn.disabled = false;
+
+      btn.textContent =
+        "🧹 REMOVE DUPLICATE TASKS";
+
+    }
+
+  };
+
+  const panel =
+    document.getElementById(
+      "adminTaskPanel"
+    );
+
+  if (panel) {
+
+    panel.appendChild(btn);
+
+  }
+
+})();
+
 </script>
+
+</body>
+</html>
 
 
 <!-- VELTRIX ADMIN CLEANUP BUTTON -->
