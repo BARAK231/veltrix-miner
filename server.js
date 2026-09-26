@@ -17,7 +17,7 @@ const ADMIN_ID = String(process.env.ADMIN_ID || "");
 const APP_URL =
   process.env.APP_URL || "https://veltrix-miner.onrender.com";
 
-const RATE = 4.74;
+const RATE = 1.25;
 const CYCLE_HOURS = 8;
 const CYCLE_SECONDS = CYCLE_HOURS * 60 * 60;
 const REFERRAL_BONUS = 300;
