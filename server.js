@@ -1438,19 +1438,22 @@ app.get("/api/wallet", auth, async (req, res) => {
   }
 });
 
+
 app.post("/api/wallet", auth, async (req, res) => {
   try {
     const wallet = String(
       req.body.wallet || ""
     ).trim();
 
-    if (
-      wallet &&
-      !/^0x[a-fA-F0-9]{40}$/.test(wallet)
-    ) {
-      return res.status(400).json({
-        error: "Invalid EVM wallet address"
-      });
+    // Solana wallet address validation
+    if (wallet) {
+      const solanaRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+      if (!solanaRegex.test(wallet)) {
+        return res.status(400).json({
+          error: "Invalid Solana wallet address"
+        });
+      }
     }
 
     await db(
@@ -1469,6 +1472,7 @@ app.post("/api/wallet", auth, async (req, res) => {
       success: true,
       wallet
     });
+
   } catch (err) {
     console.error(err);
 
