@@ -956,12 +956,12 @@ function startMiningTimer() {
 
           currentUser.mining =
             Math.min(
-              4.74 *
+              1.25 *
               (
                 elapsed /
                 3600
               ),
-              37.92
+              10
             );
 
           currentUser.total =
@@ -983,13 +983,13 @@ function startMiningTimer() {
             true;
 
           currentUser.mining =
-            37.92;
+            10;
 
           currentUser.total =
             Number(
               currentUser.balance
             ) +
-            37.92;
+            10;
 
           updateUserUI();
         }
