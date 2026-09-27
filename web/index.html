@@ -315,6 +315,25 @@
 
 <div class="app">
 
+  <!-- VLX LISTING COUNTDOWN -->
+<div class="card">
+
+  <h3>
+    🚀 VLX LISTING
+  </h3>
+
+  <div class="small">
+    📅 27 November 2026
+  </div>
+
+  <br>
+
+  <div id="vlxCountdown">
+    Loading...
+  </div>
+
+</div>
+
   <header>
     <div class="logo">VELTRIX</div>
     <div class="sub">VLX MINER</div>
@@ -2043,6 +2062,70 @@ async function deleteVeltrixTask(
 loadUser();
 
 initAdminPanel();
+
+  /* =========================
+   VLX LISTING COUNTDOWN
+========================= */
+
+const VLX_LISTING_DATE =
+  new Date(
+    "2026-11-27T20:00:00+04:30"
+  ).getTime();
+
+function updateVLXListingCountdown() {
+
+  const now = Date.now();
+  const distance = VLX_LISTING_DATE - now;
+
+  const countdown =
+    document.getElementById("vlxCountdown");
+
+  if (!countdown) return;
+
+  if (distance <= 0) {
+
+    countdown.innerHTML =
+      "🚀 <b>VLX LISTING IS LIVE!</b>";
+
+    return;
+  }
+
+  const days =
+    Math.floor(
+      distance / (1000 * 60 * 60 * 24)
+    );
+
+  const hours =
+    Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) /
+      (1000 * 60 * 60)
+    );
+
+  const minutes =
+    Math.floor(
+      (distance % (1000 * 60 * 60)) /
+      (1000 * 60)
+    );
+
+  const seconds =
+    Math.floor(
+      (distance % (1000 * 60)) /
+      1000
+    );
+
+  countdown.innerHTML =
+    `⏳ <b>${days} Days</b> : ` +
+    `<b>${String(hours).padStart(2, "0")} Hours</b> : ` +
+    `<b>${String(minutes).padStart(2, "0")} Minutes</b> : ` +
+    `<b>${String(seconds).padStart(2, "0")} Seconds</b>`;
+}
+
+updateVLXListingCountdown();
+
+setInterval(
+  updateVLXListingCountdown,
+  1000
+);
 
 </script>
 
