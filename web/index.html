@@ -339,6 +339,88 @@
     <div class="sub">VLX MINER</div>
   </header>
 
+    <!-- VLX PRESALE -->
+  <div class="card">
+
+    <h3>
+      💎 VLX PRESALE
+    </h3>
+
+    <div class="small">
+      🔥 PRESALE IS LIVE
+    </div>
+
+    <br>
+
+    <div class="small">
+      💰 1 TON = 5,000 VLX
+    </div>
+
+    <div class="small">
+      🪙 Available: 150,000,000 VLX
+    </div>
+
+    <br>
+
+    <div class="small">
+      🌐 Payment Network: TON
+    </div>
+
+    <button id="presaleBtn">
+      💎 BUY VLX
+    </button>
+
+    <div id="presaleBox" style="display:none;">
+
+  <br>
+
+  <input
+    id="presaleTonAmount"
+    type="number"
+    step="0.01"
+    min="0.01"
+    placeholder="TON Amount"
+  >
+
+  <div class="small">
+    🪙 You will receive:
+    <b id="presaleVlxAmount">0 VLX</b>
+  </div>
+
+  <br>
+
+  <div class="small">
+    💰 Send TON to:
+  </div>
+
+  <div class="small" style="word-break:break-all;">
+    UQASlSXzQBNaRnFNLgui-Xp_LqZ4NNuTUODRsBAm--sAph8u
+  </div>
+
+  <br>
+
+  <input
+    id="presaleTxHash"
+    type="text"
+    placeholder="TON Transaction Hash"
+    autocomplete="off"
+  >
+
+  <button id="submitPresale">
+    🚀 SUBMIT PRESALE
+  </button>
+
+  <div id="presaleMessage"></div>
+
+    </div>
+
+  </div>
+
+  <header>
+    <div class="logo">VELTRIX</div>
+    <div class="sub">VLX MINER</div>
+  </header>
+
   <div id="errorBox" class="error"></div>
 
   <!-- MINE -->
@@ -2062,6 +2144,90 @@ async function deleteVeltrixTask(
 loadUser();
 
 initAdminPanel();
+
+  /* =========================
+   VLX PRESALE
+========================= */
+
+document
+  .getElementById("presaleBtn")
+  .addEventListener("click", () => {
+
+    tg.showPopup({
+      title: "💎 VLX PRESALE",
+      message:
+        "💰 1 TON = 5,000 VLX\n\n" +
+        "🪙 Available: 150,000,000 VLX\n\n" +
+        "🌐 Payment Network: TON\n\n" +
+        "Presale purchase system is being activated.",
+      buttons: [
+        {
+          id: "ok",
+          type: "default",
+          text: "OK"
+        }
+      ]
+    });
+
+  });
+
+  /* =========================
+   VLX PRESALE CALCULATOR
+========================= */
+
+const PRESALE_RATE = 5000;
+
+const presaleBtn =
+  document.getElementById("presaleBtn");
+
+const presaleBox =
+  document.getElementById("presaleBox");
+
+const presaleTonAmount =
+  document.getElementById("presaleTonAmount");
+
+const presaleVlxAmount =
+  document.getElementById("presaleVlxAmount");
+
+
+if (presaleBtn) {
+
+  presaleBtn.addEventListener(
+    "click",
+    () => {
+
+      presaleBox.style.display = "block";
+
+      presaleTonAmount.focus();
+
+    }
+  );
+
+}
+
+
+if (presaleTonAmount) {
+
+  presaleTonAmount.addEventListener(
+    "input",
+    () => {
+
+      const ton =
+        Number(
+          presaleTonAmount.value
+        ) || 0;
+
+      const vlx =
+        ton * PRESALE_RATE;
+
+      presaleVlxAmount.textContent =
+        vlx.toLocaleString() +
+        " VLX";
+
+    }
+  );
+
+}
 
   /* =========================
    VLX LISTING COUNTDOWN
