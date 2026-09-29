@@ -735,6 +735,19 @@ async function initDatabase() {
       created_at BIGINT NOT NULL
     )
   `);
+
+  await db(`
+    CREATE TABLE IF NOT EXISTS presale_orders (
+      id SERIAL PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      ton_amount DOUBLE PRECISION NOT NULL,
+      vlx_amount DOUBLE PRECISION NOT NULL,
+      wallet TEXT NOT NULL,
+      tx_hash TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      created_at BIGINT NOT NULL
+    )
+  `);
     await db(`
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS mining_notified_cycle BIGINT NOT NULL DEFAULT 0
