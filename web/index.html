@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>VELTRIX — VLX Miner</title>
 
-  <!-- Telegram Mini App -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- TON Connect -->
   <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -126,6 +117,7 @@
 
     button:disabled {
       opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .section {
@@ -146,6 +138,13 @@
     .task-title {
       font-weight: 700;
       margin-bottom: 5px;
+    }
+
+    .task-description {
+      color: #8d98a5;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 8px;
     }
 
     .task-reward {
@@ -225,11 +224,8 @@
       color: #b8ffca;
       font-size: 13px;
       margin-top: 10px;
+      line-height: 1.5;
     }
-
-    /* =========================
-       PRESALE
-    ========================= */
 
     .presale-wallet {
       background: #0d131a;
@@ -267,10 +263,6 @@
       width: 100% !important;
     }
 
-    /* =========================
-       NAVIGATION
-    ========================= */
-
     nav {
       position: fixed;
       left: 0;
@@ -303,10 +295,6 @@
       padding: 12px 0;
       border-bottom: 1px solid #202b36;
     }
-
-    /* =========================
-       ADMIN
-    ========================= */
 
     #adminTaskPanel {
       display: none;
@@ -354,31 +342,42 @@
       color: #fff;
     }
 
+    .admin-toggle {
+      margin-top: 10px;
+      background: #27313d;
+      color: #fff;
+    }
+
     .admin-result {
       margin-top: 10px;
       font-size: 13px;
     }
 
-  </style>
+    .order-item {
+      background: #171f28;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
 
+    .status {
+      font-weight: 700;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- =========================
-       VLX LISTING
-  ========================= -->
-
+  <!-- LISTING COUNTDOWN -->
   <div class="card">
-
-    <h3>
-      🚀 VLX LISTING
-    </h3>
+    <h3>🚀 VLX LISTING</h3>
 
     <div class="small">
-      📅 27 November 2026
+      📅 27 November 2026 — 8:00 PM Afghanistan Time
     </div>
 
     <br>
@@ -386,39 +385,20 @@
     <div id="vlxCountdown">
       Loading...
     </div>
-
   </div>
 
-
-  <!-- HEADER -->
-
   <header>
-
-    <div class="logo">
-      VELTRIX
-    </div>
-
-    <div class="sub">
-      VLX MINER
-    </div>
-
+    <div class="logo">VELTRIX</div>
+    <div class="sub">VLX MINER</div>
   </header>
 
-
-  <div
-    id="errorBox"
-    class="error"
-  ></div>
-
+  <div id="errorBox" class="error"></div>
 
   <!-- =========================
        MINE
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="mine"
-    class="section active"
-  >
+  <section id="mine" class="section active">
 
     <div class="card balance">
 
@@ -426,10 +406,7 @@
         CLAIMED BALANCE
       </div>
 
-      <div
-        id="balance"
-        class="balance-number"
-      >
+      <div id="balance" class="balance-number">
         0.0000
       </div>
 
@@ -446,10 +423,7 @@
         ⛏️ MINING
       </div>
 
-      <div
-        id="mining"
-        class="mining-number"
-      >
+      <div id="mining" class="mining-number">
         0.0000
       </div>
 
@@ -461,17 +435,11 @@
         ⚡ 1.25 VLX / hour
       </div>
 
-      <div
-        id="timer"
-        class="timer"
-      >
+      <div id="timer" class="timer">
         08:00:00
       </div>
 
-      <button
-        id="claimBtn"
-        disabled
-      >
+      <button id="claimBtn" disabled>
         ⏳ MINING...
       </button>
 
@@ -485,7 +453,6 @@
       <div class="row">
 
         <div>
-
           <div id="total">
             0.0000
           </div>
@@ -493,12 +460,9 @@
           <div class="small">
             TOTAL
           </div>
-
         </div>
 
-
         <div>
-
           <div>
             8h
           </div>
@@ -506,7 +470,6 @@
           <div class="small">
             CYCLE
           </div>
-
         </div>
 
       </div>
@@ -518,12 +481,9 @@
 
   <!-- =========================
        TASKS
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="tasks"
-    class="section"
-  >
+  <section id="tasks" class="section">
 
     <div class="card">
 
@@ -542,12 +502,9 @@
 
   <!-- =========================
        FRIENDS
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="friends"
-    class="section"
-  >
+  <section id="friends" class="section">
 
     <div class="card">
 
@@ -558,7 +515,6 @@
       <div class="row">
 
         <div>
-
           <div id="refCount">
             0
           </div>
@@ -566,12 +522,9 @@
           <div class="small">
             FRIENDS
           </div>
-
         </div>
 
-
         <div>
-
           <div>
             300
           </div>
@@ -579,19 +532,13 @@
           <div class="small">
             BONUS
           </div>
-
         </div>
 
       </div>
 
-
-      <div
-        id="refLink"
-        class="friend-link"
-      >
+      <div id="refLink" class="friend-link">
         Loading...
       </div>
-
 
       <button id="copyRef">
         📋 Copy Referral Link
@@ -604,12 +551,9 @@
 
   <!-- =========================
        RANK
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="rank"
-    class="section"
-  >
+  <section id="rank" class="section">
 
     <div class="card">
 
@@ -628,12 +572,9 @@
 
   <!-- =========================
        PRESALE
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="presale"
-    class="section"
-  >
+  <section id="presale" class="section">
 
     <div class="card">
 
@@ -641,13 +582,11 @@
         💎 VLX PRESALE
       </h3>
 
-
       <div class="small">
         🔥 PRESALE IS LIVE
       </div>
 
       <br>
-
 
       <div class="small">
         💰 1 TON = 5,000 VLX
@@ -662,7 +601,6 @@
       </div>
 
       <br>
-
 
       <div class="presale-wallet">
 
@@ -684,11 +622,7 @@
 
       </div>
 
-
-      <!-- TON CONNECT BUTTON -->
-
       <div id="tonConnectButton"></div>
-
 
       <input
         id="presaleTonAmount"
@@ -698,11 +632,9 @@
         placeholder="TON Amount"
       >
 
-
       <div class="small">
         🪙 You will receive:
       </div>
-
 
       <div
         id="presaleVlxAmount"
@@ -711,7 +643,6 @@
         0 VLX
       </div>
 
-
       <button
         id="buyVlxBtn"
         disabled
@@ -719,18 +650,23 @@
         🔗 CONNECT WALLET TO BUY
       </button>
 
-
       <div id="presaleMessage"></div>
 
-
       <div class="presale-note">
+        ⚠️ Connect your TON wallet, enter the TON amount,
+        and confirm the transaction inside your wallet.
+        Payment is verified by the VELTRIX server before
+        VLX is credited.
+      </div>
 
-        ⚠️ The transaction will be requested
-        inside your connected TON wallet.
+      <br>
 
-        VLX allocation will only be credited
-        after server-side payment verification.
+      <div class="small">
+        📋 YOUR PRESALE ORDERS
+      </div>
 
+      <div id="presaleOrders">
+        Loading...
       </div>
 
     </div>
@@ -740,12 +676,9 @@
 
   <!-- =========================
        WALLET
-  ========================= -->
+  ========================== -->
 
-  <section
-    id="wallet"
-    class="section"
-  >
+  <section id="wallet" class="section">
 
     <div class="card">
 
@@ -759,30 +692,24 @@
 
       <br>
 
-
       <input
         id="walletInput"
         placeholder="Solana wallet address"
         autocomplete="off"
       >
 
-
       <button id="saveWallet">
         💾 Save Wallet
       </button>
 
-
       <br>
       <br>
-
 
       <div class="small">
         Minimum withdrawal: 10,000 VLX
       </div>
 
-
       <br>
-
 
       <input
         id="withdrawAmount"
@@ -791,11 +718,9 @@
         min="10000"
       >
 
-
       <button id="withdrawBtn">
         🚀 Withdraw
       </button>
-
 
       <div id="withdrawMessage"></div>
 
@@ -820,7 +745,6 @@
     Mine
   </button>
 
-
   <button
     class="navBtn"
     data-section="tasks"
@@ -828,7 +752,6 @@
     🎯<br>
     Tasks
   </button>
-
 
   <button
     class="navBtn"
@@ -838,7 +761,6 @@
     Friends
   </button>
 
-
   <button
     class="navBtn"
     data-section="rank"
@@ -847,7 +769,6 @@
     Rank
   </button>
 
-
   <button
     class="navBtn"
     data-section="presale"
@@ -855,7 +776,6 @@
     💎<br>
     Presale
   </button>
-
 
   <button
     class="navBtn"
@@ -872,9 +792,7 @@
      ADMIN TASK PANEL
 ========================= -->
 
-<div
-  id="adminTaskPanel"
->
+<div id="adminTaskPanel">
 
   <div class="admin-card">
 
@@ -882,26 +800,27 @@
       🛠️ Admin — Task Management
     </h3>
 
-
     <input
       id="adminTaskTitle"
       placeholder="Task title"
     >
 
+    <input
+      id="adminTaskDescription"
+      placeholder="Task description"
+    >
 
     <input
       id="adminTaskUrl"
       value="https://t.me/VELTRIX_M_EXCHANGE"
-      placeholder="Task URL"
+      placeholder="Telegram channel URL"
     >
-
 
     <input
       id="adminTaskChannel"
       value="@VELTRIX_M_EXCHANGE"
-      placeholder="@channel"
+      placeholder="@channel or chat ID"
     >
-
 
     <input
       id="adminTaskReward"
@@ -911,11 +830,9 @@
       min="0"
     >
 
-
     <button id="addTaskBtn">
       ➕ ADD TASK
     </button>
-
 
     <div
       id="adminTaskResult"
@@ -942,65 +859,48 @@
 
 <script>
 
-const tg =
-  window.Telegram.WebApp;
+/* =========================
+   TELEGRAM
+========================= */
+
+const tg = window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
-const initData =
-  tg.initData;
+const initData = tg.initData || "";
 
 let currentUser = null;
 let timerInterval = null;
+let miningSyncInterval = null;
 
 
 /* =========================
    API
 ========================= */
 
-async function api(
-  url,
-  options = {}
-) {
+async function api(url, options = {}) {
 
   const headers = {
-    "Content-Type":
-      "application/json",
-
-    "X-Telegram-Init-Data":
-      initData,
-
+    "Content-Type": "application/json",
+    "X-Telegram-Init-Data": initData,
     ...(options.headers || {})
   };
 
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
 
-  const response =
-    await fetch(
-      url,
-      {
-        ...options,
-        headers
-      }
-    );
-
-
-  const text =
-    await response.text();
-
+  const text = await response.text();
 
   let data;
 
-
   try {
-
-    data =
-      JSON.parse(text);
-
-  } catch (e) {
-
+    data = JSON.parse(text);
+  } catch {
     console.error(
-      "Invalid JSON:",
+      "Invalid server response:",
       url,
       text
     );
@@ -1008,22 +908,15 @@ async function api(
     throw new Error(
       `Server returned invalid response (${response.status})`
     );
-
   }
 
-
-  if (!response.ok) {
-
+  if (!response.ok || data.ok === false) {
     throw new Error(
-      data.error ||
-      "Request failed"
+      data.error || "Request failed"
     );
-
   }
-
 
   return data;
-
 }
 
 
@@ -1031,41 +924,26 @@ async function api(
    ERROR
 ========================= */
 
-function showError(
-  message
-) {
+function showError(message) {
 
   const box =
-    document.getElementById(
-      "errorBox"
-    );
-
+    document.getElementById("errorBox");
 
   box.textContent =
-    message;
+    message || "Something went wrong.";
 
-
-  box.style.display =
-    "block";
-
+  box.style.display = "block";
 }
 
 
 function clearError() {
 
   const box =
-    document.getElementById(
-      "errorBox"
-    );
+    document.getElementById("errorBox");
 
+  box.textContent = "";
 
-  box.textContent =
-    "";
-
-
-  box.style.display =
-    "none";
-
+  box.style.display = "none";
 }
 
 
@@ -1079,40 +957,28 @@ async function loadUser() {
 
     clearError();
 
-
     const params =
       new URLSearchParams(
         window.location.search
       );
 
-
     let ref =
       params.get("ref");
 
-
     if (!ref) {
-
       ref =
-        tg.initDataUnsafe
-          ?.start_param ||
-        "";
-
+        tg.initDataUnsafe?.start_param || "";
     }
 
+    const url = ref
+      ? `/api/user?ref=${encodeURIComponent(ref)}`
+      : `/api/user`;
 
-    const url =
-      ref
-        ? `/api/user?ref=${encodeURIComponent(ref)}`
-        : `/api/user`;
-
-
-    const user =
+    const data =
       await api(url);
 
-
     currentUser =
-      user;
-
+      data.user;
 
     updateUserUI();
 
@@ -1122,24 +988,20 @@ async function loadUser() {
 
     console.error(err);
 
-    showError(
-      err.message
-    );
-
+    showError(err.message);
   }
-
 }
 
 
 /* =========================
-   UPDATE UI
+   UPDATE USER UI
 ========================= */
 
 function updateUserUI() {
 
-  if (!currentUser)
+  if (!currentUser) {
     return;
-
+  }
 
   document.getElementById(
     "balance"
@@ -1148,7 +1010,6 @@ function updateUserUI() {
       currentUser.balance || 0
     ).toFixed(4);
 
-
   document.getElementById(
     "mining"
   ).textContent =
@@ -1156,14 +1017,12 @@ function updateUserUI() {
       currentUser.mining || 0
     ).toFixed(4);
 
-
   document.getElementById(
     "total"
   ).textContent =
     Number(
       currentUser.total || 0
     ).toFixed(4);
-
 
   document.getElementById(
     "timer"
@@ -1174,40 +1033,30 @@ function updateUserUI() {
       )
     );
 
-
   const claimBtn =
     document.getElementById(
       "claimBtn"
     );
 
+  if (currentUser.canClaim) {
 
-  if (
-    currentUser.canClaim
-  ) {
-
-    claimBtn.disabled =
-      false;
+    claimBtn.disabled = false;
 
     claimBtn.textContent =
       "✅ CLAIM VLX";
 
   } else {
 
-    claimBtn.disabled =
-      true;
+    claimBtn.disabled = true;
 
     claimBtn.textContent =
       "⏳ MINING...";
-
   }
-
 
   document.getElementById(
     "walletInput"
   ).value =
-    currentUser.wallet ||
-    "";
-
+    currentUser.wallet || "";
 }
 
 
@@ -1215,9 +1064,7 @@ function updateUserUI() {
    TIME
 ========================= */
 
-function formatTime(
-  seconds
-) {
+function formatTime(seconds) {
 
   seconds =
     Math.max(
@@ -1225,22 +1072,18 @@ function formatTime(
       Math.floor(seconds)
     );
 
-
   const h =
     Math.floor(
       seconds / 3600
     );
-
 
   const m =
     Math.floor(
       (seconds % 3600) / 60
     );
 
-
   const s =
     seconds % 60;
-
 
   return [
     h,
@@ -1253,7 +1096,6 @@ function formatTime(
           .padStart(2, "0")
     )
     .join(":");
-
 }
 
 
@@ -1264,88 +1106,119 @@ function formatTime(
 function startMiningTimer() {
 
   if (timerInterval) {
-
-    clearInterval(
-      timerInterval
-    );
-
+    clearInterval(timerInterval);
   }
 
-
   timerInterval =
-    setInterval(
-      async () => {
+    setInterval(() => {
 
-        if (!currentUser)
-          return;
+      if (!currentUser) {
+        return;
+      }
 
+      let remaining =
+        Number(
+          currentUser.remaining || 0
+        );
 
-        if (
+      if (remaining > 0) {
+
+        remaining--;
+
+        currentUser.remaining =
+          remaining;
+
+        const elapsed =
+          8 * 3600 -
+          remaining;
+
+        currentUser.mining =
+          Math.min(
+            1.25 *
+            (elapsed / 3600),
+            10
+          );
+
+        currentUser.total =
           Number(
-            currentUser.remaining
-          ) > 0
-        ) {
+            currentUser.balance || 0
+          ) +
+          Number(
+            currentUser.mining || 0
+          );
 
-          currentUser.remaining--;
+        currentUser.canClaim =
+          remaining <= 0;
 
+      } else {
 
-          const elapsed =
-            8 * 3600 -
-            currentUser.remaining;
+        currentUser.remaining = 0;
 
+        currentUser.mining = 10;
 
-          currentUser.mining =
-            Math.min(
-              1.25 *
-              (
-                elapsed /
-                3600
-              ),
-              10
-            );
+        currentUser.total =
+          Number(
+            currentUser.balance || 0
+          ) + 10;
 
+        currentUser.canClaim = true;
+      }
 
-          currentUser.total =
-            Number(
-              currentUser.balance
-            ) +
-            Number(
-              currentUser.mining
-            );
+      updateUserUI();
+
+    }, 1000);
+}
 
 
-          currentUser.canClaim =
-            currentUser.remaining <= 0;
+/* =========================
+   SERVER MINING SYNC
+========================= */
 
+async function syncMining() {
 
-          updateUserUI();
+  try {
 
+    if (!currentUser) {
+      return;
+    }
 
-        } else {
+    const data =
+      await api(
+        "/api/mining"
+      );
 
-          currentUser.canClaim =
-            true;
+    currentUser.mining =
+      Number(
+        data.mining || 0
+      );
 
+    currentUser.remaining =
+      Number(
+        data.remaining || 0
+      );
 
-          currentUser.mining =
-            10;
+    currentUser.canClaim =
+      Boolean(
+        data.canClaim
+      );
 
+    currentUser.total =
+      Number(
+        currentUser.balance || 0
+      ) +
+      Number(
+        currentUser.mining || 0
+      );
 
-          currentUser.total =
-            Number(
-              currentUser.balance
-            ) +
-            10;
+    updateUserUI();
 
+  } catch (err) {
 
-          updateUserUI();
-
-        }
-
-      },
-      1000
+    console.warn(
+      "Mining sync:",
+      err.message
     );
-
+  }
 }
 
 
@@ -1354,9 +1227,7 @@ function startMiningTimer() {
 ========================= */
 
 document
-  .getElementById(
-    "claimBtn"
-  )
+  .getElementById("claimBtn")
   .addEventListener(
     "click",
     async () => {
@@ -1365,48 +1236,40 @@ document
 
         clearError();
 
-
         const btn =
           document.getElementById(
             "claimBtn"
           );
 
-
-        btn.disabled =
-          true;
-
+        btn.disabled = true;
 
         btn.textContent =
           "⏳ CLAIMING...";
-
 
         const result =
           await api(
             "/api/claim",
             {
               method: "POST",
-              body:
-                JSON.stringify({})
+              body: JSON.stringify({})
             }
           );
 
-
         currentUser =
           result.user;
-
 
         document.getElementById(
           "claimMessage"
         ).innerHTML =
           `<div class="success">
-            ✅ ${Number(result.reward).toFixed(2)} VLX Claimed
+            ✅ ${Number(
+              result.reward
+            ).toFixed(2)} VLX Claimed
           </div>`;
-
 
         updateUserUI();
 
         startMiningTimer();
-
 
       } catch (err) {
 
@@ -1415,9 +1278,7 @@ document
         );
 
         updateUserUI();
-
       }
-
     }
   );
 
@@ -1430,17 +1291,24 @@ async function loadTasks() {
 
   try {
 
-    const tasks =
+    const data =
       await api(
         "/api/tasks"
       );
 
+    const tasks =
+      Array.isArray(data)
+        ? data
+        : (
+          Array.isArray(data.tasks)
+            ? data.tasks
+            : []
+        );
 
     const list =
       document.getElementById(
         "taskList"
       );
-
 
     if (!tasks.length) {
 
@@ -1450,245 +1318,150 @@ async function loadTasks() {
         </div>`;
 
       return;
-
     }
-
 
     list.innerHTML =
       tasks
-        .map(
-          task => {
+        .map(task => {
 
-            const claimed =
-              task.claimed;
+          const claimed =
+            Boolean(
+              task.claimed
+            );
 
+          const target =
+            task.url ||
+            task.target ||
+            "";
 
-            const isXTask =
-              task.type ===
-                "x_follow" ||
-              task.type ===
-                "x_repost";
+          return `
+            <div class="task">
 
+              <div class="task-title">
+                ${escapeHtml(
+                  task.title
+                )}
+              </div>
 
-            return `
-              <div class="task">
+              ${
+                task.description
+                  ? `
+                    <div class="task-description">
+                      ${escapeHtml(
+                        task.description
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
 
-                <div class="task-title">
-                  ${escapeHtml(
-                    task.title
-                  )}
-                </div>
+              <div class="task-reward">
+                🎁 ${Number(
+                  task.reward || 0
+                ).toFixed(2)} VLX
+              </div>
 
-                <div class="task-reward">
-                  🎁 ${
-                    Number(
-                      task.reward
-                    ).toFixed(2)
-                  } VLX
-                </div>
+              <div class="task-actions">
 
-                <div class="task-actions">
+                <button
+                  class="secondary"
+                  onclick="openTask('${escapeAttr(target)}')"
+                >
+                  JOIN
+                </button>
 
-                  <button
-                    class="secondary"
-                    onclick="openTask('${escapeAttr(task.url)}')"
-                  >
-                    ${
-                      isXTask
-                        ? "OPEN X"
-                        : "JOIN"
-                    }
-                  </button>
-
-                  <button
-                    ${
-                      claimed
-                        ? "disabled"
-                        : ""
-                    }
-
-                    onclick="${
-                      claimed
-                        ? ""
-                        : isXTask
-                          ? `verifyXTask(${task.id})`
-                          : `claimTask(${task.id})`
-                    }"
-                  >
-                    ${
-                      claimed
-                        ? "CLAIMED"
-                        : "VERIFY"
-                    }
-                  </button>
-
-                </div>
+                <button
+                  ${
+                    claimed
+                      ? "disabled"
+                      : ""
+                  }
+                  onclick="${
+                    claimed
+                      ? ""
+                      : `claimTask(${Number(
+                          task.id
+                        )})`
+                  }"
+                >
+                  ${
+                    claimed
+                      ? "CLAIMED"
+                      : "VERIFY"
+                  }
+                </button>
 
               </div>
-            `;
 
-          }
-        )
+            </div>
+          `;
+
+        })
         .join("");
-
 
   } catch (err) {
 
     document.getElementById(
       "taskList"
-    ).textContent =
-      err.message;
-
+    ).innerHTML =
+      `<div style="color:#ff8b8b;">
+        ❌ ${escapeHtml(
+          err.message
+        )}
+      </div>`;
   }
-
 }
 
 
-function openTask(
-  url
-) {
+function openTask(url) {
+
+  if (!url) {
+    return;
+  }
 
   window.open(
     url,
     "_blank"
   );
-
 }
 
 
-/* =========================
-   TELEGRAM TASK
-========================= */
-
-async function claimTask(
-  taskId
-) {
+async function claimTask(taskId) {
 
   try {
 
     clearError();
-
 
     const result =
       await api(
         "/api/task/claim",
         {
           method: "POST",
-          body:
-            JSON.stringify({
-              taskId
-            })
+          body: JSON.stringify({
+            taskId
+          })
         }
       );
 
-
     currentUser =
       result.user;
-
 
     updateUserUI();
 
     await loadTasks();
 
-
     tg.showAlert(
-      `✅ ${
-        Number(
-          result.reward
-        ).toFixed(2)
-      } VLX added`
+      `✅ ${Number(
+        result.reward || 0
+      ).toFixed(2)} VLX added`
     );
-
 
   } catch (err) {
 
     showError(
       err.message
     );
-
   }
-
-}
-
-
-/* =========================
-   X TASK
-========================= */
-
-async function verifyXTask(
-  taskId
-) {
-
-  try {
-
-    clearError();
-
-
-    const status =
-      await api(
-        "/api/x/status"
-      );
-
-
-    if (!status.connected) {
-
-      tg.showAlert(
-        "Connect your X account first."
-      );
-
-
-      window.open(
-        `/api/x/auth?initData=${encodeURIComponent(
-          tg.initData
-        )}`,
-        "_blank"
-      );
-
-
-      return;
-
-    }
-
-
-    const result =
-      await api(
-        "/api/x/verify-task",
-        {
-          method: "POST",
-          body:
-            JSON.stringify({
-              taskId
-            })
-        }
-      );
-
-
-    currentUser =
-      result.user;
-
-
-    updateUserUI();
-
-    await loadTasks();
-
-
-    tg.showAlert(
-      `✅ ${
-        Number(
-          result.reward
-        ).toFixed(2)
-      } VLX added`
-    );
-
-
-  } catch (err) {
-
-    showError(
-      err.message
-    );
-
-  }
-
 }
 
 
@@ -1705,36 +1478,43 @@ async function loadReferral() {
         "/api/referral"
       );
 
-
     document.getElementById(
       "refCount"
     ).textContent =
-      data.count;
+      Number(
+        data.referrals || 0
+      );
 
+    const link =
+      data.link || "";
 
     document.getElementById(
       "refLink"
     ).textContent =
-      data.link;
-
+      link;
 
     document.getElementById(
       "copyRef"
     ).onclick =
       async () => {
 
-        await navigator.clipboard
-          .writeText(
-            data.link
+        try {
+
+          await navigator
+            .clipboard
+            .writeText(link);
+
+          tg.showAlert(
+            "Referral link copied!"
           );
 
+        } catch {
 
-        tg.showAlert(
-          "Referral link copied!"
-        );
-
+          tg.showAlert(
+            "Could not copy the link."
+          );
+        }
       };
-
 
   } catch (err) {
 
@@ -1742,9 +1522,7 @@ async function loadReferral() {
       "refLink"
     ).textContent =
       err.message;
-
   }
-
 }
 
 
@@ -1761,14 +1539,23 @@ async function loadLeaderboard() {
         "/api/leaderboard"
       );
 
+    const users =
+      Array.isArray(data)
+        ? data
+        : (
+          Array.isArray(
+            data.leaderboard
+          )
+            ? data.leaderboard
+            : []
+        );
 
     const box =
       document.getElementById(
         "leaderboard"
       );
 
-
-    if (!data.length) {
+    if (!users.length) {
 
       box.innerHTML =
         `<div class="small">
@@ -1776,33 +1563,31 @@ async function loadLeaderboard() {
         </div>`;
 
       return;
-
     }
 
-
     box.innerHTML =
-      data
+      users
         .map(
           user => `
             <div class="rank-item">
 
               <div>
-                #${user.rank}
-                ${
-                  escapeHtml(
-                    user.first_name ||
-                    user.username ||
-                    "User"
-                  )
-                }
+                #${Number(
+                  user.rank || 0
+                )}
+
+                ${escapeHtml(
+                  user.first_name ||
+                  user.username ||
+                  "User"
+                )}
               </div>
 
               <div>
-                ${
-                  Number(
-                    user.balance
-                  ).toFixed(2)
-                } VLX
+                ${Number(
+                  user.balance || 0
+                ).toFixed(2)}
+                VLX
               </div>
 
             </div>
@@ -1810,16 +1595,13 @@ async function loadLeaderboard() {
         )
         .join("");
 
-
   } catch (err) {
 
     document.getElementById(
       "leaderboard"
     ).textContent =
       err.message;
-
   }
-
 }
 
 
@@ -1828,9 +1610,7 @@ async function loadLeaderboard() {
 ========================= */
 
 document
-  .getElementById(
-    "saveWallet"
-  )
+  .getElementById("saveWallet")
   .addEventListener(
     "click",
     async () => {
@@ -1839,45 +1619,34 @@ document
 
         clearError();
 
-
         const wallet =
-          document
-            .getElementById(
-              "walletInput"
-            )
-            .value
-            .trim();
-
+          document.getElementById(
+            "walletInput"
+          ).value.trim();
 
         await api(
           "/api/wallet",
           {
             method: "POST",
-            body:
-              JSON.stringify({
-                wallet
-              })
+            body: JSON.stringify({
+              wallet
+            })
           }
         );
-
 
         currentUser.wallet =
           wallet;
 
-
         tg.showAlert(
           "✅ Wallet saved"
         );
-
 
       } catch (err) {
 
         showError(
           err.message
         );
-
       }
-
     }
   );
 
@@ -1898,59 +1667,60 @@ document
 
         clearError();
 
-
         const amount =
           Number(
-            document
-              .getElementById(
-                "withdrawAmount"
-              )
-              .value
+            document.getElementById(
+              "withdrawAmount"
+            ).value
           );
-
 
         const result =
           await api(
             "/api/withdraw",
             {
               method: "POST",
-              body:
-                JSON.stringify({
-                  amount
-                })
+              body: JSON.stringify({
+                amount
+              })
             }
           );
 
+        if (currentUser) {
 
-        currentUser =
-          result.user;
+          currentUser.balance =
+            Number(
+              currentUser.balance || 0
+            ) - amount;
 
+          currentUser.total =
+            Number(
+              currentUser.balance || 0
+            ) +
+            Number(
+              currentUser.mining || 0
+            );
+        }
 
         updateUserUI();
-
 
         document.getElementById(
           "withdrawMessage"
         ).innerHTML =
           `<div class="success">
-            ✅ Withdrawal submitted — PENDING
+            ✅ Withdrawal submitted successfully.<br>
+            Status: <b>PENDING</b>
           </div>`;
-
 
         document.getElementById(
           "withdrawAmount"
-        ).value =
-          "";
-
+        ).value = "";
 
       } catch (err) {
 
         showError(
           err.message
         );
-
       }
-
     }
   );
 
@@ -1962,59 +1732,35 @@ document
 const PRESALE_RATE =
   5000;
 
-
 const PRESALE_ALLOCATION =
   150000000;
 
-
 const PRESALE_TON_ADDRESS =
-  "UQASlSXzQBNaRnFNLgui-Xp_LqZ4NNuTUODRsBAm--sAph8u";
-
-
-/*
-  TON Connect manifest.
-  This file will be added separately:
-  /tonconnect-manifest.json
-*/
+  "UQASlSXzQBNaRnFNLgui-XpLqZ4NNuTUODRsBAm--sAph8u";
 
 const TON_CONNECT_MANIFEST =
   `${window.location.origin}/tonconnect-manifest.json`;
 
-
-let tonConnectUI =
-  null;
+let tonConnectUI = null;
 
 
-/* =========================
-   SHORT TON ADDRESS
-========================= */
+function shortAddress(address) {
 
-function shortAddress(
-  address
-) {
-
-  if (!address)
+  if (!address) {
     return "";
+  }
 
-
-  if (
-    address.length <= 16
-  )
+  if (address.length <= 18) {
     return address;
-
+  }
 
   return (
     address.slice(0, 8) +
     "..." +
     address.slice(-8)
   );
-
 }
 
-
-/* =========================
-   UPDATE TON WALLET UI
-========================= */
 
 function updatePresaleWalletUI(
   wallet
@@ -2025,65 +1771,48 @@ function updatePresaleWalletUI(
       "presaleWalletStatus"
     );
 
-
   const address =
     document.getElementById(
       "presaleWalletAddress"
     );
-
 
   const buyBtn =
     document.getElementById(
       "buyVlxBtn"
     );
 
-
   if (!wallet) {
 
     status.textContent =
       "Not Connected";
 
-
     address.textContent =
       "";
-
 
     buyBtn.disabled =
       true;
 
-
     buyBtn.textContent =
       "🔗 CONNECT WALLET TO BUY";
 
-
     return;
-
   }
-
 
   status.textContent =
     "🟢 Connected";
-
 
   address.textContent =
     shortAddress(
       wallet.account.address
     );
 
-
   buyBtn.disabled =
     false;
 
-
   buyBtn.textContent =
     "💎 BUY VLX";
-
 }
 
-
-/* =========================
-   TON CONNECT INIT
-========================= */
 
 function initTonConnect() {
 
@@ -2097,23 +1826,18 @@ function initTonConnect() {
     );
 
     return;
-
   }
-
 
   try {
 
     tonConnectUI =
-      new TON_CONNECT_UI.TonConnectUI(
-        {
-          manifestUrl:
-            TON_CONNECT_MANIFEST,
+      new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl:
+          TON_CONNECT_MANIFEST,
 
-          buttonRootId:
-            "tonConnectButton"
-        }
-      );
-
+        buttonRootId:
+          "tonConnectButton"
+      });
 
     tonConnectUI.onStatusChange(
       wallet => {
@@ -2121,15 +1845,12 @@ function initTonConnect() {
         updatePresaleWalletUI(
           wallet
         );
-
       }
     );
-
 
     updatePresaleWalletUI(
       tonConnectUI.wallet
     );
-
 
   } catch (err) {
 
@@ -2137,14 +1858,60 @@ function initTonConnect() {
       "TON Connect initialization failed:",
       err
     );
-
   }
-
 }
 
 
 /* =========================
-   TON CALCULATOR
+   TON NANO CONVERSION
+========================= */
+
+function tonToNanoTON(
+  value
+) {
+
+  const input =
+    String(value || "")
+      .trim();
+
+  if (
+    !/^\d+(\.\d{1,9})?$/.test(
+      input
+    )
+  ) {
+
+    throw new Error(
+      "Enter a valid TON amount."
+    );
+  }
+
+  const parts =
+    input.split(".");
+
+  const whole =
+    BigInt(
+      parts[0] || "0"
+    );
+
+  const fraction =
+    (parts[1] || "")
+      .padEnd(
+        9,
+        "0"
+      );
+
+  return (
+    whole *
+      1000000000n +
+    BigInt(
+      fraction || "0"
+    )
+  ).toString();
+}
+
+
+/* =========================
+   PRESALE CALCULATOR
 ========================= */
 
 document
@@ -2155,31 +1922,90 @@ document
     "input",
     () => {
 
+      const input =
+        document.getElementById(
+          "presaleTonAmount"
+        );
+
       const ton =
         Number(
-          document.getElementById(
-            "presaleTonAmount"
-          ).value
+          input.value
         ) || 0;
-
 
       const vlx =
         ton *
         PRESALE_RATE;
-
 
       document.getElementById(
         "presaleVlxAmount"
       ).textContent =
         vlx.toLocaleString() +
         " VLX";
-
     }
   );
 
 
 /* =========================
-   BUY BUTTON
+   PRESALE CONFIG
+========================= */
+
+async function updatePresaleInfo() {
+
+  try {
+
+    const data =
+      await api(
+        "/api/presale/config"
+      );
+
+    const remaining =
+      Number(
+        data.remaining || 0
+      );
+
+    const note =
+      document.querySelector(
+        ".presale-note"
+      );
+
+    if (!data.active) {
+
+      document.getElementById(
+        "buyVlxBtn"
+      ).disabled = true;
+
+      document.getElementById(
+        "buyVlxBtn"
+      ).textContent =
+        "⛔ PRESALE SOLD OUT";
+
+      if (note) {
+
+        note.innerHTML =
+          `⛔ Presale allocation is sold out.`;
+      }
+
+    } else if (note) {
+
+      note.innerHTML =
+        `⚠️ Remaining allocation:
+        <b>${remaining.toLocaleString()} VLX</b>.
+        Payment is verified by the VELTRIX server before
+        VLX is credited.`;
+    }
+
+  } catch (err) {
+
+    console.warn(
+      "Presale config:",
+      err.message
+    );
+  }
+}
+
+
+/* =========================
+   BUY VLX
 ========================= */
 
 document
@@ -2194,63 +2020,63 @@ document
 
         clearError();
 
+        const message =
+          document.getElementById(
+            "presaleMessage"
+          );
+
+        const btn =
+          document.getElementById(
+            "buyVlxBtn"
+          );
 
         if (!tonConnectUI) {
 
           throw new Error(
             "TON Connect is not ready yet."
           );
-
         }
-
 
         if (!tonConnectUI.wallet) {
 
           await tonConnectUI.openModal();
 
           return;
-
         }
 
-
-        const tonInput =
+        const input =
           document.getElementById(
             "presaleTonAmount"
-          ).value
-          .trim();
+          );
 
+        const tonInput =
+          input.value.trim();
 
         if (!tonInput) {
 
           throw new Error(
             "Enter the TON amount first."
           );
-
         }
-
 
         const ton =
           Number(
             tonInput
           );
 
-
         if (
           !Number.isFinite(ton) ||
-          ton <= 0
+          ton < 0.01
         ) {
 
           throw new Error(
-            "Enter a valid TON amount."
+            "Minimum presale amount is 0.01 TON."
           );
-
         }
-
 
         const vlx =
           ton *
           PRESALE_RATE;
-
 
         if (
           vlx >
@@ -2260,43 +2086,184 @@ document
           throw new Error(
             "Presale allocation exceeded."
           );
-
         }
 
+        const wallet =
+          tonConnectUI
+            .wallet
+            .account
+            .address;
 
-        /*
-          IMPORTANT:
+        btn.disabled =
+          true;
 
-          Real TON transfer is NOT sent in this
-          frontend-only stage.
+        btn.textContent =
+          "⏳ CREATING ORDER...";
 
-          The backend verification must be
-          installed first so that a successful
-          payment can be matched and the correct
-          VLX amount can be credited.
-
-          This prevents accidental loss of TON.
-        */
-
-        document.getElementById(
-          "presaleMessage"
-        ).innerHTML =
+        message.innerHTML =
           `<div class="success">
-            🟢 Wallet connected successfully.<br><br>
-            💰 Amount: ${tonInput} TON<br>
-            🪙 VLX: ${vlx.toLocaleString()} VLX<br><br>
-            ⏳ Payment is waiting for secure
-            server-side verification.
+            ⏳ Preparing your presale order...
           </div>`;
 
+        /* CREATE SERVER ORDER */
+
+        const orderData =
+          await api(
+            "/api/presale/create-order",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                tonAmount: ton,
+                wallet
+              })
+            }
+          );
+
+        const order =
+          orderData.order;
+
+        /* SEND REAL TON TRANSACTION */
+
+        btn.textContent =
+          "💎 CONFIRM IN WALLET...";
+
+        const nanoTON =
+          tonToNanoTON(
+            tonInput
+          );
+
+        await tonConnectUI.sendTransaction({
+          validUntil:
+            Math.floor(
+              Date.now() / 1000
+            ) + 600,
+
+          network:
+            "-239",
+
+          messages: [
+            {
+              address:
+                PRESALE_TON_ADDRESS,
+
+              amount:
+                nanoTON
+            }
+          ]
+        });
+
+        message.innerHTML =
+          `<div class="success">
+            ✅ Transaction sent.<br>
+            ⏳ Waiting for blockchain verification...
+          </div>`;
+
+        /* VERIFY ORDER */
+
+        btn.textContent =
+          "⏳ VERIFYING...";
+
+        let approved =
+          false;
+
+        for (
+          let i = 0;
+          i < 20;
+          i++
+        ) {
+
+          await new Promise(
+            resolve =>
+              setTimeout(
+                resolve,
+                3000
+              )
+          );
+
+          try {
+
+            const statusData =
+              await api(
+                `/api/presale/order/${order.id}`
+              );
+
+            if (
+              statusData.status ===
+              "APPROVED"
+            ) {
+
+              approved =
+                true;
+
+              message.innerHTML =
+                `<div class="success">
+                  ✅ Payment verified successfully.<br>
+                  💎 ${Number(
+                    statusData.order.vlx_amount
+                  ).toLocaleString()} VLX added to your presale balance.
+                </div>`;
+
+              break;
+            }
+
+            if (
+              statusData.status ===
+                "EXPIRED" ||
+              statusData.status ===
+                "REJECTED"
+            ) {
+
+              throw new Error(
+                `Order ${statusData.status.toLowerCase()}.`
+              );
+            }
+
+          } catch (err) {
+
+            if (
+              String(
+                err.message
+              ).includes(
+                "expired"
+              ) ||
+              String(
+                err.message
+              ).includes(
+                "rejected"
+              )
+            ) {
+
+              throw err;
+            }
+          }
+        }
+
+        if (!approved) {
+
+          message.innerHTML =
+            `<div class="success">
+              ⏳ Payment was sent but is still being verified.
+              Your order remains PENDING and will be checked again by the system.
+            </div>`;
+        }
+
+        await loadPresaleOrders();
+
+        await updatePresaleInfo();
+
+        btn.disabled =
+          false;
+
+        updatePresaleWalletUI(
+          tonConnectUI.wallet
+        );
 
       } catch (err) {
 
         console.error(
-          "Presale error:",
+          "Presale transaction error:",
           err
         );
-
 
         document.getElementById(
           "presaleMessage"
@@ -2304,14 +2271,117 @@ document
           `<div style="color:#ff8b8b;">
             ❌ ${escapeHtml(
               err.message ||
-              "Presale error."
+              "Transaction cancelled."
             )}
           </div>`;
 
+        updatePresaleWalletUI(
+          tonConnectUI?.wallet ||
+          null
+        );
       }
-
     }
   );
+
+
+/* =========================
+   PRESALE ORDERS
+========================= */
+
+async function loadPresaleOrders() {
+
+  const box =
+    document.getElementById(
+      "presaleOrders"
+    );
+
+  if (!box) {
+    return;
+  }
+
+  try {
+
+    const data =
+      await api(
+        "/api/presale/orders"
+      );
+
+    const orders =
+      Array.isArray(
+        data.orders
+      )
+        ? data.orders
+        : [];
+
+    if (!orders.length) {
+
+      box.innerHTML =
+        `<div class="small">
+          No presale orders yet.
+        </div>`;
+
+      return;
+    }
+
+    box.innerHTML =
+      orders
+        .map(order => {
+
+          const status =
+            String(
+              order.status ||
+              "PENDING"
+            ).toUpperCase();
+
+          return `
+            <div class="order-item">
+
+              <div>
+                💰 TON:
+                <b>
+                  ${Number(
+                    order.ton_amount || 0
+                  ).toFixed(2)}
+                </b>
+              </div>
+
+              <div>
+                💎 VLX:
+                <b>
+                  ${Number(
+                    order.vlx_amount || 0
+                  ).toLocaleString()}
+                </b>
+              </div>
+
+              <div class="status">
+                ${
+                  status === "APPROVED"
+                    ? "✅ APPROVED"
+                    : status === "EXPIRED"
+                      ? "⌛ EXPIRED"
+                      : status === "REJECTED"
+                        ? "❌ REJECTED"
+                        : "⏳ PENDING"
+                }
+              </div>
+
+            </div>
+          `;
+
+        })
+        .join("");
+
+  } catch (err) {
+
+    box.innerHTML =
+      `<div style="color:#ff8b8b;">
+        ❌ ${escapeHtml(
+          err.message
+        )}
+      </div>`;
+  }
+}
 
 
 /* =========================
@@ -2322,102 +2392,96 @@ document
   .querySelectorAll(
     ".navBtn"
   )
-  .forEach(
-    button => {
+  .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        async () => {
+    button.addEventListener(
+      "click",
+      async () => {
 
-          const section =
-            button.dataset.section;
+        const section =
+          button.dataset.section;
 
-
-          document
-            .querySelectorAll(
-              ".section"
-            )
-            .forEach(
-              el =>
-                el.classList.remove(
-                  "active"
-                )
-            );
-
-
-          document
-            .getElementById(
-              section
-            )
-            .classList.add(
-              "active"
-            );
-
-
-          document
-            .querySelectorAll(
-              ".navBtn"
-            )
-            .forEach(
-              el =>
-                el.classList.remove(
-                  "active"
-                )
-            );
-
-
-          button.classList.add(
-            "active"
+        document
+          .querySelectorAll(
+            ".section"
+          )
+          .forEach(
+            el =>
+              el.classList.remove(
+                "active"
+              )
           );
 
+        const target =
+          document.getElementById(
+            section
+          );
 
-          if (
-            section ===
-            "tasks"
-          ) {
-
-            await loadTasks();
-
-          }
-
-
-          if (
-            section ===
-            "friends"
-          ) {
-
-            await loadReferral();
-
-          }
-
-
-          if (
-            section ===
-            "rank"
-          ) {
-
-            await loadLeaderboard();
-
-          }
-
-
-          if (
-            section ===
-            "presale"
-          ) {
-
-            updatePresaleWalletUI(
-              tonConnectUI?.wallet ||
-              null
-            );
-
-          }
-
+        if (target) {
+          target.classList.add(
+            "active"
+          );
         }
-      );
 
-    }
-  );
+        document
+          .querySelectorAll(
+            ".navBtn"
+          )
+          .forEach(
+            el =>
+              el.classList.remove(
+                "active"
+              )
+          );
+
+        button.classList.add(
+          "active"
+        );
+
+        clearError();
+
+        if (
+          section ===
+          "tasks"
+        ) {
+
+          await loadTasks();
+        }
+
+        if (
+          section ===
+          "friends"
+        ) {
+
+          await loadReferral();
+        }
+
+        if (
+          section ===
+          "rank"
+        ) {
+
+          await loadLeaderboard();
+        }
+
+        if (
+          section ===
+          "presale"
+        ) {
+
+          updatePresaleWalletUI(
+            tonConnectUI?.wallet ||
+            null
+          );
+
+          await updatePresaleInfo();
+
+          await loadPresaleOrders();
+        }
+
+      }
+    );
+  });
 
 
 /* =========================
@@ -2429,7 +2493,7 @@ function escapeHtml(
 ) {
 
   return String(
-    value || ""
+    value ?? ""
   )
     .replace(
       /&/g,
@@ -2451,7 +2515,6 @@ function escapeHtml(
       /'/g,
       "&#039;"
     );
-
 }
 
 
@@ -2460,7 +2523,7 @@ function escapeAttr(
 ) {
 
   return String(
-    value || ""
+    value ?? ""
   )
     .replace(
       /\\/g,
@@ -2470,12 +2533,11 @@ function escapeAttr(
       /'/g,
       "\\'"
     );
-
 }
 
 
 /* =========================
-   ADMIN SECURITY
+   ADMIN
 ========================= */
 
 const ADMIN_ID =
@@ -2487,59 +2549,38 @@ function isAdmin() {
   const user =
     tg.initDataUnsafe?.user;
 
-
-  return (
+  return Boolean(
     user &&
-    String(user.id) ===
-      ADMIN_ID
+    String(
+      user.id
+    ) === ADMIN_ID
   );
-
 }
 
 
-/* =========================
-   ADMIN INIT
-========================= */
-
 function initAdminPanel() {
-
-  if (!isAdmin()) {
-
-    const panel =
-      document.getElementById(
-        "adminTaskPanel"
-      );
-
-
-    if (panel) {
-
-      panel.style.display =
-        "none";
-
-    }
-
-
-    return;
-
-  }
-
 
   const panel =
     document.getElementById(
       "adminTaskPanel"
     );
 
-
-  if (!panel)
+  if (!panel) {
     return;
+  }
 
+  if (!isAdmin()) {
+
+    panel.style.display =
+      "none";
+
+    return;
+  }
 
   panel.style.display =
     "block";
 
-
   loadAdminTasks();
-
 }
 
 
@@ -2562,107 +2603,112 @@ document
         );
 
         return;
-
       }
-
 
       const resultBox =
         document.getElementById(
           "adminTaskResult"
         );
 
-
       const title =
-        document
-          .getElementById(
-            "adminTaskTitle"
-          )
-          .value
-          .trim();
+        document.getElementById(
+          "adminTaskTitle"
+        ).value.trim();
 
+      const description =
+        document.getElementById(
+          "adminTaskDescription"
+        ).value.trim();
 
       const url =
-        document
-          .getElementById(
-            "adminTaskUrl"
-          )
-          .value
-          .trim();
-
+        document.getElementById(
+          "adminTaskUrl"
+        ).value.trim();
 
       const channel =
-        document
-          .getElementById(
-            "adminTaskChannel"
-          )
-          .value
-          .trim();
-
+        document.getElementById(
+          "adminTaskChannel"
+        ).value.trim();
 
       const reward =
         Number(
-          document
-            .getElementById(
-              "adminTaskReward"
-            )
-            .value
+          document.getElementById(
+            "adminTaskReward"
+          ).value
         );
 
+      if (!title) {
 
-      if (
-        !title ||
-        !url
-      ) {
-
-        resultBox.textContent =
-          "❌ Title and URL are required.";
+        resultBox.innerHTML =
+          `<span style="color:#ff8b8b;">
+            ❌ Task title is required.
+          </span>`;
 
         return;
-
       }
 
+      if (!url) {
+
+        resultBox.innerHTML =
+          `<span style="color:#ff8b8b;">
+            ❌ Telegram URL is required.
+          </span>`;
+
+        return;
+      }
+
+      if (
+        !Number.isFinite(
+          reward
+        ) ||
+        reward < 0
+      ) {
+
+        resultBox.innerHTML =
+          `<span style="color:#ff8b8b;">
+            ❌ Invalid reward.
+          </span>`;
+
+        return;
+      }
 
       try {
 
         resultBox.textContent =
           "⏳ Adding task...";
 
-
         await api(
-          "/api/admin/task",
+          "/api/admin/tasks",
           {
             method: "POST",
 
-            body:
-              JSON.stringify({
-                title,
-                url,
-                channel,
-                reward
-              })
-
+            body: JSON.stringify({
+              title,
+              description,
+              reward,
+              target: url,
+              targetId:
+                channel || null
+            })
           }
         );
-
 
         resultBox.innerHTML =
           `<span class="success">
             ✅ Task added successfully.
           </span>`;
 
+        document.getElementById(
+          "adminTaskTitle"
+        ).value = "";
 
-        document
-          .getElementById(
-            "adminTaskTitle"
-          )
-          .value =
-          "";
-
+        document.getElementById(
+          "adminTaskDescription"
+        ).value = "";
 
         await loadAdminTasks();
 
         await loadTasks();
-
 
       } catch (err) {
 
@@ -2672,9 +2718,7 @@ document
               err.message
             )}
           </span>`;
-
       }
-
     }
   );
 
@@ -2685,19 +2729,18 @@ document
 
 async function loadAdminTasks() {
 
-  if (!isAdmin())
+  if (!isAdmin()) {
     return;
-
+  }
 
   const list =
     document.getElementById(
       "adminTaskList"
     );
 
-
-  if (!list)
+  if (!list) {
     return;
-
+  }
 
   try {
 
@@ -2706,39 +2749,19 @@ async function loadAdminTasks() {
         Loading tasks...
       </div>`;
 
-
-    const response =
-      await fetch(
-        "/api/admin/tasks",
-        {
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            "X-Telegram-Init-Data":
-              tg.initData
-
-          }
-        }
-      );
-
-
     const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Failed to load tasks"
+      await api(
+        "/api/admin/tasks"
       );
 
-    }
+    const tasks =
+      Array.isArray(
+        data.tasks
+      )
+        ? data.tasks
+        : [];
 
-
-    if (!data.length) {
+    if (!tasks.length) {
 
       list.innerHTML =
         `<div class="small">
@@ -2746,15 +2769,12 @@ async function loadAdminTasks() {
         </div>`;
 
       return;
-
     }
 
-
     list.innerHTML =
-      data
+      tasks
         .map(
           task => `
-
             <div class="admin-task">
 
               <div class="admin-task-title">
@@ -2764,44 +2784,52 @@ async function loadAdminTasks() {
               </div>
 
               <div class="small">
-                🎁 ${
-                  Number(
-                    task.reward
-                  ).toFixed(2)
-                } VLX
+                🎁 ${Number(
+                  task.reward || 0
+                ).toFixed(2)} VLX
               </div>
 
-              ${
-                task.channel
-                  ? `
-                    <div class="small">
-                      📢 ${escapeHtml(
-                        task.channel
-                      )}
-                    </div>
-                  `
-                  : ""
-              }
+              <div class="small">
+                📢 ${escapeHtml(
+                  task.target_id ||
+                  task.target ||
+                  ""
+                )}
+              </div>
 
               <div class="admin-task-url">
                 ${escapeHtml(
-                  task.url
+                  task.target ||
+                  ""
                 )}
               </div>
 
               <button
+                class="admin-toggle"
+                onclick="toggleVeltrixTask(${Number(
+                  task.id
+                )})"
+              >
+                ${
+                  task.active
+                    ? "⏸️ DISABLE TASK"
+                    : "▶️ ENABLE TASK"
+                }
+              </button>
+
+              <button
                 class="admin-delete"
-                onclick="deleteVeltrixTask(${Number(task.id)})"
+                onclick="deleteVeltrixTask(${Number(
+                  task.id
+                )})"
               >
                 🗑️ DELETE TASK
               </button>
 
             </div>
-
           `
         )
         .join("");
-
 
   } catch (err) {
 
@@ -2811,9 +2839,52 @@ async function loadAdminTasks() {
           err.message
         )}
       </div>`;
+  }
+}
 
+
+/* =========================
+   ADMIN TOGGLE TASK
+========================= */
+
+async function toggleVeltrixTask(
+  taskId
+) {
+
+  if (!isAdmin()) {
+
+    tg.showAlert(
+      "❌ Admin access required."
+    );
+
+    return;
   }
 
+  try {
+
+    await api(
+      `/api/admin/tasks/${taskId}/toggle`,
+      {
+        method: "POST",
+        body: JSON.stringify({})
+      }
+    );
+
+    tg.showAlert(
+      "✅ Task status updated."
+    );
+
+    await loadAdminTasks();
+
+    await loadTasks();
+
+  } catch (err) {
+
+    tg.showAlert(
+      "❌ " +
+      err.message
+    );
+  }
 }
 
 
@@ -2832,65 +2903,33 @@ async function deleteVeltrixTask(
     );
 
     return;
-
   }
-
 
   const confirmed =
     window.confirm(
       "Are you sure you want to delete this task?"
     );
 
-
-  if (!confirmed)
+  if (!confirmed) {
     return;
-
+  }
 
   try {
 
-    const response =
-      await fetch(
-        `/api/admin/task/${taskId}`,
-        {
-          method: "DELETE",
-
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            "X-Telegram-Init-Data":
-              tg.initData
-
-          }
-
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Task deletion failed"
-      );
-
-    }
-
+    await api(
+      `/api/admin/tasks/${taskId}`,
+      {
+        method: "DELETE"
+      }
+    );
 
     tg.showAlert(
       "✅ Task deleted successfully."
     );
 
-
     await loadAdminTasks();
 
     await loadTasks();
-
 
   } catch (err) {
 
@@ -2898,9 +2937,7 @@ async function deleteVeltrixTask(
       "❌ " +
       err.message
     );
-
   }
-
 }
 
 
@@ -2916,24 +2953,18 @@ const VLX_LISTING_DATE =
 
 function updateVLXListingCountdown() {
 
-  const now =
-    Date.now();
-
-
   const distance =
     VLX_LISTING_DATE -
-    now;
-
+    Date.now();
 
   const countdown =
     document.getElementById(
       "vlxCountdown"
     );
 
-
-  if (!countdown)
+  if (!countdown) {
     return;
-
+  }
 
   if (
     distance <= 0
@@ -2943,100 +2974,109 @@ function updateVLXListingCountdown() {
       "🚀 <b>VLX LISTING IS LIVE!</b>";
 
     return;
-
   }
-
 
   const days =
     Math.floor(
       distance /
-      (
-        1000 *
-        60 *
-        60 *
-        24
-      )
+      (1000 * 60 * 60 * 24)
     );
-
 
   const hours =
     Math.floor(
       (
         distance %
-        (
-          1000 *
-          60 *
-          60 *
-          24
-        )
+        (1000 * 60 * 60 * 24)
       ) /
-      (
-        1000 *
-        60 *
-        60
-      )
+      (1000 * 60 * 60)
     );
-
 
   const minutes =
     Math.floor(
       (
         distance %
-        (
-          1000 *
-          60 *
-          60
-        )
+        (1000 * 60 * 60)
       ) /
-      (
-        1000 *
-        60
-      )
+      (1000 * 60)
     );
-
 
   const seconds =
     Math.floor(
       (
         distance %
-        (
-          1000 *
-          60
-        )
+        (1000 * 60)
       ) /
       1000
     );
 
-
   countdown.innerHTML =
     `⏳ <b>${days} Days</b> : ` +
-    `<b>${String(hours).padStart(2, "0")} Hours</b> : ` +
-    `<b>${String(minutes).padStart(2, "0")} Minutes</b> : ` +
-    `<b>${String(seconds).padStart(2, "0")} Seconds</b>`;
-
+    `<b>${String(
+      hours
+    ).padStart(2, "0")} Hours</b> : ` +
+    `<b>${String(
+      minutes
+    ).padStart(2, "0")} Minutes</b> : ` +
+    `<b>${String(
+      seconds
+    ).padStart(2, "0")} Seconds</b>`;
 }
 
 
 /* =========================
-   START
+   START APP
 ========================= */
 
-initTonConnect();
+async function startApp() {
 
-updateVLXListingCountdown();
+  try {
+
+    initTonConnect();
+
+    updateVLXListingCountdown();
+
+    setInterval(
+      updateVLXListingCountdown,
+      1000
+    );
+
+    await loadUser();
+
+    await updatePresaleInfo();
+
+    await loadTasks();
+
+    await loadReferral();
+
+    await loadLeaderboard();
+
+    await loadPresaleOrders();
+
+    initAdminPanel();
+
+    miningSyncInterval =
+      setInterval(
+        syncMining,
+        30000
+      );
+
+  } catch (err) {
+
+    console.error(
+      "VELTRIX start error:",
+      err
+    );
+
+    showError(
+      err.message
+    );
+  }
+}
 
 
-setInterval(
-  updateVLXListingCountdown,
-  1000
-);
-
-
-loadUser();
-
-initAdminPanel();
+startApp();
 
 </script>
 
 </body>
-  </html>
+</html>
