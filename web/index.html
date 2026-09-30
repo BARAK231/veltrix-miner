@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -10,9 +11,14 @@
 
   <title>VELTRIX — VLX Miner</title>
 
+  <!-- Telegram Mini App -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+  <!-- TON Connect -->
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -221,6 +227,50 @@
       margin-top: 10px;
     }
 
+    /* =========================
+       PRESALE
+    ========================= */
+
+    .presale-wallet {
+      background: #0d131a;
+      border: 1px solid #27313d;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0 14px;
+    }
+
+    .presale-address {
+      word-break: break-all;
+      color: #8d98a5;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .presale-value {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 8px 0 14px;
+    }
+
+    .presale-note {
+      color: #8d98a5;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    #tonConnectButton {
+      margin-bottom: 12px;
+    }
+
+    #tonConnectButton button {
+      width: 100% !important;
+    }
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
     nav {
       position: fixed;
       left: 0;
@@ -231,16 +281,16 @@
       background: #111820;
       border-top: 1px solid #202b36;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      padding: 8px 5px;
+      grid-template-columns: repeat(6, 1fr);
+      padding: 8px 3px;
       z-index: 100;
     }
 
     nav button {
       background: transparent;
       color: #8d98a5;
-      padding: 8px 2px;
-      font-size: 11px;
+      padding: 8px 1px;
+      font-size: 10px;
     }
 
     nav button.active {
@@ -308,135 +358,87 @@
       margin-top: 10px;
       font-size: 13px;
     }
+
   </style>
+
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- VLX LISTING COUNTDOWN -->
-<div class="card">
+  <!-- =========================
+       VLX LISTING
+  ========================= -->
 
-  <h3>
-    🚀 VLX LISTING
-  </h3>
-
-  <div class="small">
-    📅 27 November 2026
-  </div>
-
-  <br>
-
-  <div id="vlxCountdown">
-    Loading...
-  </div>
-
-</div>
-
-  <header>
-    <div class="logo">VELTRIX</div>
-    <div class="sub">VLX MINER</div>
-  </header>
-
-    <!-- VLX PRESALE -->
   <div class="card">
 
     <h3>
-      💎 VLX PRESALE
+      🚀 VLX LISTING
     </h3>
 
     <div class="small">
-      🔥 PRESALE IS LIVE
+      📅 27 November 2026
     </div>
 
     <br>
 
-    <div class="small">
-      💰 1 TON = 5,000 VLX
-    </div>
-
-    <div class="small">
-      🪙 Available: 150,000,000 VLX
-    </div>
-
-    <br>
-
-    <div class="small">
-      🌐 Payment Network: TON
-    </div>
-
-    <button id="presaleBtn">
-      💎 BUY VLX
-    </button>
-
-    <div id="presaleBox" style="display:none;">
-
-  <br>
-
-  <input
-    id="presaleTonAmount"
-    type="number"
-    step="0.01"
-    min="0.01"
-    placeholder="TON Amount"
-  >
-
-  <div class="small">
-    🪙 You will receive:
-    <b id="presaleVlxAmount">0 VLX</b>
-  </div>
-
-  <br>
-
-  <div class="small">
-    💰 Send TON to:
-  </div>
-
-  <div class="small" style="word-break:break-all;">
-    UQASlSXzQBNaRnFNLgui-Xp_LqZ4NNuTUODRsBAm--sAph8u
-  </div>
-
-  <br>
-
-  <input
-    id="presaleTxHash"
-    type="text"
-    placeholder="TON Transaction Hash"
-    autocomplete="off"
-  >
-
-  <button id="submitPresale">
-    🚀 SUBMIT PRESALE
-  </button>
-
-  <div id="presaleMessage"></div>
-
+    <div id="vlxCountdown">
+      Loading...
     </div>
 
   </div>
+
+
+  <!-- HEADER -->
 
   <header>
-    <div class="logo">VELTRIX</div>
-    <div class="sub">VLX MINER</div>
+
+    <div class="logo">
+      VELTRIX
+    </div>
+
+    <div class="sub">
+      VLX MINER
+    </div>
+
   </header>
 
-  <div id="errorBox" class="error"></div>
 
-  <!-- MINE -->
-  <section id="mine" class="section active">
+  <div
+    id="errorBox"
+    class="error"
+  ></div>
+
+
+  <!-- =========================
+       MINE
+  ========================= -->
+
+  <section
+    id="mine"
+    class="section active"
+  >
 
     <div class="card balance">
-      <div class="balance-title">CLAIMED BALANCE</div>
 
-      <div id="balance" class="balance-number">
+      <div class="balance-title">
+        CLAIMED BALANCE
+      </div>
+
+      <div
+        id="balance"
+        class="balance-number"
+      >
         0.0000
       </div>
 
       <div class="vlx">
         VLX
       </div>
+
     </div>
+
 
     <div class="card mining-box">
 
@@ -444,7 +446,10 @@
         ⛏️ MINING
       </div>
 
-      <div id="mining" class="mining-number">
+      <div
+        id="mining"
+        class="mining-number"
+      >
         0.0000
       </div>
 
@@ -456,11 +461,17 @@
         ⚡ 1.25 VLX / hour
       </div>
 
-      <div id="timer" class="timer">
+      <div
+        id="timer"
+        class="timer"
+      >
         08:00:00
       </div>
 
-      <button id="claimBtn" disabled>
+      <button
+        id="claimBtn"
+        disabled
+      >
         ⏳ MINING...
       </button>
 
@@ -468,11 +479,13 @@
 
     </div>
 
+
     <div class="card">
 
       <div class="row">
 
         <div>
+
           <div id="total">
             0.0000
           </div>
@@ -480,9 +493,12 @@
           <div class="small">
             TOTAL
           </div>
+
         </div>
 
+
         <div>
+
           <div>
             8h
           </div>
@@ -490,6 +506,7 @@
           <div class="small">
             CYCLE
           </div>
+
         </div>
 
       </div>
@@ -499,8 +516,14 @@
   </section>
 
 
-  <!-- TASKS -->
-  <section id="tasks" class="section">
+  <!-- =========================
+       TASKS
+  ========================= -->
+
+  <section
+    id="tasks"
+    class="section"
+  >
 
     <div class="card">
 
@@ -517,8 +540,14 @@
   </section>
 
 
-  <!-- FRIENDS -->
-  <section id="friends" class="section">
+  <!-- =========================
+       FRIENDS
+  ========================= -->
+
+  <section
+    id="friends"
+    class="section"
+  >
 
     <div class="card">
 
@@ -529,6 +558,7 @@
       <div class="row">
 
         <div>
+
           <div id="refCount">
             0
           </div>
@@ -536,9 +566,12 @@
           <div class="small">
             FRIENDS
           </div>
+
         </div>
 
+
         <div>
+
           <div>
             300
           </div>
@@ -546,13 +579,19 @@
           <div class="small">
             BONUS
           </div>
+
         </div>
 
       </div>
 
-      <div id="refLink" class="friend-link">
+
+      <div
+        id="refLink"
+        class="friend-link"
+      >
         Loading...
       </div>
+
 
       <button id="copyRef">
         📋 Copy Referral Link
@@ -563,8 +602,14 @@
   </section>
 
 
-  <!-- RANK -->
-  <section id="rank" class="section">
+  <!-- =========================
+       RANK
+  ========================= -->
+
+  <section
+    id="rank"
+    class="section"
+  >
 
     <div class="card">
 
@@ -581,60 +626,189 @@
   </section>
 
 
-  <!-- WALLET -->
-<section id="wallet" class="section">
+  <!-- =========================
+       PRESALE
+  ========================= -->
 
-  <div class="card">
+  <section
+    id="presale"
+    class="section"
+  >
 
-    <h3>
-      💰 Wallet
-    </h3>
+    <div class="card">
 
-    <div class="small">
-      WEB3 WALLET — SOLANA
+      <h3>
+        💎 VLX PRESALE
+      </h3>
+
+
+      <div class="small">
+        🔥 PRESALE IS LIVE
+      </div>
+
+      <br>
+
+
+      <div class="small">
+        💰 1 TON = 5,000 VLX
+      </div>
+
+      <div class="small">
+        🪙 Allocation: 150,000,000 VLX
+      </div>
+
+      <div class="small">
+        🌐 Network: TON
+      </div>
+
+      <br>
+
+
+      <div class="presale-wallet">
+
+        <div class="small">
+          🔗 TON WALLET
+        </div>
+
+        <div
+          id="presaleWalletStatus"
+          class="presale-value"
+        >
+          Not Connected
+        </div>
+
+        <div
+          id="presaleWalletAddress"
+          class="presale-address"
+        ></div>
+
+      </div>
+
+
+      <!-- TON CONNECT BUTTON -->
+
+      <div id="tonConnectButton"></div>
+
+
+      <input
+        id="presaleTonAmount"
+        type="number"
+        step="0.01"
+        min="0.01"
+        placeholder="TON Amount"
+      >
+
+
+      <div class="small">
+        🪙 You will receive:
+      </div>
+
+
+      <div
+        id="presaleVlxAmount"
+        class="presale-value"
+      >
+        0 VLX
+      </div>
+
+
+      <button
+        id="buyVlxBtn"
+        disabled
+      >
+        🔗 CONNECT WALLET TO BUY
+      </button>
+
+
+      <div id="presaleMessage"></div>
+
+
+      <div class="presale-note">
+
+        ⚠️ The transaction will be requested
+        inside your connected TON wallet.
+
+        VLX allocation will only be credited
+        after server-side payment verification.
+
+      </div>
+
     </div>
 
-    <br>
+  </section>
 
-    <input
-      id="walletInput"
-      placeholder="Solana wallet address"
-      autocomplete="off"
-    >
 
-    <button id="saveWallet">
-      💾 Save Wallet
-    </button>
+  <!-- =========================
+       WALLET
+  ========================= -->
 
-    <br><br>
+  <section
+    id="wallet"
+    class="section"
+  >
 
-    <div class="small">
-      Minimum withdrawal: 10,000 VLX
+    <div class="card">
+
+      <h3>
+        💰 Wallet
+      </h3>
+
+      <div class="small">
+        WEB3 WALLET — SOLANA
+      </div>
+
+      <br>
+
+
+      <input
+        id="walletInput"
+        placeholder="Solana wallet address"
+        autocomplete="off"
+      >
+
+
+      <button id="saveWallet">
+        💾 Save Wallet
+      </button>
+
+
+      <br>
+      <br>
+
+
+      <div class="small">
+        Minimum withdrawal: 10,000 VLX
+      </div>
+
+
+      <br>
+
+
+      <input
+        id="withdrawAmount"
+        type="number"
+        placeholder="Amount"
+        min="10000"
+      >
+
+
+      <button id="withdrawBtn">
+        🚀 Withdraw
+      </button>
+
+
+      <div id="withdrawMessage"></div>
+
     </div>
 
-    <br>
-
-    <input
-      id="withdrawAmount"
-      type="number"
-      placeholder="Amount"
-      min="10000"
-    >
-
-    <button id="withdrawBtn">
-      🚀 Withdraw
-    </button>
-
-    <div id="withdrawMessage"></div>
-
-  </div>
-
-</section>
+  </section>
 
 </div>
 
 
-<!-- NAV -->
+<!-- =========================
+     NAVIGATION
+========================= -->
 
 <nav>
 
@@ -646,6 +820,7 @@
     Mine
   </button>
 
+
   <button
     class="navBtn"
     data-section="tasks"
@@ -653,6 +828,7 @@
     🎯<br>
     Tasks
   </button>
+
 
   <button
     class="navBtn"
@@ -662,6 +838,7 @@
     Friends
   </button>
 
+
   <button
     class="navBtn"
     data-section="rank"
@@ -669,6 +846,16 @@
     🏆<br>
     Rank
   </button>
+
+
+  <button
+    class="navBtn"
+    data-section="presale"
+  >
+    💎<br>
+    Presale
+  </button>
+
 
   <button
     class="navBtn"
@@ -695,10 +882,12 @@
       🛠️ Admin — Task Management
     </h3>
 
+
     <input
       id="adminTaskTitle"
       placeholder="Task title"
     >
+
 
     <input
       id="adminTaskUrl"
@@ -706,11 +895,13 @@
       placeholder="Task URL"
     >
 
+
     <input
       id="adminTaskChannel"
       value="@VELTRIX_M_EXCHANGE"
       placeholder="@channel"
     >
+
 
     <input
       id="adminTaskReward"
@@ -720,11 +911,11 @@
       min="0"
     >
 
-    <button
-      id="addTaskBtn"
-    >
+
+    <button id="addTaskBtn">
       ➕ ADD TASK
     </button>
+
 
     <div
       id="adminTaskResult"
@@ -783,6 +974,7 @@ async function api(
     ...(options.headers || {})
   };
 
+
   const response =
     await fetch(
       url,
@@ -792,10 +984,13 @@ async function api(
       }
     );
 
+
   const text =
     await response.text();
 
+
   let data;
+
 
   try {
 
@@ -813,7 +1008,9 @@ async function api(
     throw new Error(
       `Server returned invalid response (${response.status})`
     );
+
   }
+
 
   if (!response.ok) {
 
@@ -821,9 +1018,12 @@ async function api(
       data.error ||
       "Request failed"
     );
+
   }
 
+
   return data;
+
 }
 
 
@@ -840,11 +1040,14 @@ function showError(
       "errorBox"
     );
 
+
   box.textContent =
     message;
 
+
   box.style.display =
     "block";
+
 }
 
 
@@ -855,11 +1058,14 @@ function clearError() {
       "errorBox"
     );
 
+
   box.textContent =
     "";
 
+
   box.style.display =
     "none";
+
 }
 
 
@@ -873,13 +1079,16 @@ async function loadUser() {
 
     clearError();
 
+
     const params =
       new URLSearchParams(
         window.location.search
       );
 
+
     let ref =
       params.get("ref");
+
 
     if (!ref) {
 
@@ -887,18 +1096,23 @@ async function loadUser() {
         tg.initDataUnsafe
           ?.start_param ||
         "";
+
     }
+
 
     const url =
       ref
         ? `/api/user?ref=${encodeURIComponent(ref)}`
         : `/api/user`;
 
+
     const user =
       await api(url);
 
+
     currentUser =
       user;
+
 
     updateUserUI();
 
@@ -911,7 +1125,9 @@ async function loadUser() {
     showError(
       err.message
     );
+
   }
+
 }
 
 
@@ -924,12 +1140,14 @@ function updateUserUI() {
   if (!currentUser)
     return;
 
+
   document.getElementById(
     "balance"
   ).textContent =
     Number(
       currentUser.balance || 0
     ).toFixed(4);
+
 
   document.getElementById(
     "mining"
@@ -938,12 +1156,14 @@ function updateUserUI() {
       currentUser.mining || 0
     ).toFixed(4);
 
+
   document.getElementById(
     "total"
   ).textContent =
     Number(
       currentUser.total || 0
     ).toFixed(4);
+
 
   document.getElementById(
     "timer"
@@ -954,10 +1174,12 @@ function updateUserUI() {
       )
     );
 
+
   const claimBtn =
     document.getElementById(
       "claimBtn"
     );
+
 
   if (
     currentUser.canClaim
@@ -976,18 +1198,21 @@ function updateUserUI() {
 
     claimBtn.textContent =
       "⏳ MINING...";
+
   }
+
 
   document.getElementById(
     "walletInput"
   ).value =
     currentUser.wallet ||
     "";
+
 }
 
 
 /* =========================
-   MINING TIMER
+   TIME
 ========================= */
 
 function formatTime(
@@ -1000,18 +1225,22 @@ function formatTime(
       Math.floor(seconds)
     );
 
+
   const h =
     Math.floor(
       seconds / 3600
     );
+
 
   const m =
     Math.floor(
       (seconds % 3600) / 60
     );
 
+
   const s =
     seconds % 60;
+
 
   return [
     h,
@@ -1024,8 +1253,13 @@ function formatTime(
           .padStart(2, "0")
     )
     .join(":");
+
 }
 
+
+/* =========================
+   MINING TIMER
+========================= */
 
 function startMiningTimer() {
 
@@ -1034,7 +1268,9 @@ function startMiningTimer() {
     clearInterval(
       timerInterval
     );
+
   }
+
 
   timerInterval =
     setInterval(
@@ -1042,6 +1278,7 @@ function startMiningTimer() {
 
         if (!currentUser)
           return;
+
 
         if (
           Number(
@@ -1051,9 +1288,11 @@ function startMiningTimer() {
 
           currentUser.remaining--;
 
+
           const elapsed =
             8 * 3600 -
             currentUser.remaining;
+
 
           currentUser.mining =
             Math.min(
@@ -1065,6 +1304,7 @@ function startMiningTimer() {
               10
             );
 
+
           currentUser.total =
             Number(
               currentUser.balance
@@ -1073,18 +1313,23 @@ function startMiningTimer() {
               currentUser.mining
             );
 
+
           currentUser.canClaim =
             currentUser.remaining <= 0;
 
+
           updateUserUI();
+
 
         } else {
 
           currentUser.canClaim =
             true;
 
+
           currentUser.mining =
             10;
+
 
           currentUser.total =
             Number(
@@ -1092,12 +1337,15 @@ function startMiningTimer() {
             ) +
             10;
 
+
           updateUserUI();
+
         }
 
       },
       1000
     );
+
 }
 
 
@@ -1117,16 +1365,20 @@ document
 
         clearError();
 
+
         const btn =
           document.getElementById(
             "claimBtn"
           );
 
+
         btn.disabled =
           true;
 
+
         btn.textContent =
           "⏳ CLAIMING...";
+
 
         const result =
           await api(
@@ -1138,8 +1390,10 @@ document
             }
           );
 
+
         currentUser =
           result.user;
+
 
         document.getElementById(
           "claimMessage"
@@ -1148,9 +1402,11 @@ document
             ✅ ${Number(result.reward).toFixed(2)} VLX Claimed
           </div>`;
 
+
         updateUserUI();
 
         startMiningTimer();
+
 
       } catch (err) {
 
@@ -1159,6 +1415,7 @@ document
         );
 
         updateUserUI();
+
       }
 
     }
@@ -1178,10 +1435,12 @@ async function loadTasks() {
         "/api/tasks"
       );
 
+
     const list =
       document.getElementById(
         "taskList"
       );
+
 
     if (!tasks.length) {
 
@@ -1191,7 +1450,9 @@ async function loadTasks() {
         </div>`;
 
       return;
+
     }
+
 
     list.innerHTML =
       tasks
@@ -1201,11 +1462,13 @@ async function loadTasks() {
             const claimed =
               task.claimed;
 
+
             const isXTask =
               task.type ===
                 "x_follow" ||
               task.type ===
                 "x_repost";
+
 
             return `
               <div class="task">
@@ -1263,9 +1526,11 @@ async function loadTasks() {
 
               </div>
             `;
+
           }
         )
         .join("");
+
 
   } catch (err) {
 
@@ -1273,21 +1538,26 @@ async function loadTasks() {
       "taskList"
     ).textContent =
       err.message;
+
   }
+
 }
 
 
-function openTask(url) {
+function openTask(
+  url
+) {
 
   window.open(
     url,
     "_blank"
   );
+
 }
 
 
 /* =========================
-   NORMAL TELEGRAM TASK
+   TELEGRAM TASK
 ========================= */
 
 async function claimTask(
@@ -1297,6 +1567,7 @@ async function claimTask(
   try {
 
     clearError();
+
 
     const result =
       await api(
@@ -1310,12 +1581,15 @@ async function claimTask(
         }
       );
 
+
     currentUser =
       result.user;
+
 
     updateUserUI();
 
     await loadTasks();
+
 
     tg.showAlert(
       `✅ ${
@@ -1325,17 +1599,20 @@ async function claimTask(
       } VLX added`
     );
 
+
   } catch (err) {
 
     showError(
       err.message
     );
+
   }
+
 }
 
 
 /* =========================
-   X TASK VERIFICATION
+   X TASK
 ========================= */
 
 async function verifyXTask(
@@ -1346,16 +1623,19 @@ async function verifyXTask(
 
     clearError();
 
+
     const status =
       await api(
         "/api/x/status"
       );
+
 
     if (!status.connected) {
 
       tg.showAlert(
         "Connect your X account first."
       );
+
 
       window.open(
         `/api/x/auth?initData=${encodeURIComponent(
@@ -1364,8 +1644,11 @@ async function verifyXTask(
         "_blank"
       );
 
+
       return;
+
     }
+
 
     const result =
       await api(
@@ -1379,12 +1662,15 @@ async function verifyXTask(
         }
       );
 
+
     currentUser =
       result.user;
+
 
     updateUserUI();
 
     await loadTasks();
+
 
     tg.showAlert(
       `✅ ${
@@ -1394,12 +1680,15 @@ async function verifyXTask(
       } VLX added`
     );
 
+
   } catch (err) {
 
     showError(
       err.message
     );
+
   }
+
 }
 
 
@@ -1416,15 +1705,18 @@ async function loadReferral() {
         "/api/referral"
       );
 
+
     document.getElementById(
       "refCount"
     ).textContent =
       data.count;
 
+
     document.getElementById(
       "refLink"
     ).textContent =
       data.link;
+
 
     document.getElementById(
       "copyRef"
@@ -1436,10 +1728,13 @@ async function loadReferral() {
             data.link
           );
 
+
         tg.showAlert(
           "Referral link copied!"
         );
+
       };
+
 
   } catch (err) {
 
@@ -1447,7 +1742,9 @@ async function loadReferral() {
       "refLink"
     ).textContent =
       err.message;
+
   }
+
 }
 
 
@@ -1464,10 +1761,12 @@ async function loadLeaderboard() {
         "/api/leaderboard"
       );
 
+
     const box =
       document.getElementById(
         "leaderboard"
       );
+
 
     if (!data.length) {
 
@@ -1477,7 +1776,9 @@ async function loadLeaderboard() {
         </div>`;
 
       return;
+
     }
+
 
     box.innerHTML =
       data
@@ -1509,18 +1810,21 @@ async function loadLeaderboard() {
         )
         .join("");
 
+
   } catch (err) {
 
     document.getElementById(
       "leaderboard"
     ).textContent =
       err.message;
+
   }
+
 }
 
 
 /* =========================
-   WALLET
+   SOLANA WALLET
 ========================= */
 
 document
@@ -1535,6 +1839,7 @@ document
 
         clearError();
 
+
         const wallet =
           document
             .getElementById(
@@ -1542,6 +1847,7 @@ document
             )
             .value
             .trim();
+
 
         await api(
           "/api/wallet",
@@ -1554,18 +1860,22 @@ document
           }
         );
 
+
         currentUser.wallet =
           wallet;
+
 
         tg.showAlert(
           "✅ Wallet saved"
         );
+
 
       } catch (err) {
 
         showError(
           err.message
         );
+
       }
 
     }
@@ -1588,6 +1898,7 @@ document
 
         clearError();
 
+
         const amount =
           Number(
             document
@@ -1596,6 +1907,7 @@ document
               )
               .value
           );
+
 
         const result =
           await api(
@@ -1609,10 +1921,13 @@ document
             }
           );
 
+
         currentUser =
           result.user;
 
+
         updateUserUI();
+
 
         document.getElementById(
           "withdrawMessage"
@@ -1621,15 +1936,378 @@ document
             ✅ Withdrawal submitted — PENDING
           </div>`;
 
+
         document.getElementById(
           "withdrawAmount"
-        ).value = "";
+        ).value =
+          "";
+
 
       } catch (err) {
 
         showError(
           err.message
         );
+
+      }
+
+    }
+  );
+
+
+/* =========================
+   TON PRESALE
+========================= */
+
+const PRESALE_RATE =
+  5000;
+
+
+const PRESALE_ALLOCATION =
+  150000000;
+
+
+const PRESALE_TON_ADDRESS =
+  "UQASlSXzQBNaRnFNLgui-Xp_LqZ4NNuTUODRsBAm--sAph8u";
+
+
+/*
+  TON Connect manifest.
+  This file will be added separately:
+  /tonconnect-manifest.json
+*/
+
+const TON_CONNECT_MANIFEST =
+  `${window.location.origin}/tonconnect-manifest.json`;
+
+
+let tonConnectUI =
+  null;
+
+
+/* =========================
+   SHORT TON ADDRESS
+========================= */
+
+function shortAddress(
+  address
+) {
+
+  if (!address)
+    return "";
+
+
+  if (
+    address.length <= 16
+  )
+    return address;
+
+
+  return (
+    address.slice(0, 8) +
+    "..." +
+    address.slice(-8)
+  );
+
+}
+
+
+/* =========================
+   UPDATE TON WALLET UI
+========================= */
+
+function updatePresaleWalletUI(
+  wallet
+) {
+
+  const status =
+    document.getElementById(
+      "presaleWalletStatus"
+    );
+
+
+  const address =
+    document.getElementById(
+      "presaleWalletAddress"
+    );
+
+
+  const buyBtn =
+    document.getElementById(
+      "buyVlxBtn"
+    );
+
+
+  if (!wallet) {
+
+    status.textContent =
+      "Not Connected";
+
+
+    address.textContent =
+      "";
+
+
+    buyBtn.disabled =
+      true;
+
+
+    buyBtn.textContent =
+      "🔗 CONNECT WALLET TO BUY";
+
+
+    return;
+
+  }
+
+
+  status.textContent =
+    "🟢 Connected";
+
+
+  address.textContent =
+    shortAddress(
+      wallet.account.address
+    );
+
+
+  buyBtn.disabled =
+    false;
+
+
+  buyBtn.textContent =
+    "💎 BUY VLX";
+
+}
+
+
+/* =========================
+   TON CONNECT INIT
+========================= */
+
+function initTonConnect() {
+
+  if (
+    typeof TON_CONNECT_UI ===
+    "undefined"
+  ) {
+
+    console.error(
+      "TON Connect UI library not loaded"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    tonConnectUI =
+      new TON_CONNECT_UI.TonConnectUI(
+        {
+          manifestUrl:
+            TON_CONNECT_MANIFEST,
+
+          buttonRootId:
+            "tonConnectButton"
+        }
+      );
+
+
+    tonConnectUI.onStatusChange(
+      wallet => {
+
+        updatePresaleWalletUI(
+          wallet
+        );
+
+      }
+    );
+
+
+    updatePresaleWalletUI(
+      tonConnectUI.wallet
+    );
+
+
+  } catch (err) {
+
+    console.error(
+      "TON Connect initialization failed:",
+      err
+    );
+
+  }
+
+}
+
+
+/* =========================
+   TON CALCULATOR
+========================= */
+
+document
+  .getElementById(
+    "presaleTonAmount"
+  )
+  .addEventListener(
+    "input",
+    () => {
+
+      const ton =
+        Number(
+          document.getElementById(
+            "presaleTonAmount"
+          ).value
+        ) || 0;
+
+
+      const vlx =
+        ton *
+        PRESALE_RATE;
+
+
+      document.getElementById(
+        "presaleVlxAmount"
+      ).textContent =
+        vlx.toLocaleString() +
+        " VLX";
+
+    }
+  );
+
+
+/* =========================
+   BUY BUTTON
+========================= */
+
+document
+  .getElementById(
+    "buyVlxBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        clearError();
+
+
+        if (!tonConnectUI) {
+
+          throw new Error(
+            "TON Connect is not ready yet."
+          );
+
+        }
+
+
+        if (!tonConnectUI.wallet) {
+
+          await tonConnectUI.openModal();
+
+          return;
+
+        }
+
+
+        const tonInput =
+          document.getElementById(
+            "presaleTonAmount"
+          ).value
+          .trim();
+
+
+        if (!tonInput) {
+
+          throw new Error(
+            "Enter the TON amount first."
+          );
+
+        }
+
+
+        const ton =
+          Number(
+            tonInput
+          );
+
+
+        if (
+          !Number.isFinite(ton) ||
+          ton <= 0
+        ) {
+
+          throw new Error(
+            "Enter a valid TON amount."
+          );
+
+        }
+
+
+        const vlx =
+          ton *
+          PRESALE_RATE;
+
+
+        if (
+          vlx >
+          PRESALE_ALLOCATION
+        ) {
+
+          throw new Error(
+            "Presale allocation exceeded."
+          );
+
+        }
+
+
+        /*
+          IMPORTANT:
+
+          Real TON transfer is NOT sent in this
+          frontend-only stage.
+
+          The backend verification must be
+          installed first so that a successful
+          payment can be matched and the correct
+          VLX amount can be credited.
+
+          This prevents accidental loss of TON.
+        */
+
+        document.getElementById(
+          "presaleMessage"
+        ).innerHTML =
+          `<div class="success">
+            🟢 Wallet connected successfully.<br><br>
+            💰 Amount: ${tonInput} TON<br>
+            🪙 VLX: ${vlx.toLocaleString()} VLX<br><br>
+            ⏳ Payment is waiting for secure
+            server-side verification.
+          </div>`;
+
+
+      } catch (err) {
+
+        console.error(
+          "Presale error:",
+          err
+        );
+
+
+        document.getElementById(
+          "presaleMessage"
+        ).innerHTML =
+          `<div style="color:#ff8b8b;">
+            ❌ ${escapeHtml(
+              err.message ||
+              "Presale error."
+            )}
+          </div>`;
+
       }
 
     }
@@ -1654,6 +2332,7 @@ document
           const section =
             button.dataset.section;
 
+
           document
             .querySelectorAll(
               ".section"
@@ -1665,6 +2344,7 @@ document
                 )
             );
 
+
           document
             .getElementById(
               section
@@ -1672,6 +2352,7 @@ document
             .classList.add(
               "active"
             );
+
 
           document
             .querySelectorAll(
@@ -1684,29 +2365,52 @@ document
                 )
             );
 
+
           button.classList.add(
             "active"
           );
+
 
           if (
             section ===
             "tasks"
           ) {
+
             await loadTasks();
+
           }
+
 
           if (
             section ===
             "friends"
           ) {
+
             await loadReferral();
+
           }
+
 
           if (
             section ===
             "rank"
           ) {
+
             await loadLeaderboard();
+
+          }
+
+
+          if (
+            section ===
+            "presale"
+          ) {
+
+            updatePresaleWalletUI(
+              tonConnectUI?.wallet ||
+              null
+            );
+
           }
 
         }
@@ -1747,6 +2451,7 @@ function escapeHtml(
       /'/g,
       "&#039;"
     );
+
 }
 
 
@@ -1765,6 +2470,7 @@ function escapeAttr(
       /'/g,
       "\\'"
     );
+
 }
 
 
@@ -1781,11 +2487,13 @@ function isAdmin() {
   const user =
     tg.initDataUnsafe?.user;
 
+
   return (
     user &&
     String(user.id) ===
       ADMIN_ID
   );
+
 }
 
 
@@ -1802,27 +2510,36 @@ function initAdminPanel() {
         "adminTaskPanel"
       );
 
+
     if (panel) {
 
       panel.style.display =
         "none";
+
     }
 
+
     return;
+
   }
+
 
   const panel =
     document.getElementById(
       "adminTaskPanel"
     );
 
+
   if (!panel)
     return;
+
 
   panel.style.display =
     "block";
 
+
   loadAdminTasks();
+
 }
 
 
@@ -1845,12 +2562,15 @@ document
         );
 
         return;
+
       }
+
 
       const resultBox =
         document.getElementById(
           "adminTaskResult"
         );
+
 
       const title =
         document
@@ -1860,6 +2580,7 @@ document
           .value
           .trim();
 
+
       const url =
         document
           .getElementById(
@@ -1868,6 +2589,7 @@ document
           .value
           .trim();
 
+
       const channel =
         document
           .getElementById(
@@ -1875,6 +2597,7 @@ document
           )
           .value
           .trim();
+
 
       const reward =
         Number(
@@ -1885,49 +2608,61 @@ document
             .value
         );
 
-      if (!title || !url) {
+
+      if (
+        !title ||
+        !url
+      ) {
 
         resultBox.textContent =
           "❌ Title and URL are required.";
 
         return;
+
       }
+
 
       try {
 
         resultBox.textContent =
           "⏳ Adding task...";
 
-        const result =
-          await api(
-            "/api/admin/task",
-            {
-              method: "POST",
 
-              body:
-                JSON.stringify({
-                  title,
-                  url,
-                  channel,
-                  reward
-                })
-            }
-          );
+        await api(
+          "/api/admin/task",
+          {
+            method: "POST",
+
+            body:
+              JSON.stringify({
+                title,
+                url,
+                channel,
+                reward
+              })
+
+          }
+        );
+
 
         resultBox.innerHTML =
           `<span class="success">
             ✅ Task added successfully.
           </span>`;
 
+
         document
           .getElementById(
             "adminTaskTitle"
           )
-          .value = "";
+          .value =
+          "";
+
 
         await loadAdminTasks();
 
         await loadTasks();
+
 
       } catch (err) {
 
@@ -1937,6 +2672,7 @@ document
               err.message
             )}
           </span>`;
+
       }
 
     }
@@ -1952,13 +2688,16 @@ async function loadAdminTasks() {
   if (!isAdmin())
     return;
 
+
   const list =
     document.getElementById(
       "adminTaskList"
     );
 
+
   if (!list)
     return;
+
 
   try {
 
@@ -1967,22 +2706,27 @@ async function loadAdminTasks() {
         Loading tasks...
       </div>`;
 
+
     const response =
       await fetch(
         "/api/admin/tasks",
         {
           headers: {
+
             "Content-Type":
               "application/json",
 
             "X-Telegram-Init-Data":
               tg.initData
+
           }
         }
       );
 
+
     const data =
       await response.json();
+
 
     if (!response.ok) {
 
@@ -1990,7 +2734,9 @@ async function loadAdminTasks() {
         data.error ||
         "Failed to load tasks"
       );
+
     }
+
 
     if (!data.length) {
 
@@ -2000,7 +2746,9 @@ async function loadAdminTasks() {
         </div>`;
 
       return;
+
     }
+
 
     list.innerHTML =
       data
@@ -2054,6 +2802,7 @@ async function loadAdminTasks() {
         )
         .join("");
 
+
   } catch (err) {
 
     list.innerHTML =
@@ -2062,7 +2811,9 @@ async function loadAdminTasks() {
           err.message
         )}
       </div>`;
+
   }
+
 }
 
 
@@ -2081,15 +2832,19 @@ async function deleteVeltrixTask(
     );
 
     return;
+
   }
+
 
   const confirmed =
     window.confirm(
       "Are you sure you want to delete this task?"
     );
 
+
   if (!confirmed)
     return;
+
 
   try {
 
@@ -2100,17 +2855,22 @@ async function deleteVeltrixTask(
           method: "DELETE",
 
           headers: {
+
             "Content-Type":
               "application/json",
 
             "X-Telegram-Init-Data":
               tg.initData
+
           }
+
         }
       );
 
+
     const data =
       await response.json();
+
 
     if (!response.ok) {
 
@@ -2118,119 +2878,34 @@ async function deleteVeltrixTask(
         data.error ||
         "Task deletion failed"
       );
+
     }
+
 
     tg.showAlert(
       "✅ Task deleted successfully."
     );
 
+
     await loadAdminTasks();
 
     await loadTasks();
 
+
   } catch (err) {
 
     tg.showAlert(
-      "❌ " + err.message
+      "❌ " +
+      err.message
     );
+
   }
+
 }
 
 
 /* =========================
-   START
-========================= */
-
-loadUser();
-
-initAdminPanel();
-
-  /* =========================
-   VLX PRESALE
-========================= */
-
-document
-  .getElementById("presaleBtn")
-  .addEventListener("click", () => {
-
-    tg.showPopup({
-      title: "💎 VLX PRESALE",
-      message:
-        "💰 1 TON = 5,000 VLX\n\n" +
-        "🪙 Available: 150,000,000 VLX\n\n" +
-        "🌐 Payment Network: TON\n\n" +
-        "Presale purchase system is being activated.",
-      buttons: [
-        {
-          id: "ok",
-          type: "default",
-          text: "OK"
-        }
-      ]
-    });
-
-  });
-
-  /* =========================
-   VLX PRESALE CALCULATOR
-========================= */
-
-const PRESALE_RATE = 5000;
-
-const presaleBtn =
-  document.getElementById("presaleBtn");
-
-const presaleBox =
-  document.getElementById("presaleBox");
-
-const presaleTonAmount =
-  document.getElementById("presaleTonAmount");
-
-const presaleVlxAmount =
-  document.getElementById("presaleVlxAmount");
-
-
-if (presaleBtn) {
-
-  presaleBtn.addEventListener(
-    "click",
-    () => {
-
-      presaleBox.style.display = "block";
-
-      presaleTonAmount.focus();
-
-    }
-  );
-
-}
-
-
-if (presaleTonAmount) {
-
-  presaleTonAmount.addEventListener(
-    "input",
-    () => {
-
-      const ton =
-        Number(
-          presaleTonAmount.value
-        ) || 0;
-
-      const vlx =
-        ton * PRESALE_RATE;
-
-      presaleVlxAmount.textContent =
-        vlx.toLocaleString() +
-        " VLX";
-
-    }
-  );
-
-}
-
-  /* =========================
-   VLX LISTING COUNTDOWN
+   LISTING COUNTDOWN
 ========================= */
 
 const VLX_LISTING_DATE =
@@ -2238,62 +2913,130 @@ const VLX_LISTING_DATE =
     "2026-11-27T20:00:00+04:30"
   ).getTime();
 
+
 function updateVLXListingCountdown() {
 
-  const now = Date.now();
-  const distance = VLX_LISTING_DATE - now;
+  const now =
+    Date.now();
+
+
+  const distance =
+    VLX_LISTING_DATE -
+    now;
+
 
   const countdown =
-    document.getElementById("vlxCountdown");
+    document.getElementById(
+      "vlxCountdown"
+    );
 
-  if (!countdown) return;
 
-  if (distance <= 0) {
+  if (!countdown)
+    return;
+
+
+  if (
+    distance <= 0
+  ) {
 
     countdown.innerHTML =
       "🚀 <b>VLX LISTING IS LIVE!</b>";
 
     return;
+
   }
+
 
   const days =
     Math.floor(
-      distance / (1000 * 60 * 60 * 24)
+      distance /
+      (
+        1000 *
+        60 *
+        60 *
+        24
+      )
     );
+
 
   const hours =
     Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) /
-      (1000 * 60 * 60)
+      (
+        distance %
+        (
+          1000 *
+          60 *
+          60 *
+          24
+        )
+      ) /
+      (
+        1000 *
+        60 *
+        60
+      )
     );
+
 
   const minutes =
     Math.floor(
-      (distance % (1000 * 60 * 60)) /
-      (1000 * 60)
+      (
+        distance %
+        (
+          1000 *
+          60 *
+          60
+        )
+      ) /
+      (
+        1000 *
+        60
+      )
     );
+
 
   const seconds =
     Math.floor(
-      (distance % (1000 * 60)) /
+      (
+        distance %
+        (
+          1000 *
+          60
+        )
+      ) /
       1000
     );
+
 
   countdown.innerHTML =
     `⏳ <b>${days} Days</b> : ` +
     `<b>${String(hours).padStart(2, "0")} Hours</b> : ` +
     `<b>${String(minutes).padStart(2, "0")} Minutes</b> : ` +
     `<b>${String(seconds).padStart(2, "0")} Seconds</b>`;
+
 }
 
+
+/* =========================
+   START
+========================= */
+
+initTonConnect();
+
 updateVLXListingCountdown();
+
 
 setInterval(
   updateVLXListingCountdown,
   1000
 );
 
+
+loadUser();
+
+initAdminPanel();
+
 </script>
 
 </body>
-</html>
+  </html>
