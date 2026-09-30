@@ -22,6 +22,10 @@ const ADMIN_ID = String(process.env.ADMIN_ID || "");
 const APP_URL =
   process.env.APP_URL || "https://veltrix-miner.onrender.com";
 
+/* =========================
+   VELTRIX SETTINGS
+========================= */
+
 const RATE = 1.25;
 const CYCLE_HOURS = 8;
 const CYCLE_SECONDS = CYCLE_HOURS * 3600;
@@ -29,37 +33,25 @@ const CYCLE_SECONDS = CYCLE_HOURS * 3600;
 const REFERRAL_BONUS = 300;
 const MIN_WITHDRAW = 10000;
 
-// =========================
-// VELTRIX PRESALE
-// =========================
+/* =========================
+   PRESALE SETTINGS
+========================= */
+
 const PRESALE_RATE = 5000;
 const PRESALE_ALLOCATION = 150000000;
 
 const PRESALE_TON_ADDRESS =
-  "UQASlSXzQBNaRnFNLgui-Xp_LqZ4NNuTUODRsBAm--sAph8u";
+  "UQASlSXzQBNaRnFNLgui-XpLqZ4NNuTUODRsBAm--sAph8u";
 
 const PRESALE_ORDER_TTL = 30 * 60;
 
 const TONCENTER_API_KEY =
   process.env.TONCENTER_API_KEY || "";
 
-// =========================
-// X / TWITTER
-// =========================
-const X_CLIENT_ID = process.env.X_CLIENT_ID || "";
-const X_CLIENT_SECRET = process.env.X_CLIENT_SECRET || "";
+/* =========================
+   DATABASE
+========================= */
 
-const X_CALLBACK_URL = `${APP_URL}/api/x/callback`;
-
-const X_OFFICIAL_USERNAME = "VeltrixExchang";
-const X_REPOST_POST_ID = "2101180648618959312";
-
-const X_FOLLOW_REWARD = 50;
-const X_REPOST_REWARD = 35;
-
-// =========================
-// DATABASE
-// =========================
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl:
@@ -68,15 +60,14 @@ const pool = new Pool({
       : false,
 });
 
-const db = (query, params = []) =>
-  pool.query(query, params);
+const db = (query, params = []) => pool.query(query, params);
 
-const now = () =>
-  Math.floor(Date.now() / 1000);
+const now = () => Math.floor(Date.now() / 1000);
 
-// =========================
-// MINING HELPERS
-// =========================
+/* =========================
+   MINING HELPERS
+========================= */
+
 function miningAmount(user) {
   const elapsed = Math.max(
     0,
@@ -100,6 +91,10 @@ function remaining(user) {
 function ready(user) {
   return remaining(user) === 0;
 }
+
+/* =========================
+   PUBLIC USER
+========================= */
 
 function publicUser(user) {
   return {
@@ -126,13 +121,15 @@ function publicUser(user) {
     wallet: user.wallet || "",
 
     rate: RATE,
+
     cycleHours: CYCLE_HOURS,
   };
 }
 
-// =========================
-// TELEGRAM WEB APP AUTH
-// =========================
+/* =========================
+   TELEGRAM AUTH
+========================= */
+
 function verifyTelegramInitData(initData) {
   try {
     if (!initData || !BOT_TOKEN) {
@@ -149,7 +146,7 @@ function verifyTelegramInitData(initData) {
 
     params.delete("hash");
 
-    const checkString = [...params.entries()]
+    const dataCheckString = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([key, value]) => `${key}=${value}`)
       .join("\n");
@@ -161,7 +158,7 @@ function verifyTelegramInitData(initData) {
 
     const calculatedHash = crypto
       .createHmac("sha256", secretKey)
-      .update(checkString)
+      .update(dataCheckString)
       .digest("hex");
 
     if (
@@ -203,6 +200,7 @@ function auth(req, res, next) {
   }
 
   req.tgUser = user;
+
   next();
 }
 
@@ -226,22 +224,24 @@ function adminAuth(req, res, next) {
   }
 
   req.tgUser = user;
+
   next();
 }
 
-// =========================
-// CREATE USER
-// =========================
+/* =========================
+   CREATE USER
+========================= */
+
 async function createUser(tg, ref = null) {
   const id = Number(tg.id);
 
-  const existing = await db(
+  const old = await db(
     "SELECT * FROM users WHERE id=$1",
     [id]
   );
 
-  if (existing.rows.length) {
-    return existing.rows[0];
+  if (old.rows.length) {
+    return old.rows[0];
   }
 
   let referredBy = null;
@@ -251,18 +251,19 @@ async function createUser(tg, ref = null) {
     String(ref) !== String(id) &&
     /^\d+$/.test(String(ref))
   ) {
-    const referrer = await db(
+    const refUser = await db(
       "SELECT id FROM users WHERE id=$1",
       [Number(ref)]
     );
 
-    if (referrer.rows.length) {
+    if (refUser.rows.length) {
       referredBy = Number(ref);
     }
   }
 
   const result = await db(
-    `INSERT INTO users
+    `
+    INSERT INTO users
     (
       id,
       username,
@@ -275,9 +276,17 @@ async function createUser(tg, ref = null) {
     )
     VALUES
     (
-      $1,$2,$3,0,$4,NULL,$5,$6
+      $1,
+      $2,
+      $3,
+      0,
+      $4,
+      NULL,
+      $5,
+      $6
     )
-    RETURNING *`,
+    RETURNING *
+    `,
     [
       id,
       tg.username || null,
@@ -290,17 +299,25 @@ async function createUser(tg, ref = null) {
 
   if (referredBy) {
     await db(
-      "UPDATE users SET balance=balance+$1 WHERE id=$2",
-      [REFERRAL_BONUS, referredBy]
+      `
+      UPDATE users
+      SET balance = balance + $1
+      WHERE id = $2
+      `,
+      [
+        REFERRAL_BONUS,
+        referredBy,
+      ]
     );
   }
 
   return result.rows[0];
 }
 
-// =========================
-// DATABASE INITIALIZATION
-// =========================
+/* =========================
+   DATABASE INITIALIZATION
+========================= */
+
 async function initDatabase() {
   await db(`
     CREATE TABLE IF NOT EXISTS users(
@@ -327,26 +344,9 @@ async function initDatabase() {
     presale_balance DOUBLE PRECISION DEFAULT 0
   `);
 
-  await db(`
-    CREATE TABLE IF NOT EXISTS x_accounts(
-      user_id BIGINT PRIMARY KEY,
-      x_user_id TEXT NOT NULL,
-      username TEXT,
-      access_token TEXT NOT NULL,
-      refresh_token TEXT,
-      expires_at BIGINT,
-      created_at BIGINT NOT NULL
-    )
-  `);
-
-  await db(`
-    CREATE TABLE IF NOT EXISTS x_oauth_states(
-      state TEXT PRIMARY KEY,
-      user_id BIGINT NOT NULL,
-      code_verifier TEXT NOT NULL,
-      created_at BIGINT NOT NULL
-    )
-  `);
+  /* =========================
+     TASKS
+  ========================= */
 
   await db(`
     CREATE TABLE IF NOT EXISTS tasks(
@@ -364,13 +364,28 @@ async function initDatabase() {
 
   await db(`
     ALTER TABLE tasks
-    ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'telegram'
+    ADD COLUMN IF NOT EXISTS
+    type TEXT DEFAULT 'telegram'
   `);
 
   await db(`
     ALTER TABLE tasks
-    ADD COLUMN IF NOT EXISTS target_id TEXT
+    ADD COLUMN IF NOT EXISTS
+    target_id TEXT
   `);
+
+  /* =========================
+     REMOVE OLD X TASKS ONLY
+  ========================= */
+
+  await db(`
+    DELETE FROM tasks
+    WHERE type IN ('x_follow','x_repost')
+  `);
+
+  /* =========================
+     TASK CLAIMS
+  ========================= */
 
   await db(`
     CREATE TABLE IF NOT EXISTS task_claims(
@@ -380,6 +395,10 @@ async function initDatabase() {
       PRIMARY KEY(user_id,task_id)
     )
   `);
+
+  /* =========================
+     WITHDRAWALS
+  ========================= */
 
   await db(`
     CREATE TABLE IF NOT EXISTS withdrawals(
@@ -393,6 +412,10 @@ async function initDatabase() {
       tx_hash TEXT
     )
   `);
+
+  /* =========================
+     PRESALE ORDERS
+  ========================= */
 
   await db(`
     CREATE TABLE IF NOT EXISTS presale_orders(
@@ -415,7 +438,8 @@ async function initDatabase() {
 
   await db(`
     ALTER TABLE presale_orders
-    ADD COLUMN IF NOT EXISTS verified_at BIGINT
+    ADD COLUMN IF NOT EXISTS
+    verified_at BIGINT
   `);
 
   await db(`
@@ -424,69 +448,12 @@ async function initDatabase() {
     ON presale_orders(tx_hash)
     WHERE tx_hash IS NOT NULL
   `).catch(() => {});
-
-  const followTask = await db(
-    "SELECT id FROM tasks WHERE type='x_follow' LIMIT 1"
-  );
-
-  if (!followTask.rows.length) {
-    await db(
-      `INSERT INTO tasks
-      (
-        title,
-        description,
-        reward,
-        type,
-        target,
-        active,
-        created_at
-      )
-      VALUES
-      ($1,$2,$3,'x_follow',$4,TRUE,$5)`,
-      [
-        "Follow VELTRIX on X",
-        "Follow @VeltrixExchang",
-        X_FOLLOW_REWARD,
-        X_OFFICIAL_USERNAME,
-        now(),
-      ]
-    );
-  }
-
-  const repostTask = await db(
-    "SELECT id FROM tasks WHERE type='x_repost' LIMIT 1"
-  );
-
-  if (!repostTask.rows.length) {
-    await db(
-      `INSERT INTO tasks
-      (
-        title,
-        description,
-        reward,
-        type,
-        target,
-        target_id,
-        active,
-        created_at
-      )
-      VALUES
-      ($1,$2,$3,'x_repost',$4,$5,TRUE,$6)`,
-      [
-        "Repost VELTRIX",
-        "Repost official VELTRIX post",
-        X_REPOST_REWARD,
-        `https://x.com/${X_OFFICIAL_USERNAME}/status/${X_REPOST_POST_ID}`,
-        X_REPOST_POST_ID,
-        now(),
-      ]
-    );
-  }
 }
 
-// =========================
-// HEALTH
-// =========================
+/* =========================
+   HEALTH
+========================= */
+
 app.get(
   "/api/health",
   async (req, res) => {
@@ -505,18 +472,19 @@ app.get(
           allocation: PRESALE_ALLOCATION,
         },
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// TON CONNECT MANIFEST
-// =========================
+/* =========================
+   TON CONNECT MANIFEST
+========================= */
+
 app.get(
   "/tonconnect-manifest.json",
   (req, res) => {
@@ -529,39 +497,43 @@ app.get(
   }
 );
 
-// =========================
-// FRONTEND
-// =========================
+/* =========================
+   FRONTEND
+========================= */
+
 app.get("/", (req, res) => {
   try {
-    const indexPath = path.join(
+    const filePath = path.join(
       __dirname,
       "web",
       "index.html"
     );
 
-    if (!fs.existsSync(indexPath)) {
+    if (!fs.existsSync(filePath)) {
       return res
         .status(404)
         .send("VELTRIX Mini App not found");
     }
 
-    let html = fs.readFileSync(
-      indexPath,
+    const html = fs.readFileSync(
+      filePath,
       "utf8"
     );
 
     res.send(html);
-  } catch (e) {
-    res.status(500).send(
-      "VELTRIX server error"
-    );
+  } catch (error) {
+    console.error(error);
+
+    res
+      .status(500)
+      .send("VELTRIX server error");
   }
 });
 
-// =========================
-// USER API
-// =========================
+/* =========================
+   USER
+========================= */
+
 app.get(
   "/api/user",
   auth,
@@ -576,14 +548,18 @@ app.get(
         ok: true,
         user: publicUser(user),
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   MINING
+========================= */
 
 app.get(
   "/api/mining",
@@ -602,18 +578,19 @@ app.get(
         rate: RATE,
         cycleHours: CYCLE_HOURS,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// MINING CLAIM
-// =========================
+/* =========================
+   CLAIM MINING
+========================= */
+
 app.post(
   "/api/claim",
   auth,
@@ -624,7 +601,12 @@ app.post(
       await client.query("BEGIN");
 
       const result = await client.query(
-        "SELECT * FROM users WHERE id=$1 FOR UPDATE",
+        `
+        SELECT *
+        FROM users
+        WHERE id=$1
+        FOR UPDATE
+        `,
         [Number(req.tgUser.id)]
       );
 
@@ -644,7 +626,8 @@ app.post(
 
         return res.status(400).json({
           ok: false,
-          error: "Mining cycle is not complete",
+          error:
+            "Mining cycle is not complete",
           remaining: remaining(user),
         });
       }
@@ -652,20 +635,23 @@ app.post(
       const reward =
         RATE * CYCLE_HOURS;
 
-      const updated = await client.query(
-        `UPDATE users
-         SET
-           balance=balance+$1,
-           cycle_start=$2,
-           mining_notified_cycle=0
-         WHERE id=$3
-         RETURNING *`,
-        [
-          reward,
-          now(),
-          Number(req.tgUser.id),
-        ]
-      );
+      const updated =
+        await client.query(
+          `
+          UPDATE users
+          SET
+            balance = balance + $1,
+            cycle_start = $2,
+            mining_notified_cycle = 0
+          WHERE id = $3
+          RETURNING *
+          `,
+          [
+            reward,
+            now(),
+            Number(req.tgUser.id),
+          ]
+        );
 
       await client.query("COMMIT");
 
@@ -676,7 +662,7 @@ app.post(
           updated.rows[0]
         ),
       });
-    } catch (e) {
+    } catch (error) {
       await client.query("ROLLBACK");
 
       res.status(500).json({
@@ -689,622 +675,36 @@ app.post(
   }
 );
 
-// =========================
-// X / TWITTER HELPERS
-// =========================
-function base64url(buffer) {
-  return Buffer.from(buffer)
-    .toString("base64")
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-}
+/* =========================
+   TELEGRAM TASKS
+========================= */
 
-function randomString(length = 32) {
-  return base64url(
-    crypto.randomBytes(length)
-  );
-}
-
-function pkceChallenge(verifier) {
-  return base64url(
-    crypto
-      .createHash("sha256")
-      .update(verifier)
-      .digest()
-  );
-}
-
-function xBasicAuth() {
-  return Buffer.from(
-    `${X_CLIENT_ID}:${X_CLIENT_SECRET}`
-  ).toString("base64");
-}
-
-async function xTokenRequest(params) {
-  const response = await fetch(
-    "https://api.x.com/2/oauth2/token",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type":
-          "application/x-www-form-urlencoded",
-
-        Authorization:
-          `Basic ${xBasicAuth()}`,
-      },
-
-      body: new URLSearchParams(
-        params
-      ),
-    }
-  );
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data?.error_description ||
-        data?.detail ||
-        "X token request failed"
-    );
-  }
-
-  return data;
-}
-
-async function xApi(
-  pathname,
-  accessToken,
-  options = {}
-) {
-  const response = await fetch(
-    `https://api.x.com${pathname}`,
-    {
-      ...options,
-
-      headers: {
-        ...(options.headers || {}),
-
-        Authorization:
-          `Bearer ${accessToken}`,
-      },
-    }
-  );
-
-  const data =
-    await response
-      .json()
-      .catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(
-      data?.detail ||
-        data?.title ||
-        data?.error ||
-        `X API error ${response.status}`
-    );
-  }
-
-  return data;
-}
-
-async function getXAccount(userId) {
-  const result = await db(
-    "SELECT * FROM x_accounts WHERE user_id=$1",
-    [userId]
-  );
-
-  return result.rows[0] || null;
-}
-
-async function getXOfficialUserId(
-  accessToken
-) {
-  const data = await xApi(
-    `/2/users/by/username/${encodeURIComponent(
-      X_OFFICIAL_USERNAME
-    )}?user.fields=id,username`,
-    accessToken
-  );
-
-  return data?.data?.id || null;
-}
-
-async function verifyXFollow(account) {
-  const officialId =
-    await getXOfficialUserId(
-      account.access_token
-    );
-
-  if (!officialId) {
-    return false;
-  }
-
-  let pagination = "";
-
-  for (let i = 0; i < 5; i++) {
-    const url =
-      `/2/users/${encodeURIComponent(
-        account.x_user_id
-      )}/following?max_results=1000` +
-      (
-        pagination
-          ? `&pagination_token=${encodeURIComponent(
-              pagination
-            )}`
-          : ""
-      );
-
-    const data = await xApi(
-      url,
-      account.access_token
-    );
-
-    if (
-      (data.data || []).some(
-        x =>
-          String(x.id) ===
-          String(officialId)
-      )
-    ) {
-      return true;
-    }
-
-    if (!data.meta?.next_token) {
-      break;
-    }
-
-    pagination =
-      data.meta.next_token;
-  }
-
-  return false;
-}
-
-async function verifyXRepost(
-  account
-) {
-  const data = await xApi(
-    `/2/users/${encodeURIComponent(
-      account.x_user_id
-    )}/retweeted_tweets?max_results=100`,
-    account.access_token
-  );
-
-  return (
-    data.data || []
-  ).some(
-    x =>
-      String(x.id) ===
-      String(X_REPOST_POST_ID)
-  );
-}
-
-// =========================
-// X AUTH
-// =========================
-app.get(
-  "/api/x/auth",
-  auth,
-  async (req, res) => {
-    try {
-      if (
-        !X_CLIENT_ID ||
-        !X_CLIENT_SECRET
-      ) {
-        return res.status(503).json({
-          ok: false,
-          error:
-            "X OAuth is not configured",
-        });
-      }
-
-      const verifier =
-        randomString(48);
-
-      const challenge =
-        pkceChallenge(verifier);
-
-      const state =
-        randomString(32);
-
-      const userId =
-        Number(req.tgUser.id);
-
-      await db(
-        "DELETE FROM x_oauth_states WHERE user_id=$1",
-        [userId]
-      );
-
-      await db(
-        `INSERT INTO x_oauth_states
-        (
-          state,
-          user_id,
-          code_verifier,
-          created_at
-        )
-        VALUES
-        ($1,$2,$3,$4)`,
-        [
-          state,
-          userId,
-          verifier,
-          now(),
-        ]
-      );
-
-      const url = new URL(
-        "https://twitter.com/i/oauth2/authorize"
-      );
-
-      url.searchParams.set(
-        "response_type",
-        "code"
-      );
-
-      url.searchParams.set(
-        "client_id",
-        X_CLIENT_ID
-      );
-
-      url.searchParams.set(
-        "redirect_uri",
-        X_CALLBACK_URL
-      );
-
-      url.searchParams.set(
-        "scope",
-        "tweet.read users.read follows.read offline.access"
-      );
-
-      url.searchParams.set(
-        "state",
-        state
-      );
-
-      url.searchParams.set(
-        "code_challenge",
-        challenge
-      );
-
-      url.searchParams.set(
-        "code_challenge_method",
-        "S256"
-      );
-
-      res.json({
-        ok: true,
-        url: url.toString(),
-      });
-    } catch (e) {
-      res.status(500).json({
-        ok: false,
-        error: e.message,
-      });
-    }
-  }
-);
-
-// =========================
-// X CALLBACK
-// =========================
-app.get(
-  "/api/x/callback",
-  async (req, res) => {
-    try {
-      const {
-        code,
-        state,
-        error,
-        error_description,
-      } = req.query;
-
-      if (error) {
-        return res
-          .status(400)
-          .send(
-            `X authorization failed: ${
-              error_description ||
-              error
-            }`
-          );
-      }
-
-      if (!code || !state) {
-        return res
-          .status(400)
-          .send(
-            "Missing X authorization code or state"
-          );
-      }
-
-      const result = await db(
-        "SELECT * FROM x_oauth_states WHERE state=$1",
-        [String(state)]
-      );
-
-      if (!result.rows.length) {
-        return res
-          .status(400)
-          .send(
-            "Invalid or expired X OAuth state"
-          );
-      }
-
-      const oauth =
-        result.rows[0];
-
-      if (
-        Number(oauth.created_at) <
-        now() - 600
-      ) {
-        await db(
-          "DELETE FROM x_oauth_states WHERE state=$1",
-          [String(state)]
-        );
-
-        return res
-          .status(400)
-          .send(
-            "X OAuth state expired"
-          );
-      }
-
-      const token =
-        await xTokenRequest({
-          code: String(code),
-          grant_type:
-            "authorization_code",
-          redirect_uri:
-            X_CALLBACK_URL,
-          code_verifier:
-            oauth.code_verifier,
-        });
-
-      const me = await xApi(
-        "/2/users/me?user.fields=id,username,name",
-        token.access_token
-      );
-
-      const xUser =
-        me?.data;
-
-      if (!xUser?.id) {
-        throw new Error(
-          "Could not read X account"
-        );
-      }
-
-      const expiresAt =
-        token.expires_in
-          ? now() +
-            Number(token.expires_in)
-          : null;
-
-      await db(
-        `INSERT INTO x_accounts
-        (
-          user_id,
-          x_user_id,
-          username,
-          access_token,
-          refresh_token,
-          expires_at,
-          created_at
-        )
-        VALUES
-        ($1,$2,$3,$4,$5,$6,$7)
-
-        ON CONFLICT(user_id)
-        DO UPDATE SET
-          x_user_id=EXCLUDED.x_user_id,
-          username=EXCLUDED.username,
-          access_token=EXCLUDED.access_token,
-          refresh_token=EXCLUDED.refresh_token,
-          expires_at=EXCLUDED.expires_at`,
-        [
-          Number(oauth.user_id),
-          String(xUser.id),
-          xUser.username || "",
-          token.access_token,
-          token.refresh_token ||
-            null,
-          expiresAt,
-          now(),
-        ]
-      );
-
-      await db(
-        "DELETE FROM x_oauth_states WHERE state=$1",
-        [String(state)]
-      );
-
-      res.send(`
-        <html>
-          <body
-            style="
-              font-family:sans-serif;
-              text-align:center;
-              padding:40px
-            "
-          >
-            <h2>
-              ✅ X account connected
-            </h2>
-
-            <p>
-              @${String(
-                xUser.username || ""
-              ).replace(
-                /[<>]/g,
-                ""
-              )}
-            </p>
-
-            <p>
-              You can return to VELTRIX.
-            </p>
-
-            <script>
-              setTimeout(
-                () => window.close(),
-                1200
-              );
-            </script>
-          </body>
-        </html>
-      `);
-    } catch (e) {
-      console.error(
-        "X callback:",
-        e.message
-      );
-
-      res
-        .status(500)
-        .send(
-          `X connection failed: ${e.message}`
-        );
-    }
-  }
-);
-
-// =========================
-// X STATUS
-// =========================
-app.get(
-  "/api/x/status",
-  auth,
-  async (req, res) => {
-    try {
-      const account =
-        await getXAccount(
-          Number(req.tgUser.id)
-        );
-
-      res.json({
-        ok: true,
-
-        connected:
-          Boolean(account),
-
-        account: account
-          ? {
-              id: account.x_user_id,
-              username:
-                account.username,
-              expiresAt:
-                account.expires_at
-                  ? Number(
-                      account.expires_at
-                    )
-                  : null,
-            }
-          : null,
-      });
-    } catch (e) {
-      res.status(500).json({
-        ok: false,
-        error: e.message,
-      });
-    }
-  }
-);
-
-// =========================
-// X TASK VERIFY
-// =========================
-app.post(
-  "/api/x/verify-task",
-  auth,
-  async (req, res) => {
-    try {
-      const userId =
-        Number(req.tgUser.id);
-
-      const type =
-        String(
-          req.body.type || ""
-        );
-
-      const account =
-        await getXAccount(
-          userId
-        );
-
-      if (!account) {
-        return res.status(400).json({
-          ok: false,
-          error:
-            "Connect your X account first",
-        });
-      }
-
-      let verified = false;
-
-      if (type === "x_follow") {
-        verified =
-          await verifyXFollow(
-            account
-          );
-      } else if (
-        type === "x_repost"
-      ) {
-        verified =
-          await verifyXRepost(
-            account
-          );
-      } else {
-        return res.status(400).json({
-          ok: false,
-          error:
-            "Unknown X task",
-        });
-      }
-
-      res.json({
-        ok: true,
-        verified,
-      });
-    } catch (e) {
-      res.status(400).json({
-        ok: false,
-        error: e.message,
-      });
-    }
-  }
-);
-
-// =========================
-// TASKS
-// =========================
 app.get(
   "/api/tasks",
   auth,
   async (req, res) => {
     try {
       const result = await db(
-        `SELECT
+        `
+        SELECT
           t.*,
           CASE
             WHEN tc.user_id IS NULL
             THEN FALSE
             ELSE TRUE
-          END claimed
-
+          END AS claimed
         FROM tasks t
 
         LEFT JOIN task_claims tc
           ON tc.task_id=t.id
           AND tc.user_id=$1
 
-        WHERE t.active=TRUE
+        WHERE
+          t.active=TRUE
+          AND t.type='telegram'
 
-        ORDER BY t.id`,
+        ORDER BY t.id
+        `,
         [Number(req.tgUser.id)]
       );
 
@@ -1312,55 +712,39 @@ app.get(
         ok: true,
 
         tasks: result.rows.map(
-          task => ({
+          (task) => ({
             id: Number(task.id),
-
-            title:
-              task.title,
-
+            title: task.title,
             description:
-              task.description ||
-              "",
-
-            reward:
-              Number(
-                task.reward || 0
-              ),
-
-            type:
-              task.type,
-
+              task.description || "",
+            reward: Number(
+              task.reward || 0
+            ),
+            type: "telegram",
             target:
               task.target || "",
-
             targetId:
-              task.target_id ||
-              "",
-
+              task.target_id || "",
             claimed:
-              Boolean(
-                task.claimed
-              ),
+              Boolean(task.claimed),
           })
         ),
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// TELEGRAM BOT HOLDER
-// =========================
 let bot = null;
 
-// =========================
-// TASK CLAIM
-// =========================
+/* =========================
+   CLAIM TELEGRAM TASK
+========================= */
+
 app.post(
   "/api/task/claim",
   auth,
@@ -1369,47 +753,53 @@ app.post(
       await pool.connect();
 
     try {
-      const taskId =
-        Number(
-          req.body.taskId
-        );
+      const taskId = Number(
+        req.body.taskId
+      );
 
-      const userId =
-        Number(req.tgUser.id);
+      const userId = Number(
+        req.tgUser.id
+      );
 
       const taskResult =
         await client.query(
-          `SELECT *
-           FROM tasks
-           WHERE id=$1
-           AND active=TRUE`,
+          `
+          SELECT *
+          FROM tasks
+          WHERE
+            id=$1
+            AND active=TRUE
+            AND type='telegram'
+          `,
           [taskId]
         );
 
       if (!taskResult.rows.length) {
         return res.status(404).json({
           ok: false,
-          error:
-            "Task not found",
+          error: "Task not found",
         });
       }
 
       const task =
         taskResult.rows[0];
 
-      const already =
+      const oldClaim =
         await client.query(
-          `SELECT 1
-           FROM task_claims
-           WHERE user_id=$1
-           AND task_id=$2`,
+          `
+          SELECT 1
+          FROM task_claims
+          WHERE
+            user_id=$1
+            AND task_id=$2
+          `,
           [
             userId,
             taskId,
           ]
         );
 
-      if (already.rows.length) {
+      if (oldClaim.rows.length) {
         return res.status(400).json({
           ok: false,
           error:
@@ -1417,107 +807,66 @@ app.post(
         });
       }
 
-      // Telegram task
-      if (task.type === "telegram") {
-        if (!bot) {
-          return res.status(503).json({
-            ok: false,
-            error:
-              "Bot not ready",
-          });
-        }
-
-        const chat =
-          task.target_id ||
-          task.target;
-
-        let member;
-
-        try {
-          member =
-            await bot.telegram.getChatMember(
-              chat,
-              userId
-            );
-        } catch (e) {
-          return res.status(400).json({
-            ok: false,
-            error:
-              "Membership verification failed. Make sure the bot is admin in the channel.",
-          });
-        }
-
-        if (
-          ![
-            "creator",
-            "administrator",
-            "member",
-            "restricted",
-          ].includes(
-            member.status
-          )
-        ) {
-          return res.status(400).json({
-            ok: false,
-            error:
-              "Please join the Telegram channel first.",
-          });
-        }
+      if (!bot) {
+        return res.status(503).json({
+          ok: false,
+          error:
+            "Bot not ready",
+        });
       }
 
-      // X tasks
-      if (
-        task.type === "x_follow" ||
-        task.type === "x_repost"
-      ) {
-        const account =
-          await getXAccount(
+      const chat =
+        task.target_id ||
+        task.target;
+
+      let member;
+
+      try {
+        member =
+          await bot.telegram.getChatMember(
+            chat,
             userId
           );
-
-        if (!account) {
-          return res.status(400).json({
-            ok: false,
-            error:
-              "Connect your X account first",
-          });
-        }
-
-        const verified =
-          task.type ===
-          "x_follow"
-            ? await verifyXFollow(
-                account
-              )
-            : await verifyXRepost(
-                account
-              );
-
-        if (!verified) {
-          return res.status(400).json({
-            ok: false,
-            error:
-              task.type ===
-              "x_follow"
-                ? "Follow @VeltrixExchang on X first."
-                : "Repost the official VELTRIX post first.",
-          });
-        }
+      } catch (error) {
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Membership verification failed. Make sure the bot is admin in the channel.",
+        });
       }
 
-      await client.query(
-        "BEGIN"
-      );
+      const allowedStatuses = [
+        "creator",
+        "administrator",
+        "member",
+        "restricted",
+      ];
+
+      if (
+        !allowedStatuses.includes(
+          member.status
+        )
+      ) {
+        return res.status(400).json({
+          ok: false,
+          error:
+            "Please join the Telegram channel first.",
+        });
+      }
+
+      await client.query("BEGIN");
 
       await client.query(
-        `INSERT INTO task_claims
+        `
+        INSERT INTO task_claims
         (
           user_id,
           task_id,
           claimed_at
         )
         VALUES
-        ($1,$2,$3)`,
+        ($1,$2,$3)
+        `,
         [
           userId,
           taskId,
@@ -1526,9 +875,11 @@ app.post(
       );
 
       await client.query(
-        `UPDATE users
-         SET balance=balance+$1
-         WHERE id=$2`,
+        `
+        UPDATE users
+        SET balance=balance+$1
+        WHERE id=$2
+        `,
         [
           Number(
             task.reward || 0
@@ -1537,25 +888,23 @@ app.post(
         ]
       );
 
-      await client.query(
-        "COMMIT"
-      );
+      await client.query("COMMIT");
 
       res.json({
         ok: true,
-        reward:
-          Number(
-            task.reward || 0
-          ),
+        reward: Number(
+          task.reward || 0
+        ),
       });
-    } catch (e) {
+    } catch (error) {
       await client.query(
         "ROLLBACK"
       );
 
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error:
+          "Task claim failed",
       });
     } finally {
       client.release();
@@ -1563,9 +912,10 @@ app.post(
   }
 );
 
-// =========================
-// REFERRAL
-// =========================
+/* =========================
+   REFERRAL
+========================= */
+
 app.get(
   "/api/referral",
   auth,
@@ -1576,16 +926,17 @@ app.get(
 
       const result =
         await db(
-          `SELECT COUNT(*)::int count
-           FROM users
-           WHERE referred_by=$1`,
+          `
+          SELECT COUNT(*)::int AS count
+          FROM users
+          WHERE referred_by=$1
+          `,
           [userId]
         );
 
       const referrals =
         Number(
-          result.rows[0]?.count ||
-            0
+          result.rows[0]?.count || 0
         );
 
       res.json({
@@ -1603,18 +954,19 @@ app.get(
         link:
           `https://t.me/VeltrixMinerBot?start=${userId}`,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// LEADERBOARD
-// =========================
+/* =========================
+   LEADERBOARD
+========================= */
+
 app.get(
   "/api/leaderboard",
   auth,
@@ -1622,17 +974,16 @@ app.get(
     try {
       const result =
         await db(
-          `SELECT
+          `
+          SELECT
             id,
             username,
             first_name,
             balance
-
-           FROM users
-
-           ORDER BY balance DESC
-
-           LIMIT 100`
+          FROM users
+          ORDER BY balance DESC
+          LIMIT 100
+          `
         );
 
       res.json({
@@ -1641,40 +992,34 @@ app.get(
         leaderboard:
           result.rows.map(
             (user, index) => ({
-              rank:
-                index + 1,
-
-              id:
-                Number(user.id),
-
+              rank: index + 1,
+              id: Number(
+                user.id
+              ),
               username:
-                user.username ||
-                "",
-
+                user.username || "",
               first_name:
-                user.first_name ||
-                "",
-
+                user.first_name || "",
               balance:
                 Number(
-                  user.balance ||
-                    0
+                  user.balance || 0
                 ),
             })
           ),
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// SOLANA WALLET
-// =========================
+/* =========================
+   SOLANA WALLET
+========================= */
+
 function validSolana(wallet) {
   return (
     typeof wallet === "string" &&
@@ -1693,7 +1038,11 @@ app.get(
     try {
       const result =
         await db(
-          "SELECT wallet FROM users WHERE id=$1",
+          `
+          SELECT wallet
+          FROM users
+          WHERE id=$1
+          `,
           [
             Number(
               req.tgUser.id
@@ -1703,15 +1052,14 @@ app.get(
 
       res.json({
         ok: true,
-
         wallet:
           result.rows[0]
             ?.wallet || "",
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
@@ -1724,8 +1072,7 @@ app.post(
     try {
       const wallet =
         String(
-          req.body.wallet ||
-            ""
+          req.body.wallet || ""
         ).trim();
 
       if (!validSolana(wallet)) {
@@ -1737,9 +1084,11 @@ app.post(
       }
 
       await db(
-        `UPDATE users
-         SET wallet=$1
-         WHERE id=$2`,
+        `
+        UPDATE users
+        SET wallet=$1
+        WHERE id=$2
+        `,
         [
           wallet,
           Number(
@@ -1752,18 +1101,19 @@ app.post(
         ok: true,
         wallet,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// WITHDRAW
-// =========================
+/* =========================
+   WITHDRAW
+========================= */
+
 app.post(
   "/api/withdraw",
   auth,
@@ -1773,9 +1123,7 @@ app.post(
 
     try {
       const amount =
-        Number(
-          req.body.amount
-        );
+        Number(req.body.amount);
 
       const userId =
         Number(req.tgUser.id);
@@ -1804,13 +1152,16 @@ app.post(
         });
       }
 
-      await client.query(
-        "BEGIN"
-      );
+      await client.query("BEGIN");
 
       const result =
         await client.query(
-          "SELECT * FROM users WHERE id=$1 FOR UPDATE",
+          `
+          SELECT *
+          FROM users
+          WHERE id=$1
+          FOR UPDATE
+          `,
           [userId]
         );
 
@@ -1863,11 +1214,14 @@ app.post(
 
       const pending =
         await client.query(
-          `SELECT id
-           FROM withdrawals
-           WHERE user_id=$1
-           AND status='PENDING'
-           LIMIT 1`,
+          `
+          SELECT id
+          FROM withdrawals
+          WHERE
+            user_id=$1
+            AND status='PENDING'
+          LIMIT 1
+          `,
           [userId]
         );
 
@@ -1884,9 +1238,11 @@ app.post(
       }
 
       await client.query(
-        `UPDATE users
-         SET balance=balance-$1
-         WHERE id=$2`,
+        `
+        UPDATE users
+        SET balance=balance-$1
+        WHERE id=$2
+        `,
         [
           amount,
           userId,
@@ -1895,7 +1251,8 @@ app.post(
 
       const withdrawal =
         await client.query(
-          `INSERT INTO withdrawals
+          `
+          INSERT INTO withdrawals
           (
             user_id,
             amount,
@@ -1905,9 +1262,14 @@ app.post(
           )
           VALUES
           (
-            $1,$2,$3,'PENDING',$4
+            $1,
+            $2,
+            $3,
+            'PENDING',
+            $4
           )
-          RETURNING *`,
+          RETURNING *
+          `,
           [
             userId,
             amount,
@@ -1925,7 +1287,7 @@ app.post(
         withdrawal:
           withdrawal.rows[0],
       });
-    } catch (e) {
+    } catch (error) {
       await client.query(
         "ROLLBACK"
       );
@@ -1940,28 +1302,40 @@ app.post(
     }
   }
 );
-// =========================
-// PRESALE HELPERS
-// =========================
+
+/* =========================
+   PRESALE HELPERS
+========================= */
 
 async function expireOrders() {
   await db(
-    `UPDATE presale_orders
-     SET status='EXPIRED'
-     WHERE status='PENDING'
-     AND created_at < $1`,
-    [now() - PRESALE_ORDER_TTL]
+    `
+    UPDATE presale_orders
+    SET status='EXPIRED'
+    WHERE
+      status='PENDING'
+      AND created_at<$1
+    `,
+    [
+      now() -
+        PRESALE_ORDER_TTL,
+    ]
   );
 }
 
 async function sold() {
-  const result = await db(
-    `SELECT COALESCE(
-      SUM(vlx_amount),0
-    ) sold
-    FROM presale_orders
-    WHERE status='APPROVED'`
-  );
+  const result =
+    await db(
+      `
+      SELECT
+        COALESCE(
+          SUM(vlx_amount),
+          0
+        ) AS sold
+      FROM presale_orders
+      WHERE status='APPROVED'
+      `
+    );
 
   return Number(
     result.rows[0]?.sold || 0
@@ -1969,15 +1343,24 @@ async function sold() {
 }
 
 async function reserved() {
-  const result = await db(
-    `SELECT COALESCE(
-      SUM(vlx_amount),0
-    ) reserved
-    FROM presale_orders
-    WHERE status='PENDING'
-    AND created_at >= $1`,
-    [now() - PRESALE_ORDER_TTL]
-  );
+  const result =
+    await db(
+      `
+      SELECT
+        COALESCE(
+          SUM(vlx_amount),
+          0
+        ) AS reserved
+      FROM presale_orders
+      WHERE
+        status='PENDING'
+        AND created_at >= $1
+      `,
+      [
+        now() -
+          PRESALE_ORDER_TTL,
+      ]
+    );
 
   return Number(
     result.rows[0]?.reserved || 0
@@ -1986,7 +1369,8 @@ async function reserved() {
 
 function validTon(wallet) {
   if (
-    typeof wallet !== "string"
+    typeof wallet !==
+    "string"
   ) {
     return false;
   }
@@ -2005,13 +1389,14 @@ function validTon(wallet) {
 
 function nanoTon(amount) {
   return Math.round(
-    Number(amount) * 1e9
+    Number(amount) *
+      1e9
   );
 }
 
-// =========================
-// PRESALE CONFIG
-// =========================
+/* =========================
+   PRESALE CONFIG
+========================= */
 
 app.get(
   "/api/presale/config",
@@ -2019,26 +1404,18 @@ app.get(
     try {
       await expireOrders();
 
-      const totalSold =
+      const soldAmount =
         await sold();
 
-      const totalReserved =
+      const reservedAmount =
         await reserved();
-
-      const remaining =
-        Math.max(
-          0,
-          PRESALE_ALLOCATION -
-            totalSold -
-            totalReserved
-        );
 
       res.json({
         ok: true,
 
         active:
-          totalSold +
-            totalReserved <
+          soldAmount +
+            reservedAmount <
           PRESALE_ALLOCATION,
 
         rate:
@@ -2048,28 +1425,34 @@ app.get(
           PRESALE_ALLOCATION,
 
         sold:
-          totalSold,
+          soldAmount,
 
         reserved:
-          totalReserved,
+          reservedAmount,
 
-        remaining,
+        remaining:
+          Math.max(
+            0,
+            PRESALE_ALLOCATION -
+              soldAmount -
+              reservedAmount
+          ),
 
         tonAddress:
           PRESALE_TON_ADDRESS,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// CREATE PRESALE ORDER
-// =========================
+/* =========================
+   CREATE PRESALE ORDER
+========================= */
 
 app.post(
   "/api/presale/create-order",
@@ -2079,7 +1462,7 @@ app.post(
       await pool.connect();
 
     try {
-      const tonAmount =
+      const ton =
         Number(
           req.body.tonAmount
         );
@@ -2091,9 +1474,9 @@ app.post(
 
       if (
         !Number.isFinite(
-          tonAmount
+          ton
         ) ||
-        tonAmount < 0.01
+        ton < 0.01
       ) {
         return res.status(400).json({
           ok: false,
@@ -2112,20 +1495,19 @@ app.post(
 
       await expireOrders();
 
-      const totalSold =
+      const soldAmount =
         await sold();
 
-      const totalReserved =
+      const reservedAmount =
         await reserved();
 
-      const vlxAmount =
-        tonAmount *
-        PRESALE_RATE;
+      const vlx =
+        ton * PRESALE_RATE;
 
       if (
-        totalSold +
-          totalReserved +
-          vlxAmount >
+        soldAmount +
+          reservedAmount +
+          vlx >
         PRESALE_ALLOCATION
       ) {
         return res.status(400).json({
@@ -2141,7 +1523,8 @@ app.post(
 
       const result =
         await client.query(
-          `INSERT INTO presale_orders
+          `
+          INSERT INTO presale_orders
           (
             user_id,
             ton_amount,
@@ -2153,23 +1536,23 @@ app.post(
           )
           VALUES
           (
-            $1,$2,$3,$4,
+            $1,
+            $2,
+            $3,
+            $4,
             NULL,
             'PENDING',
             $5
           )
-          RETURNING *`,
+          RETURNING *
+          `,
           [
             Number(
               req.tgUser.id
             ),
-
-            tonAmount,
-
-            vlxAmount,
-
+            ton,
+            vlx,
             wallet,
-
             now(),
           ]
         );
@@ -2185,31 +1568,23 @@ app.post(
           id: Number(
             result.rows[0].id
           ),
-
-          ton_amount:
-            tonAmount,
-
-          vlx_amount:
-            vlxAmount,
-
+          ton_amount: ton,
+          vlx_amount: vlx,
           wallet,
-
-          status:
-            "PENDING",
+          status: "PENDING",
         },
 
         destination:
           PRESALE_TON_ADDRESS,
       });
-    } catch (e) {
+    } catch (error) {
       await client.query(
         "ROLLBACK"
       );
 
       res.status(500).json({
         ok: false,
-        error:
-          "Presale order failed",
+        error: error.message,
       });
     } finally {
       client.release();
@@ -2217,9 +1592,9 @@ app.post(
   }
 );
 
-// =========================
-// TON CENTER
-// =========================
+/* =========================
+   TON CENTER
+========================= */
 
 async function tonMessages(
   params
@@ -2229,8 +1604,9 @@ async function tonMessages(
   );
 
   for (
-    const [key, value]
-    of Object.entries(params)
+    const [key, value] of Object.entries(
+      params
+    )
   ) {
     if (
       value !== undefined &&
@@ -2268,13 +1644,11 @@ async function tonMessages(
   return data;
 }
 
-// =========================
-// FIND TON PAYMENT
-// =========================
+/* =========================
+   FIND TON PAYMENT
+========================= */
 
-async function findPayment(
-  order
-) {
+async function findPayment(order) {
   const data =
     await tonMessages({
       source:
@@ -2288,8 +1662,7 @@ async function findPayment(
           order.created_at
         ) - 120,
 
-      direction:
-        "in",
+      direction: "in",
 
       limit: 50,
 
@@ -2309,7 +1682,7 @@ async function findPayment(
     );
 
   return messages.find(
-    message =>
+    (message) =>
       Number(
         message.value || 0
       ) === expected &&
@@ -2321,9 +1694,9 @@ async function findPayment(
   ) || null;
 }
 
-// =========================
-// VERIFY PRESALE ORDER
-// =========================
+/* =========================
+   VERIFY PRESALE ORDER
+========================= */
 
 async function verifyOrder(
   orderId
@@ -2334,9 +1707,11 @@ async function verifyOrder(
   try {
     const result =
       await client.query(
-        `SELECT *
-         FROM presale_orders
-         WHERE id=$1`,
+        `
+        SELECT *
+        FROM presale_orders
+        WHERE id=$1
+        `,
         [orderId]
       );
 
@@ -2366,9 +1741,11 @@ async function verifyOrder(
         PRESALE_ORDER_TTL
     ) {
       await db(
-        `UPDATE presale_orders
-         SET status='EXPIRED'
-         WHERE id=$1`,
+        `
+        UPDATE presale_orders
+        SET status='EXPIRED'
+        WHERE id=$1
+        `,
         [orderId]
       );
 
@@ -2387,27 +1764,32 @@ async function verifyOrder(
       return order;
     }
 
-    const txHash =
+    const hash =
       payment.hash ||
       payment.message_hash;
 
     const duplicate =
       await db(
-        `SELECT id
-         FROM presale_orders
-         WHERE tx_hash=$1
-         AND id<>$2`,
+        `
+        SELECT id
+        FROM presale_orders
+        WHERE
+          tx_hash=$1
+          AND id<>$2
+        `,
         [
-          txHash,
+          hash,
           orderId,
         ]
       );
 
     if (duplicate.rows.length) {
       await db(
-        `UPDATE presale_orders
-         SET status='REJECTED'
-         WHERE id=$1`,
+        `
+        UPDATE presale_orders
+        SET status='REJECTED'
+        WHERE id=$1
+        `,
         [orderId]
       );
 
@@ -2423,33 +1805,37 @@ async function verifyOrder(
 
     const updated =
       await client.query(
-        `UPDATE presale_orders
-         SET
-           status='APPROVED',
-           tx_hash=$1,
-           verified_at=$2
-         WHERE id=$3
-         RETURNING *`,
+        `
+        UPDATE presale_orders
+        SET
+          status='APPROVED',
+          tx_hash=$1,
+          verified_at=$2
+        WHERE id=$3
+        RETURNING *
+        `,
         [
-          txHash,
+          hash,
           now(),
           orderId,
         ]
       );
 
     await client.query(
-      `UPDATE users
-       SET presale_balance =
-         COALESCE(
-           presale_balance,
-           0
-         ) + $1
-       WHERE id=$2`,
+      `
+      UPDATE users
+      SET
+        presale_balance =
+          COALESCE(
+            presale_balance,
+            0
+          ) + $1
+      WHERE id=$2
+      `,
       [
         Number(
           order.vlx_amount
         ),
-
         Number(
           order.user_id
         ),
@@ -2461,7 +1847,7 @@ async function verifyOrder(
     );
 
     return updated.rows[0];
-  } catch (e) {
+  } catch (error) {
     try {
       await client.query(
         "ROLLBACK"
@@ -2470,7 +1856,7 @@ async function verifyOrder(
 
     console.error(
       "Presale verification:",
-      e.message
+      error.message
     );
 
     return null;
@@ -2479,9 +1865,9 @@ async function verifyOrder(
   }
 }
 
-// =========================
-// USER PRESALE ORDER
-// =========================
+/* =========================
+   USER PRESALE ORDER
+========================= */
 
 app.get(
   "/api/presale/order/:id",
@@ -2495,10 +1881,13 @@ app.get(
 
       const own =
         await db(
-          `SELECT *
-           FROM presale_orders
-           WHERE id=$1
-           AND user_id=$2`,
+          `
+          SELECT *
+          FROM presale_orders
+          WHERE
+            id=$1
+            AND user_id=$2
+          `,
           [
             orderId,
             Number(
@@ -2571,18 +1960,18 @@ app.get(
               : null,
         },
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// USER PRESALE ORDERS
-// =========================
+/* =========================
+   USER PRESALE ORDERS
+========================= */
 
 app.get(
   "/api/presale/orders",
@@ -2593,11 +1982,13 @@ app.get(
 
       const result =
         await db(
-          `SELECT *
-           FROM presale_orders
-           WHERE user_id=$1
-           ORDER BY id DESC
-           LIMIT 50`,
+          `
+          SELECT *
+          FROM presale_orders
+          WHERE user_id=$1
+          ORDER BY id DESC
+          LIMIT 50
+          `,
           [
             Number(
               req.tgUser.id
@@ -2610,18 +2001,18 @@ app.get(
         orders:
           result.rows,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// ADMIN TASKS
-// =========================
+/* =========================
+   ADMIN TASKS
+========================= */
 
 app.get(
   "/api/admin/tasks",
@@ -2630,7 +2021,12 @@ app.get(
     try {
       const result =
         await db(
-          "SELECT * FROM tasks ORDER BY id DESC"
+          `
+          SELECT *
+          FROM tasks
+          WHERE type='telegram'
+          ORDER BY id DESC
+          `
         );
 
       res.json({
@@ -2638,14 +2034,18 @@ app.get(
         tasks:
           result.rows,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   CREATE TELEGRAM TASK
+========================= */
 
 app.post(
   "/api/admin/tasks",
@@ -2654,7 +2054,8 @@ app.post(
     try {
       const result =
         await db(
-          `INSERT INTO tasks
+          `
+          INSERT INTO tasks
           (
             title,
             description,
@@ -2667,31 +2068,28 @@ app.post(
           )
           VALUES
           (
-            $1,$2,$3,$4,
-            $5,$6,
+            $1,
+            $2,
+            $3,
+            'telegram',
+            $4,
+            $5,
             TRUE,
-            $7
+            $6
           )
-          RETURNING *`,
+          RETURNING *
+          `,
           [
             req.body.title,
-
             req.body.description ||
               "",
-
             Number(
               req.body.reward || 0
             ),
-
-            req.body.type ||
-              "telegram",
-
             req.body.target ||
               "",
-
             req.body.targetId ||
               null,
-
             now(),
           ]
         );
@@ -2701,14 +2099,18 @@ app.post(
         task:
           result.rows[0],
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   TOGGLE TASK
+========================= */
 
 app.post(
   "/api/admin/tasks/:id/toggle",
@@ -2717,10 +2119,14 @@ app.post(
     try {
       const result =
         await db(
-          `UPDATE tasks
-           SET active=NOT active
-           WHERE id=$1
-           RETURNING *`,
+          `
+          UPDATE tasks
+          SET active=NOT active
+          WHERE
+            id=$1
+            AND type='telegram'
+          RETURNING *
+          `,
           [
             Number(
               req.params.id
@@ -2733,50 +2139,62 @@ app.post(
         task:
           result.rows[0],
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   DELETE TASK
+========================= */
 
 app.delete(
   "/api/admin/tasks/:id",
   adminAuth,
   async (req, res) => {
     try {
-      const id =
+      const taskId =
         Number(
           req.params.id
         );
 
       await db(
-        "DELETE FROM task_claims WHERE task_id=$1",
-        [id]
+        `
+        DELETE FROM task_claims
+        WHERE task_id=$1
+        `,
+        [taskId]
       );
 
       await db(
-        "DELETE FROM tasks WHERE id=$1",
-        [id]
+        `
+        DELETE FROM tasks
+        WHERE
+          id=$1
+          AND type='telegram'
+        `,
+        [taskId]
       );
 
       res.json({
         ok: true,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// ADMIN WITHDRAWALS
-// =========================
+/* =========================
+   ADMIN WITHDRAWALS
+========================= */
 
 app.get(
   "/api/admin/withdrawals",
@@ -2785,19 +2203,17 @@ app.get(
     try {
       const result =
         await db(
-          `SELECT
+          `
+          SELECT
             w.*,
             u.username,
             u.first_name
-
-           FROM withdrawals w
-
-           LEFT JOIN users u
-           ON u.id=w.user_id
-
-           ORDER BY w.id DESC
-
-           LIMIT 200`
+          FROM withdrawals w
+          LEFT JOIN users u
+            ON u.id=w.user_id
+          ORDER BY w.id DESC
+          LIMIT 200
+          `
         );
 
       res.json({
@@ -2805,14 +2221,18 @@ app.get(
         withdrawals:
           result.rows,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   ADMIN WITHDRAWAL STATUS
+========================= */
 
 app.post(
   "/api/admin/withdrawals/:id",
@@ -2829,8 +2249,7 @@ app.post(
 
       const status =
         String(
-          req.body.status ||
-            ""
+          req.body.status || ""
         ).toUpperCase();
 
       if (
@@ -2853,10 +2272,12 @@ app.post(
 
       const result =
         await client.query(
-          `SELECT *
-           FROM withdrawals
-           WHERE id=$1
-           FOR UPDATE`,
+          `
+          SELECT *
+          FROM withdrawals
+          WHERE id=$1
+          FOR UPDATE
+          `,
           [id]
         );
 
@@ -2882,14 +2303,15 @@ app.post(
           "REJECTED"
       ) {
         await client.query(
-          `UPDATE users
-           SET balance=balance+$1
-           WHERE id=$2`,
+          `
+          UPDATE users
+          SET balance=balance+$1
+          WHERE id=$2
+          `,
           [
             Number(
               withdrawal.amount
             ),
-
             Number(
               withdrawal.user_id
             ),
@@ -2898,25 +2320,27 @@ app.post(
       }
 
       await client.query(
-        `UPDATE withdrawals
-         SET
-           status=$1,
+        `
+        UPDATE withdrawals
+        SET
+          status=$1,
 
-           processed_at=
-             CASE
-               WHEN $1 IN
-                 ('APPROVED','REJECTED')
-               THEN $2
-               ELSE processed_at
-             END,
+          processed_at=
+            CASE
+              WHEN $1 IN
+                ('APPROVED','REJECTED')
+              THEN $2
+              ELSE processed_at
+            END,
 
-           tx_hash=
-             COALESCE(
-               $3,
-               tx_hash
-             )
+          tx_hash=
+            COALESCE(
+              $3,
+              tx_hash
+            )
 
-         WHERE id=$4`,
+        WHERE id=$4
+        `,
         [
           status,
           now(),
@@ -2933,14 +2357,15 @@ app.post(
       res.json({
         ok: true,
       });
-    } catch (e) {
+    } catch (error) {
       await client.query(
         "ROLLBACK"
       );
 
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error:
+          "Withdrawal update failed",
       });
     } finally {
       client.release();
@@ -2948,9 +2373,9 @@ app.post(
   }
 );
 
-// =========================
-// ADMIN PRESALE
-// =========================
+/* =========================
+   ADMIN PRESALE ORDERS
+========================= */
 
 app.get(
   "/api/admin/presale/orders",
@@ -2961,19 +2386,17 @@ app.get(
 
       const result =
         await db(
-          `SELECT
+          `
+          SELECT
             p.*,
             u.username,
             u.first_name
-
-           FROM presale_orders p
-
-           LEFT JOIN users u
-           ON u.id=p.user_id
-
-           ORDER BY p.id DESC
-
-           LIMIT 500`
+          FROM presale_orders p
+          LEFT JOIN users u
+            ON u.id=p.user_id
+          ORDER BY p.id DESC
+          LIMIT 500
+          `
         );
 
       res.json({
@@ -2981,14 +2404,18 @@ app.get(
         orders:
           result.rows,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
+
+/* =========================
+   ADMIN PRESALE STATUS
+========================= */
 
 app.get(
   "/api/admin/presale/status",
@@ -2997,10 +2424,10 @@ app.get(
     try {
       await expireOrders();
 
-      const totalSold =
+      const soldAmount =
         await sold();
 
-      const totalReserved =
+      const reservedAmount =
         await reserved();
 
       res.json({
@@ -3013,34 +2440,34 @@ app.get(
           PRESALE_ALLOCATION,
 
         sold:
-          totalSold,
+          soldAmount,
 
         reserved:
-          totalReserved,
+          reservedAmount,
 
         remaining:
           Math.max(
             0,
             PRESALE_ALLOCATION -
-              totalSold -
-              totalReserved
+              soldAmount -
+              reservedAmount
           ),
 
         tonAddress:
           PRESALE_TON_ADDRESS,
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// ADMIN STATUS
-// =========================
+/* =========================
+   ADMIN STATUS
+========================= */
 
 app.get(
   "/api/admin/status",
@@ -3049,23 +2476,31 @@ app.get(
     try {
       const users =
         await db(
-          `SELECT COUNT(*)::int count
-           FROM users`
+          `
+          SELECT COUNT(*)::int AS count
+          FROM users
+          `
         );
 
       const balance =
         await db(
-          `SELECT COALESCE(
-            SUM(balance),0
-          ) total
-          FROM users`
+          `
+          SELECT
+            COALESCE(
+              SUM(balance),
+              0
+            ) AS total
+          FROM users
+          `
         );
 
-      const withdrawals =
+      const pending =
         await db(
-          `SELECT COUNT(*)::int count
-           FROM withdrawals
-           WHERE status='PENDING'`
+          `
+          SELECT COUNT(*)::int AS count
+          FROM withdrawals
+          WHERE status='PENDING'
+          `
         );
 
       res.json({
@@ -3083,24 +2518,24 @@ app.get(
 
         pendingWithdrawals:
           Number(
-            withdrawals.rows[0].count
+            pending.rows[0].count
           ),
 
         presaleSold:
           await sold(),
       });
-    } catch (e) {
+    } catch (error) {
       res.status(500).json({
         ok: false,
-        error: e.message,
+        error: error.message,
       });
     }
   }
 );
 
-// =========================
-// MINING NOTIFICATIONS
-// =========================
+/* =========================
+   MINING NOTIFICATIONS
+========================= */
 
 async function miningNotifications() {
   if (!bot) {
@@ -3108,165 +2543,141 @@ async function miningNotifications() {
   }
 
   try {
-    const result =
-      await db(
-        `SELECT *
-         FROM users
-         WHERE cycle_start IS NOT NULL
-         AND cycle_start+$1 <= $2
-         LIMIT 500`,
-        [
-          CYCLE_SECONDS,
-          now(),
-        ]
-      );
+    const result = await db(`
+      SELECT *
+      FROM users
+      WHERE
+        cycle_start IS NOT NULL
+        AND cycle_start + ${CYCLE_SECONDS} <= ${now()}
+        AND COALESCE(mining_notified_cycle, 0) != cycle_start
+      LIMIT 500
+    `);
 
-    for (
-      const user
-      of result.rows
-    ) {
-      const cycle =
-        Number(
-          user.cycle_start
-        );
-
-      if (
-        Number(
-          user.mining_notified_cycle ||
-            0
-        ) === cycle
-      ) {
-        continue;
-      }
+    for (const user of result.rows) {
+      const cycle = Number(user.cycle_start);
 
       try {
         await bot.telegram.sendMessage(
           Number(user.id),
-
           `⛏️ VELTRIX Mining Complete!
 
 🎉 Your ${CYCLE_HOURS}-hour mining cycle is complete.
 
-💰 Reward: ${(RATE * CYCLE_HOURS).toFixed(
-            2
-          )} VLX
+💰 Reward: ${(RATE * CYCLE_HOURS).toFixed(2)} VLX
 
 👇 Claim your VLX now.`,
-
           {
             reply_markup: {
               inline_keyboard: [
                 [
                   {
-                    text:
-                      "⛏️ Claim VLX",
-
+                    text: "⛏️ Claim VLX",
                     web_app: {
-                      url:
-                        APP_URL,
-                    },
-                  },
-                ],
-              ],
-            },
+                      url: APP_URL
+                    }
+                  }
+                ]
+              ]
+            }
           }
         );
 
         await db(
-          `UPDATE users
-           SET mining_notified_cycle=$1
-           WHERE id=$2`,
+          `
+          UPDATE users
+          SET mining_notified_cycle = $1
+          WHERE id = $2
+          `,
           [
             cycle,
-            Number(user.id),
+            Number(user.id)
           ]
         );
-      } catch (e) {
-        // Ignore individual Telegram errors
+
+      } catch (sendError) {
+        console.error(
+          `Mining notification failed for user ${user.id}:`,
+          sendError.message
+        );
       }
     }
-  } catch (e) {
+
+  } catch (error) {
     console.error(
-      "Notification checker:",
-      e.message
+      "Mining notification checker error:",
+      error.message
     );
   }
 }
 
-// =========================
-// TELEGRAM BOT
-// =========================
+
+/* =========================
+   TELEGRAM BOT
+========================= */
 
 if (BOT_TOKEN) {
-  bot = new Telegraf(
-    BOT_TOKEN
-  );
+  bot = new Telegraf(BOT_TOKEN);
 
-  bot.start(
-    async ctx => {
-      try {
-        await createUser(
-          ctx.from,
-          ctx.startPayload ||
-            null
-        );
+  bot.start(async (ctx) => {
+    try {
+      await createUser(
+        ctx.from,
+        ctx.startPayload || null
+      );
 
-        await ctx.reply(
-          `⛏️ VELTRIX — VLX Miner
+      await ctx.reply(
+        `⛏️ VELTRIX — VLX Miner
 
 💎 Rate: ${RATE} VLX/hour
 ⏱️ Cycle: ${CYCLE_HOURS} hours
 
 Welcome to VELTRIX 👑`,
-
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text:
-                      "⛏️ Mine VLX",
-
-                    web_app: {
-                      url:
-                        `${APP_URL}?ref=${ctx.from.id}`,
-                    },
-                  },
-
-                  {
-                    text:
-                      "💎 VLX Presale",
-
-                    web_app: {
-                      url:
-                        `${APP_URL}?section=presale&ref=${ctx.from.id}`,
-                    },
-                  },
-                ],
-              ],
-            },
+        {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "⛏️ Mine VLX",
+                  web_app: {
+                    url: `${APP_URL}?ref=${ctx.from.id}`
+                  }
+                },
+                {
+                  text: "💎 VLX Presale",
+                  web_app: {
+                    url: `${APP_URL}?section=presale&ref=${ctx.from.id}`
+                  }
+                }
+              ]
+            ]
           }
-        );
-      } catch (e) {
-        await ctx.reply(
-          "VELTRIX is temporarily unavailable. Please try again."
-        );
-      }
-    }
-  );
+        }
+      );
 
-  bot.catch(
-    e =>
+    } catch (error) {
       console.error(
-        "Telegram:",
-        e.message
-      )
-  );
+        "Telegram /start error:",
+        error.message
+      );
+
+      await ctx.reply(
+        "VELTRIX is temporarily unavailable. Please try again."
+      );
+    }
+  });
+
+  bot.catch((error) => {
+    console.error(
+      "Telegram bot error:",
+      error.message
+    );
+  });
 }
 
-// =========================
-// START SERVER
-// =========================
+
+/* =========================
+   SERVER START
+========================= */
 
 async function start() {
   try {
@@ -3275,10 +2686,11 @@ async function start() {
     app.listen(
       PORT,
       "0.0.0.0",
-      () =>
+      () => {
         console.log(
-          `VELTRIX running on ${PORT}`
-        )
+          `VELTRIX running on port ${PORT}`
+        );
+      }
     );
 
     setInterval(
@@ -3287,28 +2699,28 @@ async function start() {
     );
 
     if (bot) {
-      bot
-        .launch()
-        .then(() =>
+      bot.launch()
+        .then(() => {
           console.log(
-            "VELTRIX bot started"
-          )
-        )
-        .catch(e =>
+            "VELTRIX Telegram bot started"
+          );
+        })
+        .catch((error) => {
           console.error(
-            "Bot launch:",
-            e.message
-          )
-        );
+            "Bot launch error:",
+            error.message
+          );
+        });
     } else {
       console.error(
-        "BOT_TOKEN missing"
+        "BOT_TOKEN is missing"
       );
     }
-  } catch (e) {
+
+  } catch (error) {
     console.error(
       "Startup failed:",
-      e
+      error
     );
 
     process.exit(1);
@@ -3316,6 +2728,11 @@ async function start() {
 }
 
 start();
+
+
+/* =========================
+   GRACEFUL SHUTDOWN
+========================= */
 
 process.once(
   "SIGINT",
