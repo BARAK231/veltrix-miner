@@ -344,6 +344,12 @@ async function initDatabase() {
     presale_balance DOUBLE PRECISION DEFAULT 0
   `);
 
+  await db(`
+  ALTER TABLE tasks
+  ADD COLUMN IF NOT EXISTS
+  description TEXT
+`);
+
   /* =========================
      TASKS
   ========================= */
