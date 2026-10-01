@@ -403,6 +403,11 @@ async function initDatabase() {
     ADD COLUMN IF NOT EXISTS created_at BIGINT
   `);
 
+  await db(`
+  ALTER TABLE tasks
+  ALTER COLUMN url DROP NOT NULL
+`);
+
   /* =========================
      REMOVE OLD X TASKS ONLY
   ========================= */
