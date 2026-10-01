@@ -350,7 +350,7 @@ async function initDatabase() {
   description TEXT
 `);
 
-  /* =========================
+    /* =========================
      TASKS
   ========================= */
 
@@ -370,14 +370,37 @@ async function initDatabase() {
 
   await db(`
     ALTER TABLE tasks
-    ADD COLUMN IF NOT EXISTS
-    type TEXT DEFAULT 'telegram'
+    ADD COLUMN IF NOT EXISTS description TEXT
   `);
 
   await db(`
     ALTER TABLE tasks
-    ADD COLUMN IF NOT EXISTS
-    target_id TEXT
+    ADD COLUMN IF NOT EXISTS reward DOUBLE PRECISION DEFAULT 0
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'telegram'
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS target TEXT
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS target_id TEXT
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE
+  `);
+
+  await db(`
+    ALTER TABLE tasks
+    ADD COLUMN IF NOT EXISTS created_at BIGINT
   `);
 
   /* =========================
