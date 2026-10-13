@@ -912,12 +912,430 @@ nav button {
   font-size: 10px;
   line-height: 1.5;
   overflow-wrap: anywhere;
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg: #07111f;
+  --panel: #102033;
+  --border: #29445a;
+  --text: #f5f8ff;
+  --muted: #c0cede;
+  --cyan: #59e6d2;
+  --green: #65e8a3;
+  --blue: #438cff;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, #16354b 0%, transparent 48%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 13px;
+  padding: 14px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  color: #071a20;
+  background: linear-gradient(110deg, var(--cyan), #8af5bd);
+  box-shadow: 0 5px 18px #0002;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.app {
+  position: relative;
+  isolation: isolate;
+  max-width: 520px;
+  margin: auto;
+  min-height: 100vh;
+  padding: 0 0 105px;
+  overflow: hidden;
+}
+
+.app::before {
+  content: "VELTRIX";
+  position: fixed;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  font-size: clamp(45px, 12vw, 90px);
+  font-weight: 900;
+  letter-spacing: 8px;
+  white-space: nowrap;
+  color: rgba(115, 220, 220, .035);
+  pointer-events: none;
+  z-index: -1;
+}
+
+header {
+  padding: 25px 18px 18px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-shadow: 0 0 20px #59e6d222;
+}
+
+.sub {
+  color: var(--muted);
+  margin-top: 7px;
+  font-size: 12px;
+  letter-spacing: 4px;
+  font-weight: 800;
+}
+
+.card,
+.admin-card {
+  background: linear-gradient(145deg, #152b40, #0c192a);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  margin: 12px 14px;
+  padding: 19px;
+  box-shadow: 0 9px 28px #0003;
+}
+
+.card h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: var(--text);
+}
+
+#vlxCountdown {
+  color: #fff;
+  line-height: 1.9;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.balance {
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #22606a55, transparent 70%),
+    linear-gradient(145deg, #142b40, #0b1929);
+  border-color: #32606b;
+  padding: 28px 18px;
+}
+
+.balance-title {
+  color: #d7e4f0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+
+.balance-number {
+  font-size: clamp(31px, 9vw, 46px);
+  font-weight: 900;
+  margin: 12px 0 7px;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.vlx {
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.mining-box {
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #23588744, transparent 72%),
+    linear-gradient(145deg, #142a40, #0b1929);
+  border-color: #315675;
+  padding: 25px 18px;
+}
+
+.mining-status {
+  font-size: 14px;
+  color: var(--cyan);
+  margin-bottom: 13px;
+  letter-spacing: 2px;
+  font-weight: 900;
+}
+
+.mining-number {
+  font-size: clamp(30px, 8vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.rate {
+  margin-top: 12px;
+  color: #d4e5f4;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.timer {
+  margin: 22px 0;
+  font-size: clamp(23px, 6vw, 31px);
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+#claimMessage,
+#presaleMessage,
+#withdrawMessage {
+  margin-top: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  color: #fff;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+  animation: appear .2s ease-out;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task {
+  background: #14283b;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.task-title {
+  font-weight: 900;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.task-description {
+  color: #c5d3e1;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.task-reward {
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-actions button {
+  width: 50%;
+  padding: 12px 8px;
+  font-size: 12px;
+}
+
+.secondary,
+.admin-toggle {
+  background: #29445b;
+  color: #fff;
+  box-shadow: none;
+  border: 1px solid #3b5b73;
+}
+
+.friend-link {
+  background: #091625;
+  border: 1px solid #34516a;
+  border-radius: 13px;
+  padding: 14px;
+  word-break: break-all;
+  font-size: 13px;
+  margin: 14px 0;
+  color: var(--cyan);
+  line-height: 1.7;
+}
+
+input {
+  width: 100%;
+  background: #091625;
+  color: #fff;
+  border: 1px solid #34516a;
+  border-radius: 12px;
+  padding: 14px;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px #59e6d21c;
+}
+
+input::placeholder {
+  color: #aebfd0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.row > div {
+  flex: 1;
+  min-width: 0;
+  background: #0b1a2b;
+  border: 1px solid #2b465d;
+  border-radius: 15px;
+  padding: 16px 8px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: #fff;
+}
+
+.row > div > div:first-child {
+  font-size: clamp(17px, 5vw, 23px);
+  font-weight: 900;
+  color: #fff;
+}
+
+.small {
+  color: #c0cede;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.error {
+  display: none;
+  background: #421c2a;
+  color: #fff;
+  border: 1px solid #a7435b;
+  border-radius: 12px;
+  margin: 10px 14px;
+  padding: 13px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.success {
+  color: var(--green);
+  font-size: 13px;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.presale-wallet {
+  background: #091625;
+  border: 1px solid #34516a;
+  border-radius: 14px;
+  padding: 14px;
+  margin: 12px 0 16px;
+}
+
+.presale-address {
+  word-break: break-all;
+  color: #c0cede;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.presale-value {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 9px 0 14px;
+  color: var(--cyan);
+  overflow-wrap: anywhere;
+}
+
+.presale-note {
+  color: #c0cede;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 12px;
+}
+
+#tonConnectButton {
+  margin-bottom: 12px;
+}
+
+#tonConnectButton button {
+  width: 100% !important;
+}
+
+nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 520px;
+  margin: auto;
+  background: rgba(7, 17, 31, .98);
+  border-top: 1px solid #29445a;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  padding: 8px 3px max(8px, env(safe-area-inset-bottom));
+  z-index: 100;
+  backdrop-filter: blur(16px);
+}
+
+nav button {
+  background: transparent;
+  color: #c0cede;
+  box-shadow: none;
+  border-radius: 11px;
+  padding: 10px 1px;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 nav button.active {
-  color: #ffffff;
-  background: #153f55;
-  border: 1px solid #28677a;
+  color: var(--cyan);
+  background: #17364a;
 }
 
 .rank-item {
@@ -925,9 +1343,9 @@ nav button.active {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 13px 0;
-  border-bottom: 1px solid #2e4b63;
-  color: #ffffff;
+  padding: 14px 0;
+  border-bottom: 1px solid #29445a;
+  color: #fff;
 }
 
 .rank-item:last-child {
@@ -938,45 +1356,41 @@ nav button.active {
   display: none;
   max-width: 520px;
   margin: 0 auto;
-  padding-bottom: 100px;
+  padding-bottom: 105px;
 }
 
 .admin-title {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #ffffff;
+  color: #fff;
 }
 
-.admin-task,
-.order-item {
-  background: #0b1a2a;
-  border: 1px solid #36536b;
-  border-radius: 14px;
+.admin-task {
+  background: #0b1a2b;
+  border: 1px solid #29445a;
+  border-radius: 15px;
   padding: 14px;
-  margin-top: 10px;
-  color: #f2f8ff;
-  font-size: 12px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
+  margin-top: 11px;
+  color: #fff;
 }
 
 .admin-task-title {
-  font-weight: 800;
-  margin-bottom: 6px;
-  color: #ffffff;
+  font-weight: 900;
+  margin-bottom: 7px;
+  color: #fff;
 }
 
 .admin-task-url {
-  color: #b0c2d3;
+  color: #c0cede;
   font-size: 12px;
   word-break: break-all;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
 .admin-delete {
   margin-top: 10px;
-  background: #dc4059;
-  color: #ffffff;
+  background: #c93652;
+  color: #fff;
   box-shadow: none;
 }
 
@@ -988,33 +1402,56 @@ nav button.active {
   margin-top: 10px;
   font-size: 13px;
   line-height: 1.6;
-  color: #ffffff;
+  color: #fff;
+}
+
+.order-item {
+  background: #0b1a2b;
+  border: 1px solid #29445a;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 11px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  color: #fff;
 }
 
 .status {
-  font-weight: 800;
-  margin-top: 6px;
+  font-weight: 900;
+  margin-top: 7px;
   color: var(--cyan);
 }
 
-#vlxCountdown {
-  color: #ffffff;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-}
-
-#vlxCountdown b {
-  color: #ffffff;
-}
-
 @media (max-width: 360px) {
-  .balance-number { font-size: 31px; }
-  .mining-number { font-size: 28px; }
-  .timer { font-size: 21px; }
-  .card, .admin-card { margin: 10px; padding: 15px; }
-  nav button { font-size: 9px; }
+  .card,
+  .admin-card {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .balance-number {
+    font-size: 30px;
+  }
+
+  .mining-number {
+    font-size: 28px;
+  }
+
+  .timer {
+    font-size: 22px;
+  }
+
+  nav button {
+    font-size: 10px;
+  }
 }
 </style>
+</head>
+
+<body>
+
+<div class="app">
 
   <!-- LISTING COUNTDOWN -->
   <div class="card">
