@@ -1,376 +1,514 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>VELTRIX — VLX Miner</title>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+:root {
+  --bg: #07111f;
+  --panel: #101e30;
+  --panel2: #14263b;
+  --border: #213c54;
+  --text: #f2f8ff;
+  --muted: #8fa8bd;
+  --cyan: #39e6d1;
+  --blue: #438cff;
+  --green: #46e59a;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
 
-    body {
-      margin: 0;
-      background: #0b0f14;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 50% -10%, #153d59 0%, transparent 45%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
 
-    button,
-    input {
-      font: inherit;
-    }
+button,
+input {
+  font: inherit;
+}
 
-    .app {
-      max-width: 520px;
-      margin: auto;
-      min-height: 100vh;
-      padding-bottom: 85px;
-    }
+button {
+  border: 0;
+  border-radius: 13px;
+  padding: 13px 16px;
+  width: 100%;
+  font-weight: 800;
+  cursor: pointer;
+  color: #04151b;
+  background: linear-gradient(110deg, var(--cyan), #76f7c2);
+  box-shadow: 0 5px 18px #22d9c51c;
+  transition: transform .15s ease, opacity .15s ease;
+}
 
-    header {
-      padding: 20px 18px 10px;
-      text-align: center;
-    }
+button:active {
+  transform: scale(.98);
+}
 
-    .logo {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
+button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
-    .sub {
-      color: #8d98a5;
-      margin-top: 5px;
-      font-size: 13px;
-    }
+.app {
+  max-width: 520px;
+  margin: auto;
+  min-height: 100vh;
+  padding: 0 0 100px;
+}
 
-    .card {
-      background: #121820;
-      border: 1px solid #202b36;
-      border-radius: 18px;
-      margin: 12px 14px;
-      padding: 18px;
-    }
+header {
+  padding: 25px 18px 15px;
+  text-align: center;
+}
 
-    .balance {
-      text-align: center;
-    }
+.logo {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-shadow: 0 0 24px #39e6d144;
+}
 
-    .balance-title {
-      color: #8d98a5;
-      font-size: 13px;
-    }
+.sub {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
 
-    .balance-number {
-      font-size: 36px;
-      font-weight: 800;
-      margin: 8px 0;
-    }
+.card {
+  background: linear-gradient(145deg, #13263a, #0d1929);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin: 12px 14px;
+  padding: 18px;
+  box-shadow: 0 8px 25px #00000020;
+}
 
-    .vlx {
-      color: #8d98a5;
-    }
+.card h3 {
+  margin: 0 0 16px;
+  font-size: 17px;
+  color: var(--text);
+}
 
-    .mining-box {
-      text-align: center;
-    }
+.balance {
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #1a5860 0%, transparent 65%),
+    linear-gradient(145deg, #122c40, #0c1929);
+  border-color: #286a75;
+  padding: 24px 18px;
+}
 
-    .mining-status {
-      font-size: 14px;
-      color: #8d98a5;
-      margin-bottom: 8px;
-    }
+.balance-title {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
 
-    .mining-number {
-      font-size: 32px;
-      font-weight: 800;
-    }
+.balance-number {
+  font-size: 38px;
+  font-weight: 900;
+  margin: 12px 0 5px;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
 
-    .rate {
-      margin-top: 8px;
-      color: #8d98a5;
-      font-size: 13px;
-    }
+.vlx {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
 
-    .timer {
-      margin: 15px 0;
-      font-size: 22px;
-      font-weight: 700;
-    }
+.mining-box {
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #173e64 0%, transparent 68%),
+    linear-gradient(145deg, #13263b, #0c1929);
+  border-color: #285477;
+  padding: 22px 18px;
+}
 
-    button {
-      border: 0;
-      border-radius: 13px;
-      padding: 13px 18px;
-      width: 100%;
-      font-weight: 700;
-      cursor: pointer;
-      background: #fff;
-      color: #000;
-    }
+.mining-status {
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
 
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+.mining-number {
+  font-size: 34px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
 
-    .section {
-      display: none;
-    }
+.rate {
+  margin-top: 10px;
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 700;
+}
 
-    .section.active {
-      display: block;
-    }
+.timer {
+  margin: 18px 0;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
 
-    .task {
-      background: #171f28;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
+#claimMessage,
+#presaleMessage,
+#withdrawMessage {
+  margin-top: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
 
-    .task-title {
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
+.section {
+  display: none;
+}
 
-    .task-description {
-      color: #8d98a5;
-      font-size: 12px;
-      line-height: 1.5;
-      margin-bottom: 8px;
-    }
+.section.active {
+  display: block;
+  animation: appear .2s ease-out;
+}
 
-    .task-reward {
-      color: #8d98a5;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    .task-actions {
-      display: flex;
-      gap: 8px;
-    }
+.task {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 14px;
+  margin-bottom: 11px;
+}
 
-    .task-actions button {
-      width: 50%;
-      padding: 10px;
-    }
+.task-title {
+  font-weight: 800;
+  margin-bottom: 7px;
+  color: var(--text);
+}
 
-    .secondary {
-      background: #27313d;
-      color: #fff;
-    }
+.task-description {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
 
-    .friend-link {
-      background: #0d131a;
-      border: 1px solid #27313d;
-      border-radius: 10px;
-      padding: 12px;
-      word-break: break-all;
-      font-size: 12px;
-      margin: 12px 0;
-    }
+.task-reward {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
 
-    input {
-      width: 100%;
-      background: #0d131a;
-      color: #fff;
-      border: 1px solid #27313d;
-      border-radius: 12px;
-      padding: 13px;
-      outline: none;
-      margin-bottom: 10px;
-    }
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
+.task-actions button {
+  width: 50%;
+  padding: 11px 8px;
+  font-size: 12px;
+}
 
-    .row > div {
-      flex: 1;
-      background: #171f28;
-      border-radius: 12px;
-      padding: 13px;
-      text-align: center;
-    }
+.secondary {
+  background: #223951;
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid #34516c;
+}
 
-    .small {
-      color: #8d98a5;
-      font-size: 12px;
-    }
+.friend-link {
+  background: #091625;
+  border: 1px solid #294861;
+  border-radius: 12px;
+  padding: 13px;
+  word-break: break-all;
+  font-size: 12px;
+  margin: 14px 0;
+  color: var(--cyan);
+  line-height: 1.6;
+}
 
-    .error {
-      display: none;
-      background: #4a1616;
-      color: #ffb5b5;
-      border: 1px solid #8e2b2b;
-      border-radius: 12px;
-      margin: 10px 14px;
-      padding: 12px;
-      font-size: 13px;
-      word-break: break-word;
-    }
+input {
+  width: 100%;
+  background: #091625;
+  color: var(--text);
+  border: 1px solid #2a455d;
+  border-radius: 12px;
+  padding: 14px;
+  outline: none;
+  margin-bottom: 11px;
+}
 
-    .success {
-      color: #b8ffca;
-      font-size: 13px;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px #39e6d118;
+}
 
-    .presale-wallet {
-      background: #0d131a;
-      border: 1px solid #27313d;
-      border-radius: 12px;
-      padding: 12px;
-      margin: 10px 0 14px;
-    }
+input::placeholder {
+  color: #71889c;
+}
 
-    .presale-address {
-      word-break: break-all;
-      color: #8d98a5;
-      font-size: 11px;
-      margin-top: 8px;
-    }
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
 
-    .presale-value {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 8px 0 14px;
-    }
+.row > div {
+  flex: 1;
+  min-width: 0;
+  background: #0c1b2c;
+  border: 1px solid #213a51;
+  border-radius: 13px;
+  padding: 14px 8px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
 
-    .presale-note {
-      color: #8d98a5;
-      font-size: 11px;
-      line-height: 1.5;
-      margin-top: 10px;
-    }
+.row > div > div:first-child {
+  font-size: 18px;
+  font-weight: 800;
+}
 
-    #tonConnectButton {
-      margin-bottom: 12px;
-    }
+.small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
 
-    #tonConnectButton button {
-      width: 100% !important;
-    }
+.error {
+  display: none;
+  background: #421c2a;
+  color: #ffc4cf;
+  border: 1px solid #86364c;
+  border-radius: 12px;
+  margin: 10px 14px;
+  padding: 12px;
+  font-size: 13px;
+  word-break: break-word;
+}
 
-    nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-width: 520px;
-      margin: auto;
-      background: #111820;
-      border-top: 1px solid #202b36;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      padding: 8px 3px;
-      z-index: 100;
-    }
+.success {
+  color: var(--green);
+  font-size: 13px;
+  margin-top: 10px;
+  line-height: 1.5;
+}
 
-    nav button {
-      background: transparent;
-      color: #8d98a5;
-      padding: 8px 1px;
-      font-size: 10px;
-    }
+.presale-wallet {
+  background: #091625;
+  border: 1px solid #294861;
+  border-radius: 13px;
+  padding: 13px;
+  margin: 12px 0 15px;
+}
 
-    nav button.active {
-      color: #fff;
-    }
+.presale-address {
+  word-break: break-all;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
 
-    .rank-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #202b36;
-    }
+.presale-value {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 8px 0 14px;
+  color: var(--cyan);
+  overflow-wrap: anywhere;
+}
 
-    #adminTaskPanel {
-      display: none;
-      max-width: 520px;
-      margin: 0 auto;
-      padding-bottom: 100px;
-    }
+.presale-note {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
 
-    .admin-card {
-      background: #121820;
-      border: 1px solid #202b36;
-      border-radius: 18px;
-      margin: 12px 14px;
-      padding: 18px;
-    }
+#tonConnectButton {
+  margin-bottom: 12px;
+}
 
-    .admin-title {
-      margin-top: 0;
-      margin-bottom: 15px;
-    }
+#tonConnectButton button {
+  width: 100% !important;
+}
 
-    .admin-task {
-      background: #171f28;
-      border: 1px solid #27313d;
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 10px;
-    }
+nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 520px;
+  margin: auto;
+  background: #081524f5;
+  border-top: 1px solid #25425b;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  padding: 8px 3px max(8px, env(safe-area-inset-bottom));
+  z-index: 100;
+  backdrop-filter: blur(16px);
+}
 
-    .admin-task-title {
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
+nav button {
+  background: transparent;
+  color: #829bb0;
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 9px 1px;
+  font-size: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
 
-    .admin-task-url {
-      color: #8d98a5;
-      font-size: 12px;
-      word-break: break-all;
-      margin-top: 6px;
-    }
+nav button.active {
+  color: var(--cyan);
+  background: #153449;
+}
 
-    .admin-delete {
-      margin-top: 10px;
-      background: #dc2626;
-      color: #fff;
-    }
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #213a51;
+}
 
-    .admin-toggle {
-      margin-top: 10px;
-      background: #27313d;
-      color: #fff;
-    }
+.rank-item:last-child {
+  border-bottom: 0;
+}
 
-    .admin-result {
-      margin-top: 10px;
-      font-size: 13px;
-    }
+#adminTaskPanel {
+  display: none;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
 
-    .order-item {
-      background: #171f28;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 10px;
-      font-size: 12px;
-    }
+.admin-card {
+  background: linear-gradient(145deg, #13263a, #0d1929);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  margin: 12px 14px;
+  padding: 18px;
+}
 
-    .status {
-      font-weight: 700;
-      margin-top: 5px;
-    }
-  </style>
-</head>
+.admin-title {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
 
-<body>
+.admin-task {
+  background: #0b1a2a;
+  border: 1px solid #29445b;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 10px;
+}
 
-<div class="app">
+.admin-task-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.admin-task-url {
+  color: var(--muted);
+  font-size: 12px;
+  word-break: break-all;
+  margin-top: 6px;
+}
+
+.admin-delete {
+  margin-top: 10px;
+  background: #dc4059;
+  color: #fff;
+  box-shadow: none;
+}
+
+.admin-toggle {
+  margin-top: 10px;
+  background: #223951;
+  color: #fff;
+  box-shadow: none;
+}
+
+.admin-result {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.order-item {
+  background: #0b1a2a;
+  border: 1px solid #25425b;
+  border-radius: 13px;
+  padding: 13px;
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  font-weight: 800;
+  margin-top: 6px;
+  color: var(--cyan);
+}
+
+@media (max-width: 360px) {
+  .balance-number {
+    font-size: 31px;
+  }
+
+  .mining-number {
+    font-size: 28px;
+  }
+
+  .timer {
+    font-size: 21px;
+  }
+
+  .card {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  nav button {
+    font-size: 9px;
+  }
+}
+
 
   <!-- LISTING COUNTDOWN -->
   <div class="card">
